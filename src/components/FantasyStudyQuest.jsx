@@ -1,4 +1,4 @@
-// FANTASY STUDY QUEST - v4.1 GAUNTLET OVERHAUL
+// FANTASY STUDY QUEST - v4.2 MULTI-PHASE GAUNTLET
 // Ported to Lovable
 // Last updated: 2026-02-07
 // FIXES: Calendar sync, date display on planner, missing dependencies, poison bug
@@ -462,7 +462,10 @@ const [waveEssenceTotal, setWaveEssenceTotal] = useState(0);
   const [inPhase2, setInPhase2] = useState(false);
   const [inPhase1, setInPhase1] = useState(false);
   const [hasTriggeredPhase1Enrage, setHasTriggeredPhase1Enrage] = useState(false);
-  const [targetingAdds, setTargetingAdds] = useState(false); // Player chooses to target adds
+  const [targetingAdds, setTargetingAdds] = useState(false);
+  const [gauntletPhase, setGauntletPhase] = useState(1); // 1, 2, or 3 - separate battles
+  const [gauntletBaseHp, setGauntletBaseHp] = useState(0); // Total base HP for calculating phase HPs
+  const [phaseTransitioning, setPhaseTransitioning] = useState(false); // Show transition screen
   const [phase1TurnCounter, setPhase1TurnCounter] = useState(0);
   const [phase2TurnCounter, setPhase2TurnCounter] = useState(0);
   const [phase2DamageStacks, setPhase2DamageStacks] = useState(0);
@@ -1517,29 +1520,30 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     }
     
     const dayScaling = Math.floor(Math.sqrt(currentDay) * 100);
-    const levelScaling = level * 50; // Reduced from 75 to 50
+    const levelScaling = level * 50;
     const baseHp = GAME_CONSTANTS.FINAL_BOSS_BASE + dayScaling + levelScaling;
-    
-    // Cap boss HP to prevent infinite scaling becoming grindy
     const cappedBaseHp = Math.min(baseHp, 2000);
-    
     const completionRate = totalTasks > 0 ? completedTasks / totalTasks : 1.0;
-    const bossHealth = Math.floor(cappedBaseHp * (1.5 - completionRate * 0.5));
+    const totalBossHp = Math.floor(cappedBaseHp * (1.5 - completionRate * 0.5));
+    
+    // Phase 1 gets 40% of total HP (escalating: 40/60/80)
+    const phase1Hp = Math.floor(totalBossHp * 0.40);
+    setGauntletBaseHp(totalBossHp);
     
     setCurrentAnimation('screen-shake');
     setTimeout(() => setCurrentAnimation(null), 500);
     
     const bossNameGenerated = makeBossName();
     setBossName(bossNameGenerated);
-    setBossHp(bossHealth);
-    setBossMax(bossHealth);
+    setBossHp(phase1Hp);
+    setBossMax(phase1Hp);
     setBattleType('final');
     setShowBoss(true);
     setBattling(true);
     setBattleMode(true);
     setIsFinalBoss(true);
     setCanFlee(false);
-    setVictoryLoot([]); // Clear previous loot
+    setVictoryLoot([]);
     
     // Reset taunt state
     setIsTauntAvailable(false);
@@ -1548,18 +1552,20 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setPlayerTaunt('');
     setEnemyTauntResponse('');
     setShowTauntBoxes(false);
-    setHasFled(false); // Reset fled status
+    setHasFled(false);
     
-    // Reset Phase 3 states
-    setInPhase3(false);
+    // Reset all phase states - start at Phase 1
+    setGauntletPhase(1);
+    setInPhase1(true);
     setInPhase2(false);
-    setInPhase1(true); // Start in Phase 1
+    setInPhase3(false);
     setPhase1TurnCounter(0);
     setPhase2TurnCounter(0);
     setPhase2DamageStacks(0);
     setHasSpawnedPreviewAdd(false);
     setHasTriggeredPhase1Enrage(false);
     setTargetingAdds(false);
+    setPhaseTransitioning(false);
     setShadowAdds([]);
     setAoeWarning(false);
     setShowDodgeButton(false);
@@ -1567,11 +1573,15 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setPhase3TurnCounter(0);
     setLifeDrainCounter(0);
     
+    // Reset debuffs for clean phase start
+    setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+    
     // Set Gauntlet dialogue
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
     setEnemyDialogue(bossDialogue.START);
     
-    addLog(`👹 ${bossNameGenerated.toUpperCase()} - THE GAUNTLET!`);
+    addLog(`👹 ${bossNameGenerated.toUpperCase()} - THE GAUNTLET! (Phase 1 of 3)`);
+    addLog(`💀 Defeat this foe 3 times. Each form grows stronger.`);
   };
   
   const taunt = () => {
@@ -1618,7 +1628,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     if (!battling || bossHp <= 0) return;
     
     // Target shadow adds if player chose to (no longer forced)
-    if ((inPhase2 || inPhase3) && shadowAdds.length > 0 && targetingAdds) {
+    if ((gauntletPhase === 2 || gauntletPhase === 3) && shadowAdds.length > 0 && targetingAdds) {
       const targetAdd = shadowAdds[0];
       const damage = Math.floor((getBaseAttack() + weapon + (weaponOilActive ? 5 : 0)) * 0.7); // Reduced damage to adds
       const newAddHp = Math.max(0, targetAdd.hp - damage);
@@ -1684,7 +1694,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     }
     
     // AOE Warning - Boss vulnerable but will counter-attack
-    if (aoeWarning && inPhase3) {
+    if (aoeWarning && gauntletPhase === 3) {
       const vulnerableBonus = Math.floor(finalDamage * 0.5);
       finalDamage += vulnerableBonus;
       bonusMessages.push(`⚠️ +${vulnerableBonus} - Boss is VULNERABLE!`);
@@ -1705,49 +1715,21 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     // Update dialogue based on HP phase
     const hpPercent = newBossHp / bossMax;
     
-    // Phase 1 - Enrage at 80% HP (Gauntlet only) - uses flag to avoid narrow window
-    if (battleType === 'final' && hpPercent <= 0.80 && !hasTriggeredPhase1Enrage && enragedTurns === 0) {
+    // Phase 1 - Enrage at 50% HP (Gauntlet only) - uses flag to avoid narrow window
+    if (battleType === 'final' && gauntletPhase === 1 && hpPercent <= 0.50 && !hasTriggeredPhase1Enrage && enragedTurns === 0) {
       setHasTriggeredPhase1Enrage(true);
       setEnragedTurns(2);
-      addLog(`Boss ENRAGED at 80% HP! (2 turns)`);
+      addLog(`Boss ENRAGED! (2 turns)`);
       addLog(`Enemy deals +15% damage but has 25% miss chance!`);
     }
     
-    // Phase 2 detection for Gauntlet boss (66% HP)
-    if (battleType === 'final' && !inPhase2 && hpPercent <= 0.66 && hpPercent > 0.33) {
-      setInPhase1(false); // Exit Phase 1
-      setInPhase2(true);
-      setPhase1TurnCounter(0); // Reset Phase 1 counter
-      setPhase2TurnCounter(0);
-      setPhase2DamageStacks(0);
-      addLog(`PHASE 2: THE PRESSURE!`);
-      addLog(`Boss damage increases each turn!`);
-      
-      const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
-      setEnemyDialogue(bossDialogue.PHASE2);
-    }
-    
-    // Phase 2 - Spawn preview add at 50% HP (uses flag, no narrow window)
-    if (battleType === 'final' && inPhase2 && !hasSpawnedPreviewAdd && hpPercent <= 0.50) {
+    // Phase 2 - Spawn preview add at 50% HP
+    if (battleType === 'final' && gauntletPhase === 2 && !hasSpawnedPreviewAdd && hpPercent <= 0.50) {
       const addId = `preview_add_${Date.now()}`;
-      const addHp = 18;
+      const addHp = 18 + level * 2;
       setShadowAdds([{ id: addId, hp: addHp, maxHp: addHp }]);
       setHasSpawnedPreviewAdd(true);
-      addLog(`👤 A Shadow has materialized! (Preview of what's to come...)`);
-    }
-    
-    // Phase 3 detection for Gauntlet boss
-    if (battleType === 'final' && !inPhase3 && hpPercent <= 0.33 && hpPercent > 0) {
-      setInPhase3(true);
-      setInPhase2(false); // Exit Phase 2
-      setPhase2DamageStacks(0); // Reset ramping stacks
-      setPhase3TurnCounter(0);
-      setLifeDrainCounter(0);
-      addLog(`💀 PHASE 3: ABYSS AWAKENING!`);
-      addLog(`🌑 The darkness intensifies... Shadows stir!`);
-      
-      const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
-      setEnemyDialogue(bossDialogue.PHASE3);
+      addLog(`👤 A Shadow has materialized! (Preview of what's to come in Phase 3...)`);
     }
     
     if (battleType === 'elite' || battleType === 'final') {
@@ -1757,7 +1739,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
       
       // For Gauntlet, only use HP-based dialogue if not in any active phase (phases have cycling dialogue)
       // For elite bosses, use normal HP-based dialogue
-      const isGauntletInActivePhase = battleType === 'final' && (inPhase1 || inPhase2 || inPhase3);
+      const isGauntletInActivePhase = battleType === 'final' && gauntletPhase >= 1;
       
       if (bossDialogue && !isGauntletInActivePhase) {
         if (hpPercent <= 0.25 && hpPercent > 0) {
@@ -1809,12 +1791,59 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   
   setRecklessStacks(0);
   
+  // GAUNTLET PHASE TRANSITION - if not on final phase, transition instead of victory
+  if (isFinalBoss && gauntletPhase < 3) {
+    const nextPhase = gauntletPhase + 1;
+    const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
+    const phaseHpPercents = { 2: 0.60, 3: 0.80 };
+    const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
+    
+    // Per-phase XP reward (smaller than full victory)
+    const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
+    const phaseEssence = 30;
+    setXp(x => x + phaseXp);
+    setEssence(e => e + phaseEssence);
+    addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+    
+    // Show transition screen
+    setPhaseTransitioning(true);
+    setBattling(false);
+    
+    // Set phase transition dialogue
+    const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
+    if (nextPhase === 2) {
+      setEnemyDialogue(bossDialogue.PHASE2);
+    } else {
+      setEnemyDialogue(bossDialogue.PHASE3);
+    }
+    
+    // Store next phase info for the transition button handler
+    setVictoryLoot([
+      `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
+      `🔮 +${phaseEssence} Essence`,
+      `✨ +${phaseXp} XP`,
+      `❤️ Full HP Restored`,
+      `⚡ Stamina Restored`,
+      `⚠️ Boss HP: ${nextPhaseHp}`,
+    ]);
+    
+    setVictoryFlash(true);
+    setTimeout(() => setVictoryFlash(false), 400);
+    
+    // The actual transition happens when player clicks the "NEXT PHASE" button
+    // Store the transition data we need
+    setBossMax(nextPhaseHp);
+    setBossHp(nextPhaseHp);
+    
+    return;
+  }
+  
   // Different XP based on battle type
   let xpGain;
   let essenceGain;
   if (isFinalBoss) {
     xpGain = GAME_CONSTANTS.XP_REWARDS.finalBoss;
-    essenceGain = 100; // Final boss
+    essenceGain = 100; // Final boss - phase 3 complete
   } else if (battleType === 'elite') {
     xpGain = GAME_CONSTANTS.XP_REWARDS.miniBoss;
     essenceGain = 50; // Elite boss
@@ -1974,7 +2003,7 @@ if (curseLevel === 2) {
 }
 
 // Phase 2 ramping damage (Gauntlet only) - capped at 10 stacks
-if (inPhase2 && battleType === 'final' && !inPhase3) {
+if (gauntletPhase === 2 && battleType === 'final') {
   const cappedStacks = Math.min(phase2DamageStacks, 10);
   const rampBonus = Math.floor(bossDamage * (cappedStacks * 0.05));
   if (rampBonus > 0) {
@@ -2017,7 +2046,7 @@ if (enragedTurns > 0) {
       setTimeout(() => setPlayerFlash(false), 200);
       
       // Check for AOE execution (Phase 3 gauntlet)
-      if (aoeWarning && inPhase3 && battleType === 'final') {
+      if (aoeWarning && gauntletPhase === 3 && battleType === 'final') {
         if (dodgeReady) {
           // Player dodged successfully
           addLog(`🌀 You rolled out of the way! AOE DODGED!`);
@@ -2132,7 +2161,7 @@ if (enragedTurns > 0) {
         }
         
         // Phase 1 mechanics for Gauntlet boss
-        if (inPhase1 && battleType === 'final' && bossHp > 0 && !inPhase2 && !inPhase3) {
+        if (gauntletPhase === 1 && battleType === 'final' && bossHp > 0) {
           setPhase1TurnCounter(prev => prev + 1);
           
           // Cycle Phase 1 dialogue every 3 turns
@@ -2145,7 +2174,7 @@ if (enragedTurns > 0) {
         }
         
         // Phase 2 mechanics for Gauntlet boss
-        if (inPhase2 && battleType === 'final' && bossHp > 0 && !inPhase3) {
+        if (gauntletPhase === 2 && battleType === 'final' && bossHp > 0) {
           setPhase2TurnCounter(prev => prev + 1);
           
           // Cycle Phase 2 dialogue every 3 turns
@@ -2158,7 +2187,7 @@ if (enragedTurns > 0) {
         }
         
         // Phase 3 mechanics for Gauntlet boss
-        if (inPhase3 && battleType === 'final' && bossHp > 0) {
+        if (gauntletPhase === 3 && battleType === 'final' && bossHp > 0) {
           setPhase3TurnCounter(prev => prev + 1);
           setLifeDrainCounter(prev => prev + 1);
           
@@ -2264,7 +2293,7 @@ if (enragedTurns > 0) {
     }
     
     // AOE Warning - Boss vulnerable but will counter-attack (special attacks too)
-    if (aoeWarning && inPhase3) {
+    if (aoeWarning && gauntletPhase === 3) {
       const vulnerableBonus = Math.floor(damage * 0.5);
       damage += vulnerableBonus;
       addLog(`⚠️ Boss is VULNERABLE! +${vulnerableBonus} bonus damage!`);
@@ -2316,7 +2345,7 @@ if (enragedTurns > 0) {
       
       // For Gauntlet, only use HP-based dialogue if not in any active phase (phases have cycling dialogue)
       // For elite bosses, use normal HP-based dialogue
-      const isGauntletInActivePhase = battleType === 'final' && (inPhase1 || inPhase2 || inPhase3);
+      const isGauntletInActivePhase = battleType === 'final' && gauntletPhase >= 1;
       
       if (bossDialogue && !isGauntletInActivePhase) {
         if (hpPercent <= 0.25 && hpPercent > 0) {
@@ -5048,7 +5077,7 @@ setMiniBossCount(0);
               <div className={`bg-gradient-to-b from-red-900 to-black rounded-xl p-8 max-w-2xl w-full border-4 border-red-600 shadow-2xl shadow-red-900/50 boss-enter my-8 ${bossFlash ? 'damage-flash-boss' : ''}`}>
                {bossName && (<h2 className="text-5xl text-center text-yellow-400 mb-2 font-bold" style={{fontFamily: 'Cinzel, serif'}}>{bossName}{bossDebuffs.poisonTurns > 0 && (<span className="ml-3 text-lg text-green-400 animate-pulse">☠️ POISONED ({bossDebuffs.poisonTurns})</span>)}{bossDebuffs.marked && (<span className="ml-3 text-lg text-cyan-400 animate-pulse">🎯 MARKED</span>)}{bossDebuffs.stunned && (<span className="ml-3 text-lg text-purple-400 animate-pulse">✨ STUNNED</span>)}</h2>)}
                <p className="text-xl font-bold text-center text-red-400 mb-4">
-  {isFinalBoss ? (inPhase3 ? 'PHASE 3: ABYSS AWAKENING' : inPhase2 ? 'PHASE 2: THE PRESSURE' : 'THE UNDYING LEGEND') : 
+  {isFinalBoss ? `PHASE ${gauntletPhase} of 3: ${gauntletPhase === 1 ? 'THE UNDYING LEGEND' : gauntletPhase === 2 ? 'THE PRESSURE' : 'ABYSS AWAKENING'}` : 
    battleType === 'elite' ? 'TORMENTED CHAMPION' : 
    battleType === 'wave' ? `WAVE ASSAULT - Enemy ${currentWaveEnemy}/${totalWaveEnemies}` : 
    'ENEMY ENCOUNTER'}
@@ -5070,7 +5099,7 @@ setMiniBossCount(0);
                   </div>
                   
                   {/* Phase 2 Ramping Damage Indicator */}
-                  {inPhase2 && !inPhase3 && phase2DamageStacks > 0 && (
+                  {gauntletPhase === 2 && phase2DamageStacks > 0 && (
                     <div className="bg-orange-900 bg-opacity-60 rounded-lg p-3 border-2 border-orange-500">
                       <p className="text-orange-400 font-bold text-center">🔺 RAMPING PRESSURE</p>
                       <p className="text-white text-center text-sm">Boss damage: +{phase2DamageStacks * 5}% ({phase2DamageStacks} stacks)</p>
@@ -5079,7 +5108,7 @@ setMiniBossCount(0);
                   )}
                   
                   {/* Shadow Adds (Phase 2 & 3) */}
-                  {(inPhase2 || inPhase3) && shadowAdds.length > 0 && (
+                  {(gauntletPhase === 2 || gauntletPhase === 3) && shadowAdds.length > 0 && (
                     <div className="bg-black bg-opacity-60 rounded-lg p-4 border-2 border-purple-600">
                       <p className="text-purple-400 font-bold mb-2 text-center">👤 SHADOW ADD{shadowAdds.length > 1 ? 'S' : ''} ({shadowAdds.length}/3)</p>
                       <div className="space-y-2">
@@ -5106,13 +5135,13 @@ setMiniBossCount(0);
                         {targetingAdds ? '🎯 TARGETING ADDS (click to switch to boss)' : '⚔️ TARGETING BOSS (click to switch to adds)'}
                       </button>
                       <p className="text-xs text-purple-300 mt-2 text-center italic">
-                        {inPhase3 ? 'Each add heals boss for 8 HP per turn. Max 3 adds.' : 'Kill it before Phase 3!'}
+                        {gauntletPhase === 3 ? 'Each add heals boss for 8 HP per turn. Max 3 adds.' : 'Kill it before Phase 3!'}
                       </p>
                     </div>
                   )}
                   
                   {/* AOE Warning */}
-                  {aoeWarning && inPhase3 && (
+                  {aoeWarning && gauntletPhase === 3 && (
                     <div className="bg-red-900 bg-opacity-80 rounded-lg p-4 border-4 border-yellow-400 animate-pulse">
                       <p className="text-yellow-400 font-bold text-center text-xl">⚠️ BOSS PREPARING DEVASTATING AOE!</p>
                       <p className="text-white text-center text-sm mt-2">Next turn: 35 damage slam!</p>
@@ -5157,7 +5186,7 @@ setMiniBossCount(0);
                   
                   {/* Battle Actions */}
                   {battling && bossHp > 0 && hp > 0 && (<><div className="flex gap-4"><button onClick={attack} className="flex-1 bg-red-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-red-600/50 hover:scale-105 active:scale-95">ATTACK</button>{isTauntAvailable && (<button onClick={taunt} className="flex-1 bg-orange-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"><div>TAUNT</div><div className="text-sm">(Enrage Enemy)</div></button>)}{hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (<button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-cyan-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-cyan-700 transition-all shadow-lg hover:shadow-cyan-600/50 hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:scale-100"><div>{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name.toUpperCase()}</div><div className="text-sm">({GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`})</div></button>)}{healthPots > 0 && (<button onClick={useHealth} className="bg-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-700 transition-all hover:scale-105 active:scale-95">HEAL</button>)}{canFlee && (<button onClick={flee} disabled={stamina < 25} className="bg-yellow-600 px-6 py-4 rounded-lg font-bold hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">FLEE</button>)}{showDodgeButton && (<button onClick={dodge} className="flex-1 bg-blue-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/50 hover:scale-105 active:scale-95 animate-pulse border-4 border-cyan-400"><div>🛡️ DODGE</div><div className="text-sm">(Avoid AOE)</div></button>)}</div>{showDodgeButton && (<p className="text-xs text-cyan-400 text-center italic mt-2">🛡️ Dodge the AOE or attack for +50% damage (risky!)</p>)}{canFlee && (<p className="text-xs text-gray-400 text-center italic">💨 Fleeing costs 25 Stamina but lets you escape</p>)}{showDebug && (<><button onClick={() => { setBossHp(0); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">🛠️ DEBUG: Kill Boss Instantly</button><button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">💬 DEBUG: Force Taunt Available</button></>)}</>)}
-                  {bossHp <= 0 && (
+                  {bossHp <= 0 && !phaseTransitioning && (
                     <div className="text-center">
                       {hasFled ? (
                         <>
@@ -5188,6 +5217,98 @@ setMiniBossCount(0);
                       {(battleType === 'regular' || battleType === 'wave') && (
                         <button onClick={() => { setShowBoss(false); setHasFled(false); addLog('⚔️ Ready for your next trial...'); }} className="bg-green-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-green-400 transition-all shadow-lg shadow-green-500/50">CONTINUE</button>
                       )}
+                    </div>
+                  )}
+                  
+                  {/* Phase Transition Screen */}
+                  {phaseTransitioning && bossHp > 0 && (
+                    <div className="text-center">
+                      <div className="mb-6">
+                        <p className="text-2xl font-bold text-orange-400 mb-2 animate-pulse" style={{fontFamily: 'Cinzel, serif'}}>
+                          💀 PHASE {gauntletPhase} DEFEATED 💀
+                        </p>
+                        <p className="text-lg text-red-300 italic mb-4">
+                          "{enemyDialogue}"
+                        </p>
+                        <div className="bg-red-900 bg-opacity-60 rounded-lg p-4 border-2 border-red-500 mb-4">
+                          <p className="text-yellow-400 font-bold text-xl mb-3">
+                            ⚠️ PHASE {gauntletPhase + 1}: {gauntletPhase + 1 === 2 ? 'THE PRESSURE' : 'ABYSS AWAKENING'}
+                          </p>
+                          {victoryLoot.map((line, idx) => (
+                            <p key={idx} className="text-white text-sm">{line}</p>
+                          ))}
+                          <div className="mt-3 pt-3 border-t border-red-600">
+                            <p className="text-green-400 text-sm">❤️ Your HP will be fully restored</p>
+                            <p className="text-cyan-400 text-sm">⚡ Your Stamina will be fully restored</p>
+                            <p className="text-yellow-400 text-sm">💊 Potions will NOT be restored</p>
+                          </div>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const nextPhase = gauntletPhase + 1;
+                          setGauntletPhase(nextPhase);
+                          
+                          // Set phase flags
+                          setInPhase1(nextPhase === 1);
+                          setInPhase2(nextPhase === 2);
+                          setInPhase3(nextPhase === 3);
+                          
+                          // Reset phase-specific mechanics
+                          setPhase1TurnCounter(0);
+                          setPhase2TurnCounter(0);
+                          setPhase2DamageStacks(0);
+                          setPhase3TurnCounter(0);
+                          setLifeDrainCounter(0);
+                          setHasSpawnedPreviewAdd(false);
+                          setHasTriggeredPhase1Enrage(false);
+                          setTargetingAdds(false);
+                          setShadowAdds([]);
+                          setAoeWarning(false);
+                          setShowDodgeButton(false);
+                          setDodgeReady(false);
+                          setEnragedTurns(0);
+                          setRecklessStacks(0);
+                          
+                          // Reset debuffs
+                          setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+                          
+                          // Reset taunt state
+                          setIsTauntAvailable(false);
+                          setHasTriggeredLowHpTaunt(false);
+                          setPlayerTaunt('');
+                          setEnemyTauntResponse('');
+                          setShowTauntBoxes(false);
+                          
+                          // Full heal + stamina reset (potions stay)
+                          setHp(getMaxHp());
+                          setStamina(getMaxStamina());
+                          
+                          // Resume battle
+                          setPhaseTransitioning(false);
+                          setBattling(true);
+                          
+                          // Set phase dialogue
+                          const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
+                          if (nextPhase === 2) {
+                            setEnemyDialogue(bossDialogue.PHASE2);
+                            addLog(`⚔️ PHASE 2: THE PRESSURE BEGINS!`);
+                            addLog(`💀 Boss damage ramps each turn!`);
+                          } else {
+                            setEnemyDialogue(bossDialogue.PHASE3);
+                            addLog(`💀 PHASE 3: ABYSS AWAKENING!`);
+                            addLog(`🌑 Shadow adds spawn! Life drain active!`);
+                          }
+                          addLog(`❤️ HP restored! ⚡ Stamina restored!`);
+                          
+                          setCurrentAnimation('screen-shake');
+                          setTimeout(() => setCurrentAnimation(null), 500);
+                        }}
+                        className="bg-red-600 text-white px-10 py-4 rounded-lg font-bold text-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"
+                        style={{fontFamily: 'Cinzel, serif'}}
+                      >
+                        ⚔️ BEGIN PHASE {gauntletPhase + 1} ⚔️
+                      </button>
                     </div>
                   )}
                   {hp <= 0 && (<div className="text-center"><p className="text-3xl font-bold text-red-400 mb-2">DEFEATED</p><p className="text-gray-400 text-sm mb-4 italic">"The curse claims another victim..."</p><button onClick={() => { setShowBoss(false); die(); }} className="bg-red-600 text-white px-8 py-3 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50">CONTINUE</button></div>)}
@@ -5270,7 +5391,7 @@ setMiniBossCount(0);
         </div>
         
         <div className="text-center pb-4">
-          <p className="text-xs text-gray-600">v4.1 - Gauntlet Overhaul</p>
+          <p className="text-xs text-gray-600">v4.2 - Multi-Phase Gauntlet</p>
         </div>
       </div>
       )}
