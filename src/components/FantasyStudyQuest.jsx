@@ -5,6 +5,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calendar, Hammer } from 'lucide-react';
+import useGameSFX from '../hooks/useGameSFX';
 
 const GAME_CONSTANTS = {
   LATE_START_PENALTY: 15,
@@ -339,6 +340,7 @@ const GAME_CONSTANTS = {
 const HERO_TITLES = ['Novice', 'Seeker', 'Wanderer', 'Survivor', 'Warrior', 'Champion', 'Legend'];
 
 const FantasyStudyQuest = () => {
+  const sfx = useGameSFX();
   const [activeTab, setActiveTab] = useState('quest');
   const [currentDay, setCurrentDay] = useState(1);
   const [hasStarted, setHasStarted] = useState(false);
@@ -1411,6 +1413,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setShowBoss(true);
     setBattling(true);
     setBattleMode(true);
+    sfx.playBossSpawn();
     setIsFinalBoss(false);
     setCanFlee(true);
     setMiniBossCount(bossNumber);
@@ -1444,6 +1447,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   if (healthPots > 0 && hp < getMaxHp()) {
     setHealthPots(h => h - 1);
     setHp(h => Math.min(getMaxHp(), h + 50));
+    sfx.playPotion();
     addLog('💊 Used Health Potion! +50 HP');
   }
 };
@@ -1541,6 +1545,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setShowBoss(true);
     setBattling(true);
     setBattleMode(true);
+    sfx.playBossSpawn();
     setIsFinalBoss(true);
     setCanFlee(false);
     setVictoryLoot([]);
@@ -1619,6 +1624,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
       `⚠️ Boss HP: ${nextPhaseHp}`,
     ]);
     
+    sfx.playPhaseTransition(gauntletPhase + 1);
     setVictoryFlash(true);
     setTimeout(() => setVictoryFlash(false), 400);
   };
@@ -1712,6 +1718,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     
     // Show both dialogue boxes immediately
     setShowTauntBoxes(true);
+    sfx.playTaunt();
     
     // Player text appears immediately
     setPlayerTaunt(randomTaunt.player);
@@ -1725,8 +1732,9 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
       setEnemyDialogue(randomTaunt.enemy);
       
       // Apply ENRAGED status
-      setEnragedTurns(3); // Lasts 3 turns
-      addLog(`🔥 Enemy is ENRAGED! (+20% damage taken, +15% damage dealt, -25% accuracy for 3 turns)`);
+       setEnragedTurns(3); // Lasts 3 turns
+       sfx.playEnrage();
+       addLog(`🔥 Enemy is ENRAGED! (+20% damage taken, +15% damage dealt, -25% accuracy for 3 turns)`);
     }, 1000);
     
     // Consume taunt
@@ -1773,8 +1781,9 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
         
         setHp(h => Math.max(0, h - baseDamage));
         addLog(`💥 Boss counter-attacks for ${baseDamage} damage!`);
-        setPlayerFlash(true);
-        setTimeout(() => setPlayerFlash(false), 200);
+         setPlayerFlash(true);
+         sfx.playDamage();
+         setTimeout(() => setPlayerFlash(false), 200);
       }, 1000);
       
       return;
@@ -1827,8 +1836,9 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     // Phase 1 - Enrage at 50% HP (Gauntlet only) - uses flag to avoid narrow window
     if (battleType === 'final' && gauntletPhase === 1 && hpPercent <= 0.50 && !hasTriggeredPhase1Enrage && enragedTurns === 0) {
       setHasTriggeredPhase1Enrage(true);
-      setEnragedTurns(2);
-      addLog(`Boss ENRAGED! (2 turns)`);
+       setEnragedTurns(2);
+       sfx.playEnrage();
+       addLog(`Boss ENRAGED! (2 turns)`);
       addLog(`Enemy deals +15% damage but has 25% miss chance!`);
     }
     
@@ -1890,6 +1900,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     }
     
     setBossFlash(true);
+    sfx.playHit();
     setTimeout(() => setBossFlash(false), 200);
     
     if (newBossHp <= 0) {
@@ -2029,9 +2040,10 @@ if (battleType === 'elite') {
       const displayEssence = battleType === 'wave' ? waveEssenceTotal : essenceGain;
       lootMessages.unshift(`🔮 +${displayEssence} Essence`);
       
-      setVictoryLoot(lootMessages);
-      setVictoryFlash(true);
-      setTimeout(() => setVictoryFlash(false), 400);
+       setVictoryLoot(lootMessages);
+       sfx.playVictory();
+       setVictoryFlash(true);
+       setTimeout(() => setVictoryFlash(false), 400);
       
       // No auto-close - let player click continue button
       
@@ -2110,15 +2122,17 @@ if (enragedTurns > 0) {
   }
 }
       
-      setPlayerFlash(true);
-      setTimeout(() => setPlayerFlash(false), 200);
+       setPlayerFlash(true);
+       sfx.playDamage();
+       setTimeout(() => setPlayerFlash(false), 200);
       
       // Check for AOE execution (Phase 3 gauntlet)
       if (aoeWarning && gauntletPhase === 3 && battleType === 'final') {
         if (dodgeReady) {
           // Player dodged successfully
-          addLog(`🌀 You rolled out of the way! AOE DODGED!`);
-          setDodgeReady(false);
+           addLog(`🌀 You rolled out of the way! AOE DODGED!`);
+           sfx.playDodge();
+           setDodgeReady(false);
         } else {
           // AOE hits for 35 damage
           const aoeDamage = 35;
@@ -2219,8 +2233,9 @@ if (enragedTurns > 0) {
                   addLog('✨ Fully healed!');
                 }
                 
-                setVictoryFlash(true);
-                setTimeout(() => setVictoryFlash(false), 400);
+                 sfx.playVictory();
+                 setVictoryFlash(true);
+                 setTimeout(() => setVictoryFlash(false), 400);
               }, 500);
             }
             return newHp;
@@ -2285,15 +2300,17 @@ if (enragedTurns > 0) {
             const drainAmount = 15;
             setHp(h => Math.max(0, h - drainAmount));
             setBossHp(b => Math.min(bossMax, b + drainAmount));
-            addLog(`🩸 LIFE DRAIN! Boss drains ${drainAmount} HP from you!`);
-            setLifeDrainCounter(0);
+             addLog(`🩸 LIFE DRAIN! Boss drains ${drainAmount} HP from you!`);
+             sfx.playLifeDrain();
+             setLifeDrainCounter(0);
           }
           
           // AOE warning every 5 turns (offset from life drain)
           if (phase3TurnCounter > 0 && phase3TurnCounter % 5 === 2) {
-            setAoeWarning(true);
-            setShowDodgeButton(true);
-            addLog(`⚠️ THE BOSS RAISES ITS WEAPON TO THE SKY!`);
+             setAoeWarning(true);
+             sfx.playAoeWarning();
+             setShowDodgeButton(true);
+             addLog(`⚠️ THE BOSS RAISES ITS WEAPON TO THE SKY!`);
             addLog(`🛡️ [DODGE] button available - or attack for bonus damage!`);
           }
           
@@ -2468,8 +2485,9 @@ if (enragedTurns > 0) {
     bonusMessages.forEach(msg => addLog(msg));
     if (effectMessage) addLog(effectMessage);
     
-    setBossFlash(true);
-    setTimeout(() => setBossFlash(false), 200);
+     setBossFlash(true);
+     sfx.playCritical();
+     setTimeout(() => setBossFlash(false), 200);
     
     if (newBossHp <= 0) {
       setTimeout(() => {
@@ -2564,8 +2582,9 @@ if (enragedTurns > 0) {
       lootMessages.unshift(`🔮 +${displayEssence} Essence`);
       
       setVictoryLoot(lootMessages);
-      setVictoryFlash(true);
-      setTimeout(() => setVictoryFlash(false), 400);
+       sfx.playVictory();
+       setVictoryFlash(true);
+       setTimeout(() => setVictoryFlash(false), 400);
       
       return;
     }
@@ -2644,9 +2663,9 @@ if (enragedTurns > 0) {
   }
 }
         
-        setPlayerFlash(true);
-        setTimeout(() => setPlayerFlash(false), 200);
-        setTimeout(() => setPlayerFlash(false), 200);
+         setPlayerFlash(true);
+         sfx.playDamage();
+         setTimeout(() => setPlayerFlash(false), 200);
         
         setHp(currentHp => {
           const newHp = Math.max(0, currentHp - bossDamage);
@@ -2722,8 +2741,9 @@ if (enragedTurns > 0) {
                     addLog('✨ Fully healed!');
                   }
                   
-                  setVictoryFlash(true);
-                  setTimeout(() => setVictoryFlash(false), 400);
+                   sfx.playVictory();
+                   setVictoryFlash(true);
+                   setTimeout(() => setVictoryFlash(false), 400);
                 }, 500);
               }
               return newHp;
@@ -2752,6 +2772,7 @@ if (enragedTurns > 0) {
     
     // Cost 25 stamina to flee
     setStamina(s => Math.max(0, s - 25));
+    sfx.playFlee();
     
     // Enemy mocks you for fleeing - show in enemy dialogue box
     const fleeDialogue = GAME_CONSTANTS.ENEMY_DIALOGUE.FLEE[
@@ -2773,8 +2794,9 @@ if (enragedTurns > 0) {
   const dodge = () => {
     if (!showDodgeButton || !aoeWarning) return;
     
-    setDodgeReady(true);
-    setShowDodgeButton(false);
+     setDodgeReady(true);
+     sfx.playDodge();
+     setShowDodgeButton(false);
     addLog(`🛡️ You prepare to dodge the incoming AOE!`);
     addLog(`🌀 Ready to roll...`);
   };
@@ -2801,6 +2823,7 @@ if (enragedTurns > 0) {
 }]);
     
     addLog('💀 You have fallen...');
+    sfx.playDefeat();
     
     const newHero = makeName();
     setHero(newHero);
