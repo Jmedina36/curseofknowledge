@@ -3695,19 +3695,29 @@ setMiniBossCount(0);
           )}
 
            {activeTab === 'planner' && (
-            <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-blue-900">
-              <h2 className="text-2xl font-bold text-blue-400 mb-2 text-center font-fantasy-decorative tracking-wider">BATTLE PLANNER</h2>
-              <p className="text-gray-400 text-sm mb-4 italic text-center">"Chart your path through the coming trials..."</p>
+            <div className="bg-black/50 rounded-xl overflow-hidden border border-blue-900/40">
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4 text-center">
+                <h2 className="text-2xl font-fantasy-decorative text-blue-400 tracking-wider drop-shadow-[0_0_12px_rgba(59,130,246,0.3)]">Battle Planner</h2>
+                <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
+              </div>
+              
+              {/* Divider */}
+              <div className="flex items-center gap-3 px-6">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/25 to-transparent"></div>
+                <div className="w-1.5 h-1.5 rotate-45 bg-blue-600/30"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/25 to-transparent"></div>
+              </div>
               
               {/* Sub-toggle: Weekly / Calendar */}
-              <div className="flex justify-center mb-6">
-                <div className="inline-flex bg-black/60 rounded-lg border border-blue-900/50 p-1 gap-1">
+              <div className="flex justify-center px-6 py-4">
+                <div className="inline-flex bg-black/40 rounded-lg border border-blue-900/30 p-1 gap-1">
                   <button 
                     onClick={() => setPlannerView('weekly')}
                     className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
                       plannerView === 'weekly' 
-                        ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40 shadow-[0_0_10px_rgba(59,130,246,0.15)]' 
-                        : 'text-gray-400 hover:text-gray-300'
+                        ? 'bg-blue-800/30 text-blue-300 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]' 
+                        : 'text-gray-500 hover:text-gray-400'
                     }`}
                   >
                     Weekly Plan
@@ -3716,8 +3726,8 @@ setMiniBossCount(0);
                     onClick={() => setPlannerView('calendar')}
                     className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
                       plannerView === 'calendar' 
-                        ? 'bg-green-600/30 text-green-300 border border-green-500/40 shadow-[0_0_10px_rgba(34,197,94,0.15)]' 
-                        : 'text-gray-400 hover:text-gray-300'
+                        ? 'bg-green-800/30 text-green-300 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' 
+                        : 'text-gray-500 hover:text-gray-400'
                     }`}
                   >
                     Calendar
@@ -3725,34 +3735,35 @@ setMiniBossCount(0);
                 </div>
               </div>
 
+              <div className="px-6 pb-6">
               {plannerView === 'weekly' && (
-              <div className="grid gap-4">
+              <div className="grid gap-3">
                 {Object.keys(weeklyPlan).map(day => (
-                  <div key={day} className="bg-gray-800 rounded-lg p-4 border-2 border-gray-700">
+                  <div key={day} className="bg-black/30 rounded-lg p-4 border border-blue-900/20 hover:border-blue-800/30 transition-all">
                     <div className="flex justify-between items-center mb-3">
                       <div>
-                        <h3 className="text-xl font-bold text-blue-300">{day}</h3>
+                        <h3 className="text-lg font-fantasy tracking-wide text-blue-300">{day}</h3>
                         <p className="text-xs">
   {(() => {
     const today = new Date();
     const todayDayName = today.toLocaleDateString('en-US', { weekday: 'long' });
     if (day === todayDayName) {
-      return <span className="text-yellow-400 font-bold">Today</span>;
+      return <span className="text-yellow-400/80 font-fantasy text-[10px] tracking-wider uppercase">Today</span>;
     } else {
-      return <span className="text-gray-400">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
+      return <span className="text-gray-600 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
     }
   })()}
 </p>
                       </div>
-                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-sm transition-all flex items-center gap-1">
-                        <Plus size={16}/> Add Task
+                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-blue-200/70 border border-blue-700/20">
+                        <Plus size={14}/> Add Task
                       </button>
                     </div>
                     
                     {weeklyPlan[day].length === 0 ? (
-                      <p className="text-gray-500 text-sm italic">No tasks planned</p>
+                      <p className="text-gray-700 text-sm italic font-fantasy">No tasks planned</p>
                     ) : (
-                      <div className="space-y-2">
+                      <div className="space-y-1.5">
                       {[...weeklyPlan[day]].sort((a, b) => {
   if (a.priority === 'important' && b.priority !== 'important') return -1;
   if (a.priority !== 'important' && b.priority === 'important') return 1;
@@ -3762,24 +3773,24 @@ setMiniBossCount(0);
   return (
     <div 
       key={idx} 
-      className={`rounded p-3 flex justify-between items-start ${
+      className={`rounded-lg p-3 flex justify-between items-start transition-all ${
         item.completed 
-          ? 'bg-gray-900 opacity-60' 
+          ? 'bg-black/20 opacity-50' 
           : item.priority === 'important'
-            ? 'bg-gradient-to-r from-yellow-900/30 to-gray-900 border border-yellow-500'
-            : 'bg-gray-900'
+            ? 'bg-gradient-to-r from-yellow-950/30 to-black/20 border border-yellow-700/25'
+            : 'bg-black/20 border border-transparent hover:border-gray-800/30'
       }`}
     >
       <div className="flex-1 flex items-start gap-2">
         {item.priority === 'important' && !item.completed && (
-          <span className="text-xl">⭐</span>
+          <span className="text-base">⭐</span>
         )}
         <div>
-          <p className={`font-medium ${item.completed ? 'line-through text-gray-500' : 'text-white'}`}>
+          <p className={`font-medium text-sm ${item.completed ? 'line-through text-gray-600' : 'text-white/80'}`}>
             {item.completed && '✓ '}{item.title}
           </p>
           {item.priority === 'important' && (
-            <p className="text-xs text-yellow-400 mt-1">IMPORTANT • 1.25x XP</p>
+            <p className="text-[10px] text-yellow-500/50 mt-0.5 font-fantasy tracking-wide">Important • 1.25x XP</p>
           )}
         </div>
       </div>
@@ -3817,9 +3828,9 @@ setMiniBossCount(0);
               addLog(`🗑️ Deleted "${item.title}" from ${day} plan and future calendar dates`);
             }
           }}
-          className="text-red-400 hover:text-red-300"
+          className="text-red-500/50 hover:text-red-400/70 transition-all"
         >
-          <X size={16}/>
+          <X size={14}/>
         </button>
       </div>
     </div>
@@ -3835,15 +3846,15 @@ setMiniBossCount(0);
 
               {plannerView === 'calendar' && (
               <>
-              <div className="flex justify-between items-center mb-6">
-                <button onClick={() => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } else { setCurrentMonth(currentMonth - 1); } }} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition-all">← Previous</button>
-                <h3 className="text-2xl font-bold text-green-300">{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}</h3>
-                <button onClick={() => { if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); } else { setCurrentMonth(currentMonth + 1); } }} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition-all">Next →</button>
+              <div className="flex justify-between items-center mb-5">
+                <button onClick={() => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } else { setCurrentMonth(currentMonth - 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-300/70 border border-gray-700/20 font-fantasy text-sm">← Prev</button>
+                <h3 className="text-xl font-fantasy-decorative text-green-300/80 tracking-wider">{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}</h3>
+                <button onClick={() => { if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); } else { setCurrentMonth(currentMonth + 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-300/70 border border-gray-700/20 font-fantasy text-sm">Next →</button>
               </div>
               
-              <div className="bg-gray-800 rounded-lg p-4">
+              <div className="bg-black/30 rounded-lg p-4 border border-green-900/20">
                 <div className="grid grid-cols-7 gap-2 mb-2">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-gray-400 font-bold text-sm py-2">{day}</div>))}
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-gray-600 font-fantasy text-xs tracking-wide py-2">{day}</div>))}
                 </div>
                 
                 <div className="grid grid-cols-7 gap-2">
@@ -3862,10 +3873,10 @@ setMiniBossCount(0);
                       const completedTasks = dayTasks.filter(t => t.done).length;
                       const allDone = hasTasks && completedTasks === dayTasks.length;
                       days.push(
-                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-2 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-600 border-2 border-blue-400 shadow-lg' : hasTasks ? allDone ? 'bg-green-700 border-2 border-green-500' : 'bg-yellow-700 border-2 border-yellow-500' : 'bg-gray-700 hover:bg-gray-600'}`}>
-                          <div className="text-lg font-bold text-white">{day}</div>
-                          {hasTasks && (<div className="text-xs text-white mt-1">{completedTasks}/{dayTasks.length}</div>)}
-                          {isToday && (<div className="absolute top-0 right-0 w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>)}
+                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-800/50 border border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-black/30 hover:bg-black/40 border border-transparent hover:border-gray-700/20'}`}>
+                          <div className="text-sm font-bold text-white/70">{day}</div>
+                          {hasTasks && (<div className="text-[10px] text-white/50 mt-0.5">{completedTasks}/{dayTasks.length}</div>)}
+                          {isToday && (<div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-pulse"></div>)}
                         </button>
                       );
                     }
@@ -3874,287 +3885,330 @@ setMiniBossCount(0);
                 </div>
               </div>
               
-              <div className="mt-4 flex flex-wrap gap-4 justify-center text-sm">
-                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-blue-600 border-2 border-blue-400 rounded"></div><span className="text-gray-300">Today</span></div>
-                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-yellow-700 border-2 border-yellow-500 rounded"></div><span className="text-gray-300">Has Tasks (In Progress)</span></div>
-                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-green-700 border-2 border-green-500 rounded"></div><span className="text-gray-300">All Tasks Complete</span></div>
-                <div className="flex items-center gap-2"><div className="w-4 h-4 bg-gray-700 rounded"></div><span className="text-gray-300">No Tasks</span></div>
+              <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs">
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-800/50 border border-blue-500/40 rounded"></div><span className="text-gray-500 font-fantasy">Today</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-500 font-fantasy">In Progress</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-500 font-fantasy">Complete</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-black/30 rounded"></div><span className="text-gray-500 font-fantasy">Empty</span></div>
               </div>
               </>
               )}
+              </div>
             </div>
           )}
 
           {activeTab === 'study' && (
-  <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-purple-900">
-    <h2 className="text-2xl font-bold text-purple-400 mb-2 text-center">KNOWLEDGE FORGE</h2>
-    <p className="text-gray-400 text-sm mb-6 italic text-center">"Sharpen your mind, temper your wisdom..."</p>
-    
-    <div className="flex justify-between items-center mb-6">
-      <div>
-        <p className="text-lg text-gray-300">Your Decks: <span className="font-bold text-purple-400">{flashcardDecks.length}</span></p>
-        <p className="text-sm text-gray-500">Study to earn XP and loot!</p>
-      </div>
-      <button 
-        onClick={() => setShowDeckModal(true)}
-        className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg transition-all flex items-center gap-2"
-      >
-        <Plus size={20}/> New Deck
-      </button>
+  <div className="bg-black/50 rounded-xl overflow-hidden border border-purple-900/40">
+    {/* Header */}
+    <div className="px-6 pt-6 pb-4 text-center">
+      <h2 className="text-2xl font-fantasy-decorative text-purple-400 tracking-wider drop-shadow-[0_0_12px_rgba(168,85,247,0.3)]">Knowledge Forge</h2>
+      <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
     </div>
     
-    {flashcardDecks.length === 0 ? (
-      <div className="text-center py-12 bg-gray-800 rounded-lg border-2 border-gray-700">
-        <p className="text-gray-400 mb-2 text-lg">The forge stands empty...</p>
-        <p className="text-sm text-gray-500">Create your first deck to begin forging knowledge</p>
+    {/* Divider */}
+    <div className="flex items-center gap-3 px-6">
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-600/25 to-transparent"></div>
+      <div className="w-1.5 h-1.5 rotate-45 bg-purple-600/30"></div>
+      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-purple-600/25 to-transparent"></div>
+    </div>
+    
+    <div className="px-6 py-4">
+      <div className="flex justify-between items-center mb-5">
+        <div>
+          <p className="text-sm text-gray-400 font-fantasy tracking-wide">Your Decks: <span className="font-bold text-purple-400/80">{flashcardDecks.length}</span></p>
+          <p className="text-xs text-gray-600">Study to earn XP and loot!</p>
+        </div>
+        <button 
+          onClick={() => setShowDeckModal(true)}
+          className="bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-fantasy tracking-wide text-purple-200/70 border border-purple-700/20 text-sm"
+        >
+          <Plus size={16}/> New Deck
+        </button>
       </div>
-    ) : (
-      <div className="space-y-4">
-        {flashcardDecks.map((deck, idx) => (
-          <div key={idx} className="bg-gray-800 rounded-lg p-4 border-2 border-purple-700">
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex-1">
-                <h3 className="text-xl font-bold text-purple-300">{deck.name}</h3>
-                <p className="text-sm text-gray-400">
-                  {deck.cards.length} card{deck.cards.length !== 1 ? 's' : ''} • 
-                  {deck.cards.filter(c => c.mastered).length} mastered
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  if (window.confirm(`Delete deck "${deck.name}"?`)) {
-                    setFlashcardDecks(prev => prev.filter((_, i) => i !== idx));
-                    addLog(`🗑️ Deleted deck: ${deck.name}`);
-                  }
-                }}
-                className="text-red-400 hover:text-red-300"
-              >
-                <X size={20}/>
-              </button>
-            </div>
-            
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  if (deck.cards.length === 0) {
-                    alert('Add some cards first!');
-                    return;
-                  }
-                  setSelectedDeck(idx);
-                  setCurrentCardIndex(0);
-                  // Initialize queue with all card indices
-                  const allCardIndices = Array.from({length: deck.cards.length}, (_, i) => i);
-                  setStudyQueue(allCardIndices);
-                  setIsFlipped(false);
-                  setShowStudyModal(true);
-                }}
-                disabled={deck.cards.length === 0}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 py-2 rounded transition-all disabled:bg-gray-600 disabled:cursor-not-allowed"
-              >
-                Study Deck
-              </button>
-              <button
-                onClick={() => {
-                  if (deck.cards.length < 4) {
-                    alert('Need at least 4 cards for a quiz!');
-                    return;
-                  }
-                  setSelectedDeck(idx);
-                  generateQuiz(idx);
-                }}
-                disabled={deck.cards.length < 4}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 py-2 rounded transition-all disabled:bg-gray-600 disabled:cursor-not-allowed"
-              >
-                Practice Quiz
-              </button>
-              <button
-                onClick={() => {
-                  setSelectedDeck(idx);
-                  setShowCardModal(true);
-                }}
-                className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded transition-all"
-              >
-                Add Card
-              </button>
-            </div>
-            
-            {deck.cards.length > 0 && (
-              <div className="mt-3 pt-3 border-t border-gray-700">
-                <p className="text-xs text-gray-500 mb-2">Cards in this deck:</p>
-                <div className="space-y-1 max-h-32 overflow-y-auto">
-                  {deck.cards.map((card, cardIdx) => (
-                    <div key={cardIdx} className="flex justify-between items-center text-sm bg-gray-900 rounded p-2">
-                      <span className="text-gray-300 flex-1 truncate">
-                        {card.mastered && '✓ '}{card.front}
-                      </span>
-                      <button
-                        onClick={() => {
-                          setFlashcardDecks(prev => prev.map((d, i) => 
-                            i === idx ? {...d, cards: d.cards.filter((_, ci) => ci !== cardIdx)} : d
-                          ));
-                        }}
-                        className="text-red-400 hover:text-red-300 ml-2"
-                      >
-                        <X size={14}/>
-                      </button>
-                    </div>
-                  ))}
+    
+      {flashcardDecks.length === 0 ? (
+        <div className="text-center py-12 bg-black/30 rounded-lg border border-purple-900/20">
+          <p className="text-gray-500 mb-2 font-fantasy">The forge stands empty...</p>
+          <p className="text-xs text-gray-600 font-fantasy">Create your first deck to begin forging knowledge</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {flashcardDecks.map((deck, idx) => (
+            <div key={idx} className="bg-black/30 rounded-lg p-4 border border-purple-800/25 hover:border-purple-700/35 transition-all">
+              <div className="flex justify-between items-start mb-3">
+                <div className="flex-1">
+                  <h3 className="text-lg font-fantasy tracking-wide text-purple-300">{deck.name}</h3>
+                  <p className="text-xs text-gray-500 font-fantasy">
+                    {deck.cards.length} card{deck.cards.length !== 1 ? 's' : ''} • 
+                    {deck.cards.filter(c => c.mastered).length} mastered
+                  </p>
                 </div>
+                <button
+                  onClick={() => {
+                    if (window.confirm(`Delete deck "${deck.name}"?`)) {
+                      setFlashcardDecks(prev => prev.filter((_, i) => i !== idx));
+                      addLog(`🗑️ Deleted deck: ${deck.name}`);
+                    }
+                  }}
+                  className="text-red-500/40 hover:text-red-400/60 transition-all"
+                >
+                  <X size={16}/>
+                </button>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
-    )}
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={() => {
+                    if (deck.cards.length === 0) {
+                      alert('Add some cards first!');
+                      return;
+                    }
+                    setSelectedDeck(idx);
+                    setCurrentCardIndex(0);
+                    const allCardIndices = Array.from({length: deck.cards.length}, (_, i) => i);
+                    setStudyQueue(allCardIndices);
+                    setIsFlipped(false);
+                    setShowStudyModal(true);
+                  }}
+                  disabled={deck.cards.length === 0}
+                  className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200/70 text-sm border border-purple-700/15 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-600 disabled:cursor-not-allowed"
+                >
+                  Study Deck
+                </button>
+                <button
+                  onClick={() => {
+                    if (deck.cards.length < 4) {
+                      alert('Need at least 4 cards for a quiz!');
+                      return;
+                    }
+                    setSelectedDeck(idx);
+                    generateQuiz(idx);
+                  }}
+                  disabled={deck.cards.length < 4}
+                  className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200/70 text-sm border border-blue-700/15 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-600 disabled:cursor-not-allowed"
+                >
+                  Practice Quiz
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedDeck(idx);
+                    setShowCardModal(true);
+                  }}
+                  className="bg-gradient-to-b from-green-800/50 to-green-950/50 hover:from-green-700/60 hover:to-green-900/60 px-4 py-2 rounded-lg transition-all font-fantasy tracking-wide text-green-200/70 text-sm border border-green-700/15"
+                >
+                  Add Card
+                </button>
+              </div>
+              
+              {deck.cards.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-purple-900/15">
+                  <p className="text-[10px] text-gray-600 mb-2 font-fantasy tracking-wide uppercase">Cards in this deck:</p>
+                  <div className="space-y-1 max-h-32 overflow-y-auto">
+                    {deck.cards.map((card, cardIdx) => (
+                      <div key={cardIdx} className="flex justify-between items-center text-sm bg-black/30 rounded-lg p-2 border border-purple-900/10">
+                        <span className="text-gray-400/70 flex-1 truncate text-xs">
+                          {card.mastered && <span className="text-green-500/60">✓ </span>}{card.front}
+                        </span>
+                        <button
+                          onClick={() => {
+                            setFlashcardDecks(prev => prev.map((d, i) => 
+                              i === idx ? {...d, cards: d.cards.filter((_, ci) => ci !== cardIdx)} : d
+                            ));
+                          }}
+                          className="text-red-500/30 hover:text-red-400/50 ml-2 transition-all"
+                        >
+                          <X size={12}/>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   </div>
 )}
 
           {activeTab === 'progress' && (
-            <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-yellow-900">
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2 text-center font-fantasy-decorative tracking-wider">CHRONICLES OF THE CURSED</h2>
-              <p className="text-gray-400 text-sm mb-6 italic text-center font-fantasy">"Your struggle against the eternal darkness..."</p>
+            <div className="bg-black/50 rounded-xl overflow-hidden border border-yellow-900/40">
+              {/* Header */}
+              <div className="px-6 pt-6 pb-4 text-center">
+                <h2 className="text-2xl font-fantasy-decorative text-yellow-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">Chronicles of the Cursed</h2>
+                <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Your struggle against the eternal darkness..."</p>
+              </div>
               
+              {/* Divider */}
+              <div className="flex items-center gap-3 px-6">
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/25 to-transparent"></div>
+                <div className="w-1.5 h-1.5 rotate-45 bg-yellow-600/30"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/25 to-transparent"></div>
+              </div>
+              
+              <div className="px-6 py-5 space-y-5">
               {/* Current Cycle Status */}
-              <div className="mb-6 bg-gradient-to-br from-red-900/80 to-gray-900/80 rounded-xl p-6 border border-red-600/50 stat-card-texture">
-                <h3 className="text-xl font-bold text-red-300 mb-4 text-center font-fantasy tracking-wide">Current Cycle</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black/40 rounded-lg p-4 border border-red-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Day</p>
-                    <p className="text-3xl font-bold text-red-400">{currentDay}/7</p>
-                    <p className="text-xs text-gray-500">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name}</p>
+              <div className="bg-gradient-to-br from-red-950/50 to-black/30 rounded-xl p-5 border border-red-800/25 stat-card-texture">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-red-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400/60 uppercase">Current Cycle</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-red-600/20"></div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Day</p>
+                    <p className="text-2xl font-bold text-red-400/80 font-mono">{currentDay}/7</p>
+                    <p className="text-[10px] text-gray-600">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name}</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-purple-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Curse Level</p>
-                    <p className="text-3xl font-bold text-purple-400">{curseLevel}</p>
-                    <p className="text-xs text-gray-500">{curseLevel === 0 ? 'Pure' : curseLevel === 1 ? 'Cursed' : curseLevel === 2 ? 'Deep Curse' : 'Condemned'}</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Curse Level</p>
+                    <p className="text-2xl font-bold text-purple-400/80 font-mono">{curseLevel}</p>
+                    <p className="text-[10px] text-gray-600">{curseLevel === 0 ? 'Pure' : curseLevel === 1 ? 'Cursed' : curseLevel === 2 ? 'Deep Curse' : 'Condemned'}</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Skip Count</p>
-                    <p className="text-3xl font-bold text-yellow-400">{skipCount}</p>
-                    <p className="text-xs text-gray-500">{skipCount >= 3 ? 'DANGER' : 'of 4 max'}</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Skip Count</p>
+                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">{skipCount}</p>
+                    <p className="text-[10px] text-gray-600">{skipCount >= 3 ? 'DANGER' : 'of 4 max'}</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-cyan-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Trials Today</p>
-                    <p className="text-3xl font-bold text-cyan-400">{tasks.filter(t => t.done).length}/{tasks.length}</p>
-                    <p className="text-xs text-gray-500">{tasks.length > 0 ? `${Math.floor((tasks.filter(t => t.done).length / tasks.length) * 100)}%` : 'None'}</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Trials Today</p>
+                    <p className="text-2xl font-bold text-cyan-400/80 font-mono">{tasks.filter(t => t.done).length}/{tasks.length}</p>
+                    <p className="text-[10px] text-gray-600">{tasks.length > 0 ? `${Math.floor((tasks.filter(t => t.done).length / tasks.length) * 100)}%` : 'None'}</p>
                   </div>
                 </div>
               </div>
               
               {/* Combat Power */}
-              <div className="mb-6 bg-gradient-to-br from-blue-950/80 to-purple-950/80 rounded-xl p-6 border border-blue-600/40 stat-card-runes">
-                <h3 className="text-xl font-bold text-blue-300 mb-4 text-center font-fantasy tracking-wide">Combat Power</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black/40 rounded-lg p-4 border border-red-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Health</p>
-                    <p className="text-3xl font-bold text-red-400">{hp}/{getMaxHp()}</p>
-                    <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
-                      <div className="bg-gradient-to-r from-red-600 to-red-400 h-2 rounded-full transition-all duration-500" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
+              <div className="bg-gradient-to-br from-blue-950/40 to-purple-950/30 rounded-xl p-5 border border-blue-800/25 stat-card-runes">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-blue-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-blue-400/60 uppercase">Combat Power</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-blue-600/20"></div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Health</p>
+                    <p className="text-2xl font-bold text-red-400/80 font-mono">{hp}/{getMaxHp()}</p>
+                    <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-red-900/10">
+                      <div className="bg-gradient-to-r from-red-700 to-red-500 h-1.5 rounded-full transition-all duration-500" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
                     </div>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-cyan-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Stamina</p>
-                    <p className="text-3xl font-bold text-cyan-400">{stamina}/{getMaxStamina()}</p>
-                    <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
-                      <div className="bg-gradient-to-r from-cyan-600 to-cyan-400 h-2 rounded-full transition-all duration-500" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
+                  <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Stamina</p>
+                    <p className="text-2xl font-bold text-cyan-400/80 font-mono">{stamina}/{getMaxStamina()}</p>
+                    <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-cyan-900/10">
+                      <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-1.5 rounded-full transition-all duration-500" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                     </div>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-orange-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Attack</p>
-                    <p className="text-3xl font-bold text-orange-400">{GAME_CONSTANTS.BASE_ATTACK + (level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY) + weapon}</p>
-                    <p className="text-xs text-gray-500">Base: {GAME_CONSTANTS.BASE_ATTACK} + Weapon: {weapon}</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-orange-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Attack</p>
+                    <p className="text-2xl font-bold text-orange-400/80 font-mono">{GAME_CONSTANTS.BASE_ATTACK + (level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY) + weapon}</p>
+                    <p className="text-[10px] text-gray-600">Base: {GAME_CONSTANTS.BASE_ATTACK} + Wep: {weapon}</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-green-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Defense</p>
-                    <p className="text-3xl font-bold text-green-400">{getBaseDefense() + armor}</p>
-                    <p className="text-xs text-gray-500">Base: {GAME_CONSTANTS.BASE_DEFENSE} + Armor: {armor}</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Defense</p>
+                    <p className="text-2xl font-bold text-green-400/80 font-mono">{getBaseDefense() + armor}</p>
+                    <p className="text-[10px] text-gray-600">Base: {GAME_CONSTANTS.BASE_DEFENSE} + Arm: {armor}</p>
                   </div>
                 </div>
               </div>
               
               {/* Progression */}
-              <div className="mb-6 bg-gradient-to-br from-yellow-950/80 to-orange-950/80 rounded-xl p-6 border border-yellow-600/40 stat-card-weave">
-                <h3 className="text-xl font-bold text-yellow-300 mb-4 text-center font-fantasy tracking-wide">Progression</h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Level</p>
-                    <p className="text-3xl font-bold text-yellow-400">{level}</p>
-                    <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
-                      <div className="bg-gradient-to-r from-yellow-600 to-yellow-400 h-2 rounded-full transition-all duration-500" style={{width: `${(xp % GAME_CONSTANTS.XP_PER_LEVEL) / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`}}></div>
+              <div className="bg-gradient-to-br from-yellow-950/40 to-orange-950/30 rounded-xl p-5 border border-yellow-800/25 stat-card-weave">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-yellow-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-yellow-400/60 uppercase">Progression</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-yellow-600/20"></div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Level</p>
+                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">{level}</p>
+                    <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-yellow-900/10">
+                      <div className="bg-gradient-to-r from-yellow-700 to-yellow-400 h-1.5 rounded-full transition-all duration-500" style={{width: `${(xp % GAME_CONSTANTS.XP_PER_LEVEL) / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`}}></div>
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">{xp % GAME_CONSTANTS.XP_PER_LEVEL}/{GAME_CONSTANTS.XP_PER_LEVEL} XP</p>
+                    <p className="text-[10px] text-gray-600 mt-1">{xp % GAME_CONSTANTS.XP_PER_LEVEL}/{GAME_CONSTANTS.XP_PER_LEVEL} XP</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-purple-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Total XP</p>
-                    <p className="text-3xl font-bold text-purple-400">{xp}</p>
-                    <p className="text-xs text-gray-500">earned across all time</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Total XP</p>
+                    <p className="text-2xl font-bold text-purple-400/80 font-mono">{xp}</p>
+                    <p className="text-[10px] text-gray-600">earned across all time</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-purple-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Essence</p>
-                    <p className="text-3xl font-bold text-purple-400">{essence}</p>
-                    <p className="text-xs text-gray-500">souls collected</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Essence</p>
+                    <p className="text-2xl font-bold text-purple-400/80 font-mono">{essence}</p>
+                    <p className="text-[10px] text-gray-600">souls collected</p>
                   </div>
                 </div>
               </div>
               
               {/* Legacy Stats */}
-              <div className="mb-6 bg-gradient-to-br from-green-950/80 to-teal-950/80 rounded-xl p-6 border border-green-600/40 stat-card-texture">
-                <h3 className="text-xl font-bold text-green-300 mb-4 text-center font-fantasy tracking-wide">Legacy</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black/40 rounded-lg p-4 border border-green-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Liberated</p>
-                    <p className="text-3xl font-bold text-green-400">{heroes.length}</p>
-                    <p className="text-xs text-gray-500">broke the curse</p>
+              <div className="bg-gradient-to-br from-green-950/40 to-teal-950/30 rounded-xl p-5 border border-green-800/25 stat-card-texture">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-green-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-green-400/60 uppercase">Legacy</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-green-600/20"></div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Liberated</p>
+                    <p className="text-2xl font-bold text-green-400/80 font-mono">{heroes.length}</p>
+                    <p className="text-[10px] text-gray-600">broke the curse</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-red-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Consumed</p>
-                    <p className="text-3xl font-bold text-red-400">{graveyard.length}</p>
-                    <p className="text-xs text-gray-500">claimed by darkness</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Consumed</p>
+                    <p className="text-2xl font-bold text-red-400/80 font-mono">{graveyard.length}</p>
+                    <p className="text-[10px] text-gray-600">claimed by darkness</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Survival Rate</p>
-                    <p className="text-3xl font-bold text-yellow-400">
+                  <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Survival Rate</p>
+                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">
                       {heroes.length + graveyard.length > 0 ? Math.floor((heroes.length / (heroes.length + graveyard.length)) * 100) : 0}%
                     </p>
-                    <p className="text-xs text-gray-500">{heroes.length + graveyard.length} total cycles</p>
+                    <p className="text-[10px] text-gray-600">{heroes.length + graveyard.length} total cycles</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-orange-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Current Streak</p>
-                    <p className="text-3xl font-bold text-orange-400">{consecutiveDays}</p>
-                    <p className="text-xs text-gray-500">days without skip</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-orange-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Current Streak</p>
+                    <p className="text-2xl font-bold text-orange-400/80 font-mono">{consecutiveDays}</p>
+                    <p className="text-[10px] text-gray-600">days without skip</p>
                   </div>
                 </div>
               </div>
               
               {/* Study Stats */}
-              <div className="mb-6 bg-gradient-to-br from-cyan-950/80 to-blue-950/80 rounded-xl p-6 border border-cyan-600/40 stat-card-runes">
-                <h3 className="text-xl font-bold text-cyan-300 mb-4 text-center font-fantasy tracking-wide">Study Stats</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black/40 rounded-lg p-4 border border-cyan-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Sessions Today</p>
-                    <p className="text-3xl font-bold text-cyan-400">{studyStats.sessionsToday}</p>
-                    <p className="text-xs text-gray-500">tasks started</p>
+              <div className="bg-gradient-to-br from-cyan-950/40 to-blue-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-cyan-400/60 uppercase">Study Stats</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-600/20"></div>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Sessions Today</p>
+                    <p className="text-2xl font-bold text-cyan-400/80 font-mono">{studyStats.sessionsToday}</p>
+                    <p className="text-[10px] text-gray-600">tasks started</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-blue-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Deep Work</p>
-                    <p className="text-3xl font-bold text-blue-400">{studyStats.deepWorkSessions}</p>
-                    <p className="text-xs text-gray-500">25+ min sessions</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-blue-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Deep Work</p>
+                    <p className="text-2xl font-bold text-blue-400/80 font-mono">{studyStats.deepWorkSessions}</p>
+                    <p className="text-[10px] text-gray-600">25+ min sessions</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Early Bird Days</p>
-                    <p className="text-3xl font-bold text-yellow-400">{studyStats.earlyBirdDays}</p>
-                    <p className="text-xs text-gray-500">started early</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Early Bird Days</p>
+                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">{studyStats.earlyBirdDays}</p>
+                    <p className="text-[10px] text-gray-600">started early</p>
                   </div>
-                  <div className="bg-black/40 rounded-lg p-4 border border-green-800/20">
-                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Perfect Days</p>
-                    <p className="text-3xl font-bold text-green-400">{studyStats.perfectDays}</p>
-                    <p className="text-xs text-gray-500">all tasks done</p>
+                  <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
+                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Perfect Days</p>
+                    <p className="text-2xl font-bold text-green-400/80 font-mono">{studyStats.perfectDays}</p>
+                    <p className="text-[10px] text-gray-600">all tasks done</p>
                   </div>
                 </div>
                 {studyStats.longestStreak > 0 && (
                   <div className="mt-3 text-center">
-                    <span className="text-xs text-gray-400 font-fantasy">Longest Streak: </span>
-                    <span className="text-sm font-bold text-orange-400">{studyStats.longestStreak} days</span>
+                    <span className="text-[10px] text-gray-500 font-fantasy tracking-wide">Longest Streak: </span>
+                    <span className="text-sm font-bold text-orange-400/70 font-mono">{studyStats.longestStreak} days</span>
                   </div>
                 )}
               </div>
@@ -4173,23 +4227,105 @@ setMiniBossCount(0);
                 armor={armor}
                 gauntletUnlocked={gauntletUnlocked}
               />
+              </div>
             </div>
           )}
 
           {activeTab === 'legacy' && (
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* The Liberated Section */}
-              <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-yellow-900">
-                <h2 className="text-2xl font-bold text-yellow-400 mb-2 text-center">⚔️ THE LIBERATED</h2>
-                <p className="text-green-400 text-sm mb-6 italic text-center">"Those who broke free from the curse..."</p>
-                {heroes.length === 0 ? (<div className="text-center py-12"><Trophy size={64} className="mx-auto mb-4 text-gray-700"/><p className="text-gray-400">None have escaped the curse... yet.</p><p className="text-sm text-gray-500 mt-2">Survive all 7 days to break free!</p></div>) : (<div className="space-y-4">{heroes.slice().reverse().map((hero, i) => (<div key={i} className={`bg-gradient-to-r ${hero.class ? hero.class.gradient[3] : 'from-yellow-900'} ${hero.class && hero.class.color === 'yellow' ? 'to-orange-400' : hero.class && hero.class.color === 'red' ? 'to-orange-500' : hero.class && hero.class.color === 'purple' ? 'to-pink-500' : hero.class && hero.class.color === 'green' ? 'to-teal-500' : 'to-yellow-500'} rounded-lg p-6 border-4 border-yellow-400 shadow-2xl shadow-yellow-500/50`}><div className="flex items-center gap-4"><div className="text-6xl animate-pulse">{hero.class ? hero.class.emblem : '✨'}</div><div className="flex-1"><h3 className="text-2xl font-bold text-white">{hero.name}</h3><p className="text-xl text-white text-opacity-90">{hero.title} {hero.class ? hero.class.name : ''}</p><p className="text-white">Level {hero.lvl} • {hero.xp} XP</p>{hero.skipCount !== undefined && hero.skipCount === 0 && (<p className="text-green-300 font-bold mt-1">✨ FLAWLESS RUN - No skips!</p>)}{hero.skipCount > 0 && (<p className="text-yellow-200 text-sm mt-1">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>)}<p className="text-yellow-300 font-bold mt-2">✨ CURSE BROKEN ✨</p><p className="text-green-400 text-sm italic">"Free at last from the eternal torment..."</p></div></div></div>))}</div>)}
+              <div className="bg-black/50 rounded-xl overflow-hidden border border-yellow-900/40">
+                <div className="px-6 pt-6 pb-4 text-center">
+                  <h2 className="text-2xl font-fantasy-decorative text-yellow-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">The Liberated</h2>
+                  <p className="text-green-500/60 text-sm italic font-fantasy mt-1">"Those who broke free from the curse..."</p>
+                </div>
+                
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/25 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-yellow-600/30"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/25 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-5">
+                {heroes.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Trophy size={56} className="mx-auto mb-4 text-gray-800"/>
+                    <p className="text-gray-600 font-fantasy">None have escaped the curse... yet.</p>
+                    <p className="text-xs text-gray-700 mt-2 font-fantasy">Survive all 7 days to break free!</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {heroes.slice().reverse().map((hero, i) => (
+                      <div key={i} className="bg-gradient-to-r from-yellow-950/40 to-black/30 rounded-lg overflow-hidden border border-yellow-700/30 shadow-[0_0_20px_rgba(234,179,8,0.08)] hover:shadow-[0_0_30px_rgba(234,179,8,0.15)] transition-all">
+                        {/* Decorative top edge */}
+                        <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"></div>
+                        <div className="p-5">
+                          <div className="flex items-center gap-4">
+                            <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{hero.class ? hero.class.emblem : '✨'}</div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-fantasy-decorative text-yellow-300/90 tracking-wider">{hero.name}</h3>
+                              <p className="text-sm text-white/60 font-fantasy">{hero.title} {hero.class ? hero.class.name : ''}</p>
+                              <p className="text-xs text-white/40 font-mono mt-1">Level {hero.lvl} • {hero.xp} XP</p>
+                              {hero.skipCount !== undefined && hero.skipCount === 0 && (
+                                <p className="text-green-400/70 text-xs font-fantasy mt-1.5">✨ Flawless Run — No skips!</p>
+                              )}
+                              {hero.skipCount > 0 && (
+                                <p className="text-yellow-400/50 text-xs mt-1.5 font-fantasy">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>
+                              )}
+                              <div className="flex items-center gap-2 mt-2">
+                                <div className="h-px flex-1 bg-gradient-to-r from-yellow-600/20 to-transparent"></div>
+                                <p className="text-yellow-400/60 text-[10px] font-fantasy tracking-[0.2em] uppercase">Curse Broken</p>
+                                <div className="h-px flex-1 bg-gradient-to-l from-yellow-600/20 to-transparent"></div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                </div>
               </div>
               
               {/* The Consumed Section */}
-              <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-gray-800">
-                <h2 className="text-2xl font-bold text-gray-400 mb-2 text-center">💀 THE CONSUMED</h2>
-                <p className="text-red-400 text-sm mb-6 italic text-center">"Those who fell to the curse..."</p>
-                {graveyard.length === 0 ? (<div className="text-center py-12"><Skull size={64} className="mx-auto mb-4 text-gray-700"/><p className="text-gray-500">No fallen heroes... yet.</p></div>) : (<div className="space-y-4">{graveyard.slice().reverse().map((fallen, i) => (<div key={i} className="bg-gray-900 rounded-lg p-4 border-2 border-red-900 opacity-70 hover:opacity-90 transition-opacity"><div className="flex items-center gap-4"><div className="text-4xl opacity-50">{fallen.class ? fallen.class.emblem : '☠️'}</div><div className="flex-1"><h3 className="text-xl font-bold text-red-400">{fallen.name}</h3><p className="text-gray-400">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p><p className="text-red-300">Fell on {fallen.day ? GAME_CONSTANTS.DAY_NAMES[fallen.day - 1]?.name || `Day ${fallen.day}` : 'Day 1'} • {fallen.xp} XP earned</p><p className="text-gray-300">Trials completed: {fallen.tasks}/{fallen.total}</p>{fallen.skipCount > 0 && (<p className="text-red-400 text-sm mt-1">💀 Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}{fallen.cursed && (<p className="text-purple-400 text-sm">🌑 Died while cursed</p>)}<p className="text-red-500 text-sm italic mt-2">"The curse claimed another soul..."</p></div></div></div>))}</div>)}
+              <div className="bg-black/50 rounded-xl overflow-hidden border border-red-900/30">
+                <div className="px-6 pt-6 pb-4 text-center">
+                  <h2 className="text-2xl font-fantasy-decorative text-gray-500 tracking-wider">The Consumed</h2>
+                  <p className="text-red-500/50 text-sm italic font-fantasy mt-1">"Those who fell to the curse..."</p>
+                </div>
+                
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-red-600/20"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-5">
+                {graveyard.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Skull size={56} className="mx-auto mb-4 text-gray-800"/>
+                    <p className="text-gray-700 font-fantasy">No fallen heroes... yet.</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {graveyard.slice().reverse().map((fallen, i) => (
+                      <div key={i} className="bg-black/30 rounded-lg p-4 border border-red-900/20 opacity-60 hover:opacity-85 transition-all">
+                        <div className="flex items-center gap-4">
+                          <div className="text-3xl opacity-40">{fallen.class ? fallen.class.emblem : '☠️'}</div>
+                          <div className="flex-1">
+                            <h3 className="text-base font-fantasy tracking-wide text-red-400/70">{fallen.name}</h3>
+                            <p className="text-xs text-gray-600 font-fantasy">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p>
+                            <p className="text-xs text-red-500/50 mt-0.5">Fell on {fallen.day ? GAME_CONSTANTS.DAY_NAMES[fallen.day - 1]?.name || `Day ${fallen.day}` : 'Day 1'} • {fallen.xp} XP</p>
+                            <p className="text-xs text-gray-600">Trials: {fallen.tasks}/{fallen.total}</p>
+                            {fallen.skipCount > 0 && (<p className="text-red-500/40 text-[10px] mt-1">💀 Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}
+                            {fallen.cursed && (<p className="text-purple-500/40 text-[10px]">🌑 Died while cursed</p>)}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                </div>
               </div>
             </div>
           )}
