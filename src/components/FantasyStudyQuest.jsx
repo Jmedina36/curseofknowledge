@@ -5291,7 +5291,7 @@ setMiniBossCount(0);
                   )}
                   
                   {/* Phase Transition Screen */}
-                  {phaseTransitioning && bossHp > 0 && (
+                  {phaseTransitioning && (
                     <div className="text-center">
                       <div className="mb-6">
                         <p className="text-2xl font-bold text-orange-400 mb-2 animate-pulse" style={{fontFamily: 'Cinzel, serif'}}>
