@@ -3291,7 +3291,7 @@ setMiniBossCount(0);
             ].map(t => (
               <button 
                 key={t.id} 
-                onClick={() => setActiveTab(t.id)} 
+                onClick={() => { sfx.playClick(); setActiveTab(t.id); }} 
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   activeTab === t.id 
                     ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/50' 
@@ -3483,7 +3483,7 @@ setMiniBossCount(0);
                   <p className="text-lg text-gray-300 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
                   <p className="text-sm text-gray-400 italic mb-4">"Begin your trials for today..."</p>
                   <p className="mb-4 text-sm text-gray-400">⚠️ Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
-                  <button onClick={start} className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/50">START DAY</button>
+                  <button onClick={() => { sfx.playClick(); start(); }} className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/50">START DAY</button>
                 </div>
               ) : (
                 <>
@@ -3571,7 +3571,7 @@ setMiniBossCount(0);
                   
                   <div className="grid md:grid-cols-2 gap-4">
                     <button 
-  onClick={miniBoss} 
+  onClick={() => { sfx.playClick(); miniBoss(); }} 
   disabled={!isDayActive || eliteBossDefeatedToday || xp < 200} 
   className="bg-red-900 px-6 py-4 rounded-xl font-bold text-xl hover:bg-red-800 transition-all shadow-lg shadow-red-900/50 border-2 border-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600"
 >
@@ -3590,7 +3590,7 @@ setMiniBossCount(0);
   )}
 </button>
                     <button 
-  onClick={finalBoss} 
+  onClick={() => { sfx.playClick(); finalBoss(); }} 
   disabled={!gauntletUnlocked || tasks.length === 0 || tasks.filter(t => t.done).length < tasks.length} 
   className="bg-purple-900 px-6 py-4 rounded-xl font-bold text-xl hover:bg-purple-800 transition-all shadow-lg shadow-purple-900/50 border-2 border-red-500 disabled:bg-gray-700 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600"
 >
@@ -4876,7 +4876,7 @@ setMiniBossCount(0);
       
       <div className="flex gap-2">
         <button 
-          onClick={addTask} 
+          onClick={() => { sfx.playClick(); addTask(); }} 
           disabled={!newTask.title} 
           className="flex-1 bg-red-600 py-2 rounded-lg hover:bg-red-700 transition-all disabled:bg-gray-700 disabled:cursor-not-allowed"
         >
@@ -5346,7 +5346,7 @@ setMiniBossCount(0);
                       )}
                       
                       {(battleType === 'elite' || isFinalBoss) && (
-                        <button onClick={advance} className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/50">{isFinalBoss ? 'CLAIM FREEDOM' : 'CONTINUE'}</button>
+                        <button onClick={() => { sfx.playClick(); advance(); }} className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/50">{isFinalBoss ? 'CLAIM FREEDOM' : 'CONTINUE'}</button>
                       )}
                       {(battleType === 'regular' || battleType === 'wave') && (
                         <button onClick={() => { setShowBoss(false); setHasFled(false); addLog('⚔️ Ready for your next trial...'); }} className="bg-green-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-green-400 transition-all shadow-lg shadow-green-500/50">CONTINUE</button>
@@ -5382,7 +5382,7 @@ setMiniBossCount(0);
                         </div>
                       </div>
                       <button 
-                        onClick={beginNextGauntletPhase}
+                        onClick={() => { sfx.playClick(); beginNextGauntletPhase(); }}
                         className="bg-red-600 text-white px-10 py-4 rounded-lg font-bold text-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"
                         style={{fontFamily: 'Cinzel, serif'}}
                       >

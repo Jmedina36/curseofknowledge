@@ -540,6 +540,27 @@ const useGameSFX = () => {
     } catch (e) { /* silent fail */ }
   }, [getCtx]);
 
+  // ─── UI CLICK ───
+  const playClick = useCallback(() => {
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+
+      // Short, crisp tick
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1200, now);
+      osc.frequency.exponentialRampToValueAtTime(600, now + 0.04);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.06);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.06);
+    } catch (e) { /* silent fail */ }
+  }, [getCtx]);
+
   return {
     playHit,
     playCritical,
@@ -555,6 +576,7 @@ const useGameSFX = () => {
     playFlee,
     playAoeWarning,
     playLifeDrain,
+    playClick,
   };
 };
 
