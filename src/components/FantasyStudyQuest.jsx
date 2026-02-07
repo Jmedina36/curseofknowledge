@@ -1,4 +1,4 @@
-// FANTASY STUDY QUEST - v4.0 REBALANCE EDITION
+// FANTASY STUDY QUEST - v4.1 GAUNTLET OVERHAUL
 // Ported to Lovable
 // Last updated: 2026-02-07
 // FIXES: Calendar sync, date display on planner, missing dependencies, poison bug
@@ -461,6 +461,8 @@ const [waveEssenceTotal, setWaveEssenceTotal] = useState(0);
   const [inPhase3, setInPhase3] = useState(false);
   const [inPhase2, setInPhase2] = useState(false);
   const [inPhase1, setInPhase1] = useState(false);
+  const [hasTriggeredPhase1Enrage, setHasTriggeredPhase1Enrage] = useState(false);
+  const [targetingAdds, setTargetingAdds] = useState(false); // Player chooses to target adds
   const [phase1TurnCounter, setPhase1TurnCounter] = useState(0);
   const [phase2TurnCounter, setPhase2TurnCounter] = useState(0);
   const [phase2DamageStacks, setPhase2DamageStacks] = useState(0);
@@ -1556,6 +1558,8 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setPhase2TurnCounter(0);
     setPhase2DamageStacks(0);
     setHasSpawnedPreviewAdd(false);
+    setHasTriggeredPhase1Enrage(false);
+    setTargetingAdds(false);
     setShadowAdds([]);
     setAoeWarning(false);
     setShowDodgeButton(false);
@@ -1613,8 +1617,8 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   const attack = () => {
     if (!battling || bossHp <= 0) return;
     
-    // Auto-target shadow adds first in Phase 2 and Phase 3
-    if ((inPhase2 || inPhase3) && shadowAdds.length > 0) {
+    // Target shadow adds if player chose to (no longer forced)
+    if ((inPhase2 || inPhase3) && shadowAdds.length > 0 && targetingAdds) {
       const targetAdd = shadowAdds[0];
       const damage = Math.floor((getBaseAttack() + weapon + (weaponOilActive ? 5 : 0)) * 0.7); // Reduced damage to adds
       const newAddHp = Math.max(0, targetAdd.hp - damage);
@@ -1701,8 +1705,9 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     // Update dialogue based on HP phase
     const hpPercent = newBossHp / bossMax;
     
-    // Phase 1 - Enrage at 80% HP (Gauntlet only)
-    if (battleType === 'final' && hpPercent <= 0.80 && hpPercent > 0.79 && enragedTurns === 0) {
+    // Phase 1 - Enrage at 80% HP (Gauntlet only) - uses flag to avoid narrow window
+    if (battleType === 'final' && hpPercent <= 0.80 && !hasTriggeredPhase1Enrage && enragedTurns === 0) {
+      setHasTriggeredPhase1Enrage(true);
       setEnragedTurns(2);
       addLog(`Boss ENRAGED at 80% HP! (2 turns)`);
       addLog(`Enemy deals +15% damage but has 25% miss chance!`);
@@ -1722,8 +1727,8 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
       setEnemyDialogue(bossDialogue.PHASE2);
     }
     
-    // Phase 2 - Spawn preview add at 50% HP
-    if (battleType === 'final' && inPhase2 && !hasSpawnedPreviewAdd && hpPercent <= 0.50 && hpPercent > 0.49) {
+    // Phase 2 - Spawn preview add at 50% HP (uses flag, no narrow window)
+    if (battleType === 'final' && inPhase2 && !hasSpawnedPreviewAdd && hpPercent <= 0.50) {
       const addId = `preview_add_${Date.now()}`;
       const addHp = 18;
       setShadowAdds([{ id: addId, hp: addHp, maxHp: addHp }]);
@@ -1968,13 +1973,14 @@ if (curseLevel === 2) {
   bossDamage = Math.floor(bossDamage * 1.4); // 40% harder
 }
 
-// Phase 2 ramping damage (Gauntlet only)
+// Phase 2 ramping damage (Gauntlet only) - capped at 10 stacks
 if (inPhase2 && battleType === 'final' && !inPhase3) {
-  const rampBonus = Math.floor(bossDamage * (phase2DamageStacks * 0.05));
+  const cappedStacks = Math.min(phase2DamageStacks, 10);
+  const rampBonus = Math.floor(bossDamage * (cappedStacks * 0.05));
   if (rampBonus > 0) {
     bossDamage += rampBonus;
   }
-  setPhase2DamageStacks(prev => prev + 1);
+  setPhase2DamageStacks(prev => Math.min(prev + 1, 10));
 }
 
 // Enraged enemies hit +15% harder
@@ -2164,10 +2170,10 @@ if (enragedTurns > 0) {
             setEnemyDialogue(randomLine);
           }
           
-          // Spawn shadow add every 4 turns
-          if (phase3TurnCounter > 0 && phase3TurnCounter % 4 === 0) {
+          // Spawn shadow add every 4 turns (max 3 active)
+          if (phase3TurnCounter > 0 && phase3TurnCounter % 4 === 0 && shadowAdds.length < 3) {
             const addId = `add_${Date.now()}`;
-            const addHp = 18;
+            const addHp = 18 + level * 2; // Scale with player level
             setShadowAdds(prev => [...prev, { id: addId, hp: addHp, maxHp: addHp }]);
             addLog(`👤 A Shadow emerges from the abyss! (${addHp} HP)`);
           }
@@ -2742,8 +2748,25 @@ setMiniBossCount(0);
     if (isFinalBoss && bossHp <= 0) {
       // Gauntlet defeated - lock until next milestone
       setGauntletUnlocked(false);
+      const gauntletTier = Math.floor(gauntletMilestone / 1000); // How many times defeated
       setGauntletMilestone(m => m + 1000);
       addLog(`🏆 THE GAUNTLET CONQUERED! Next trial at ${gauntletMilestone + 1000} XP.`);
+      
+      // Unique Gauntlet rewards that scale with tier
+      const bonusEssence = 50 + gauntletTier * 25;
+      setEssence(e => e + bonusEssence);
+      addLog(`🔮 Gauntlet Bounty: +${bonusEssence} Essence!`);
+      
+      // Permanent stat boost per Gauntlet clear
+      const statBoost = 1 + Math.floor(gauntletTier / 2);
+      setWeapon(w => w + statBoost);
+      setArmor(a => a + statBoost);
+      addLog(`⚔️ Gauntlet Forging: +${statBoost} Weapon, +${statBoost} Armor (permanent)`);
+      
+      // Bonus health potions for surviving
+      const potBonus = Math.min(1 + gauntletTier, 3);
+      setHealthPots(h => h + potBonus);
+      addLog(`💊 Victory Spoils: +${potBonus} Health Potion${potBonus > 1 ? 's' : ''}!`);
       
       // Close battle but keep all progress
       setShowBoss(false);
@@ -2751,6 +2774,7 @@ setMiniBossCount(0);
       setBattling(false);
       setBattleMode(false);
       setIsFinalBoss(false);
+      setTargetingAdds(false);
       
       setTimeout(() => setActiveTab('home'), 1000);
     } else if (!isFinalBoss && bossHp <= 0) {
@@ -5057,7 +5081,7 @@ setMiniBossCount(0);
                   {/* Shadow Adds (Phase 2 & 3) */}
                   {(inPhase2 || inPhase3) && shadowAdds.length > 0 && (
                     <div className="bg-black bg-opacity-60 rounded-lg p-4 border-2 border-purple-600">
-                      <p className="text-purple-400 font-bold mb-2 text-center">👤 SHADOW ADD{shadowAdds.length > 1 ? 'S' : ''} ({shadowAdds.length})</p>
+                      <p className="text-purple-400 font-bold mb-2 text-center">👤 SHADOW ADD{shadowAdds.length > 1 ? 'S' : ''} ({shadowAdds.length}/3)</p>
                       <div className="space-y-2">
                         {shadowAdds.map((add, idx) => (
                           <div key={add.id} className="flex items-center justify-between bg-gray-900 rounded p-2">
@@ -5071,8 +5095,18 @@ setMiniBossCount(0);
                           </div>
                         ))}
                       </div>
+                      <button 
+                        onClick={() => setTargetingAdds(!targetingAdds)}
+                        className={`w-full mt-3 py-2 rounded-lg font-bold text-sm transition-all ${
+                          targetingAdds 
+                            ? 'bg-purple-600 border-2 border-purple-400 text-white animate-pulse' 
+                            : 'bg-gray-700 border-2 border-gray-500 text-gray-300 hover:bg-gray-600'
+                        }`}
+                      >
+                        {targetingAdds ? '🎯 TARGETING ADDS (click to switch to boss)' : '⚔️ TARGETING BOSS (click to switch to adds)'}
+                      </button>
                       <p className="text-xs text-purple-300 mt-2 text-center italic">
-                        Your attacks target adds first! {inPhase3 ? 'Each add heals boss for 8 HP per turn.' : 'Kill it before Phase 3!'}
+                        {inPhase3 ? 'Each add heals boss for 8 HP per turn. Max 3 adds.' : 'Kill it before Phase 3!'}
                       </p>
                     </div>
                   )}
@@ -5236,7 +5270,7 @@ setMiniBossCount(0);
         </div>
         
         <div className="text-center pb-4">
-          <p className="text-xs text-gray-600">v4.0 - Rebalance Edition</p>
+          <p className="text-xs text-gray-600">v4.1 - Gauntlet Overhaul</p>
         </div>
       </div>
       )}
