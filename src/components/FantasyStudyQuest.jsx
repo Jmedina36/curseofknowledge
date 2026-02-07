@@ -5235,77 +5235,123 @@ setMiniBossCount(0);
 )}
 
           {showBoss && (
-             <div className={`fixed inset-0 ${isFinalBoss && gauntletPhase === 3 ? 'bg-purple-950 bg-opacity-95' : isFinalBoss && gauntletPhase === 2 ? 'bg-orange-950 bg-opacity-95' : 'bg-black bg-opacity-90'} flex items-start justify-center p-4 z-50 overflow-y-auto transition-colors duration-1000`}>
-              <div className={`rounded-xl p-8 max-w-2xl w-full border-4 boss-enter my-8 ${bossFlash ? 'damage-flash-boss' : ''} ${isFinalBoss ? (gauntletPhase === 3 ? 'gauntlet-phase-3' : gauntletPhase === 2 ? 'gauntlet-phase-2' : 'gauntlet-phase-1') : 'bg-gradient-to-b from-red-900 to-black border-red-600 shadow-2xl shadow-red-900/50'}`}>
+             <div className={`fixed inset-0 ${isFinalBoss && gauntletPhase === 3 ? 'bg-purple-950 bg-opacity-95' : isFinalBoss && gauntletPhase === 2 ? 'bg-orange-950 bg-opacity-95' : 'bg-black bg-opacity-95'} flex items-start justify-center p-4 z-50 overflow-y-auto transition-colors duration-1000`}>
+              <div className={`rounded-xl max-w-2xl w-full border-2 boss-enter my-8 relative overflow-hidden ${bossFlash ? 'damage-flash-boss' : ''} ${isFinalBoss ? (gauntletPhase === 3 ? 'gauntlet-phase-3' : gauntletPhase === 2 ? 'gauntlet-phase-2' : 'gauntlet-phase-1') : 'bg-gradient-to-b from-red-950 via-red-950/80 to-black border-red-800/60 shadow-[0_0_40px_rgba(220,38,38,0.3)]'}`}>
                 
-               {bossName && (<h2 className="text-5xl text-center text-yellow-400 mb-2 font-bold" style={{fontFamily: 'Cinzel, serif'}}>{isFinalBoss ? (gauntletPhase === 1 ? bossName : gauntletPhase === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`) : bossName}{bossDebuffs.poisonTurns > 0 && (<span className="ml-3 text-lg text-green-400 animate-pulse">☠️ POISONED ({bossDebuffs.poisonTurns})</span>)}{bossDebuffs.marked && (<span className="ml-3 text-lg text-cyan-400 animate-pulse">🎯 MARKED</span>)}{bossDebuffs.stunned && (<span className="ml-3 text-lg text-purple-400 animate-pulse">✨ STUNNED</span>)}</h2>)}
-               <p className={`text-xl font-bold text-center mb-1 ${isFinalBoss ? (gauntletPhase === 3 ? 'text-purple-400' : gauntletPhase === 2 ? 'text-orange-400' : 'text-red-400') : 'text-red-400'}`}>
-  {isFinalBoss ? 'THE GAUNTLET' : 
-   battleType === 'elite' ? 'TORMENTED CHAMPION' : 
-   battleType === 'wave' ? `WAVE ASSAULT - Enemy ${currentWaveEnemy}/${totalWaveEnemies}` : 
-   'ENEMY ENCOUNTER'}
-</p>
-{isFinalBoss && (
-  <p className="text-sm text-center text-gray-400 italic mb-4">
-    {gauntletPhase === 1 ? '"Prove your worth against the cursed guardian..."' :
-     gauntletPhase === 2 ? '"The curse tightens its grip. Each blow hits harder..."' :
-     '"Shadows swarm. The abyss hungers for your soul..."'}
-  </p>
-)}
-{!isFinalBoss && <div className="mb-4" />}
+                {/* Decorative top edge */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
                 
-                <div className="space-y-6">
-                  {/* Boss HP Bar */}
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span className="text-red-400 font-bold">
-                        {bossName || 'Boss'}
-                        {enragedTurns > 0 && (<span className="ml-3 text-orange-400 font-bold animate-pulse">ENRAGED (ATK↑ DEF↓ ACC↓) ({enragedTurns})</span>)}
-                      </span>
-                      <span className="text-red-400">{bossHp}/{bossMax}</span>
+                {/* Battle card header section */}
+                <div className="relative px-8 pt-8 pb-4">
+                  {/* Battle type label */}
+                  <div className="flex items-center justify-center gap-3 mb-3">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/30 to-transparent"></div>
+                    <p className={`text-xs font-fantasy tracking-[0.3em] uppercase ${isFinalBoss ? (gauntletPhase === 3 ? 'text-purple-400/80' : gauntletPhase === 2 ? 'text-orange-400/80' : 'text-red-400/80') : battleType === 'elite' ? 'text-orange-400/80' : battleType === 'wave' ? 'text-cyan-400/80' : 'text-red-400/80'}`}>
+                      {isFinalBoss ? 'The Gauntlet' : 
+                       battleType === 'elite' ? 'Tormented Champion' : 
+                       battleType === 'wave' ? `Wave Assault — ${currentWaveEnemy}/${totalWaveEnemies}` : 
+                       'Enemy Encounter'}
+                    </p>
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/30 to-transparent"></div>
+                  </div>
+
+                  {/* Boss name */}
+                  {bossName && (
+                    <h2 className="text-4xl md:text-5xl text-center text-yellow-400 mb-1 font-fantasy-decorative tracking-wider drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]">
+                      {isFinalBoss ? (gauntletPhase === 1 ? bossName : gauntletPhase === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`) : bossName}
+                    </h2>
+                  )}
+                  
+                  {/* Status effects */}
+                  {(bossDebuffs.poisonTurns > 0 || bossDebuffs.marked || bossDebuffs.stunned) && (
+                    <div className="flex items-center justify-center gap-3 mt-2">
+                      {bossDebuffs.poisonTurns > 0 && (<span className="text-sm text-green-400 animate-pulse bg-green-900/30 px-2 py-0.5 rounded-full border border-green-700/40 font-fantasy">☠️ Poisoned ({bossDebuffs.poisonTurns})</span>)}
+                      {bossDebuffs.marked && (<span className="text-sm text-cyan-400 animate-pulse bg-cyan-900/30 px-2 py-0.5 rounded-full border border-cyan-700/40 font-fantasy">🎯 Marked</span>)}
+                      {bossDebuffs.stunned && (<span className="text-sm text-purple-400 animate-pulse bg-purple-900/30 px-2 py-0.5 rounded-full border border-purple-700/40 font-fantasy">✨ Stunned</span>)}
                     </div>
-                    <div className="bg-gray-800 rounded-full h-6 overflow-hidden">
-                      <div className={`bg-red-600 h-6 rounded-full transition-all duration-300 ${bossFlash ? 'hp-pulse' : ''}`} style={{width: `${(bossHp / bossMax) * 100}%`}}></div>
+                  )}
+                  
+                  {/* Gauntlet flavor text */}
+                  {isFinalBoss && (
+                    <p className="text-sm text-center text-gray-500 italic mt-2 font-fantasy">
+                      {gauntletPhase === 1 ? '"Prove your worth against the cursed guardian..."' :
+                       gauntletPhase === 2 ? '"The curse tightens its grip. Each blow hits harder..."' :
+                       '"Shadows swarm. The abyss hungers for your soul..."'}
+                    </p>
+                  )}
+                </div>
+                
+                {/* Divider */}
+                <div className="flex items-center gap-3 px-8">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-red-600/40"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent"></div>
+                </div>
+
+                {/* Battle content */}
+                <div className="px-8 py-6 space-y-5">
+                  {/* Boss HP Bar */}
+                  <div className="bg-black/40 rounded-lg p-4 border border-red-900/30">
+                    <div className="flex justify-between mb-2">
+                      <span className="text-red-400 font-fantasy text-sm tracking-wide">
+                        {bossName || 'Boss'}
+                        {enragedTurns > 0 && (<span className="ml-3 text-orange-400 font-bold animate-pulse">⚡ ENRAGED ({enragedTurns})</span>)}
+                      </span>
+                      <span className="text-red-400/70 text-sm font-mono">{bossHp}/{bossMax}</span>
+                    </div>
+                    <div className="bg-black/60 rounded-full h-5 overflow-hidden border border-red-900/20">
+                      <div className={`h-5 rounded-full transition-all duration-500 ${bossFlash ? 'hp-pulse' : ''} ${
+                        (bossHp / bossMax) > 0.5 ? 'bg-gradient-to-r from-red-700 to-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)]' :
+                        (bossHp / bossMax) > 0.25 ? 'bg-gradient-to-r from-orange-700 to-orange-500 shadow-[0_0_12px_rgba(234,88,12,0.4)]' :
+                        'bg-gradient-to-r from-yellow-700 to-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.4)] animate-pulse'
+                      }`} style={{width: `${(bossHp / bossMax) * 100}%`}}></div>
                     </div>
                   </div>
                   
                   {/* Phase 2 Ramping Damage Indicator */}
                   {gauntletPhase === 2 && phase2DamageStacks > 0 && (
-                    <div className="bg-orange-900 bg-opacity-60 rounded-lg p-3 border-2 border-orange-500">
-                      <p className="text-orange-400 font-bold text-center">🔺 RAMPING PRESSURE</p>
-                      <p className="text-white text-center text-sm">Boss damage: +{phase2DamageStacks * 5}% ({phase2DamageStacks} stacks)</p>
-                      <p className="text-xs text-orange-300 text-center italic mt-1">Stacks increase each turn!</p>
+                    <div className="bg-orange-950/40 rounded-lg p-3 border border-orange-700/40">
+                      <div className="flex items-center justify-center gap-2 mb-1">
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-orange-600/30"></div>
+                        <p className="text-orange-400 font-fantasy text-xs tracking-[0.2em] uppercase">Ramping Pressure</p>
+                        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-orange-600/30"></div>
+                      </div>
+                      <p className="text-white text-center text-sm">Boss damage: +{phase2DamageStacks * 5}% <span className="text-orange-400/60">({phase2DamageStacks} stacks)</span></p>
                     </div>
                   )}
                   
                   {/* Shadow Adds (Phase 2 & 3) */}
                   {(gauntletPhase === 2 || gauntletPhase === 3) && shadowAdds.length > 0 && (
-                    <div className="bg-black bg-opacity-60 rounded-lg p-4 border-2 border-purple-600">
-                      <p className="text-purple-400 font-bold mb-2 text-center">👤 SHADOW ADD{shadowAdds.length > 1 ? 'S' : ''} ({shadowAdds.length}/3)</p>
+                    <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-700/40">
+                      <div className="flex items-center justify-center gap-2 mb-3">
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent to-purple-600/30"></div>
+                        <p className="text-purple-400 font-fantasy text-xs tracking-[0.2em] uppercase">Shadow Adds ({shadowAdds.length}/3)</p>
+                        <div className="h-px flex-1 bg-gradient-to-l from-transparent to-purple-600/30"></div>
+                      </div>
                       <div className="space-y-2">
                         {shadowAdds.map((add, idx) => (
-                          <div key={add.id} className="flex items-center justify-between bg-gray-900 rounded p-2">
-                            <span className="text-gray-300">Shadow #{idx + 1}</span>
+                          <div key={add.id} className="flex items-center justify-between bg-black/40 rounded-lg p-2 border border-purple-900/20">
+                            <span className="text-gray-400 text-sm font-fantasy">Shadow #{idx + 1}</span>
                             <div className="flex-1 mx-4">
-                              <div className="bg-gray-700 rounded-full h-3 overflow-hidden">
-                                <div className="bg-purple-500 h-3 rounded-full" style={{width: `${(add.hp / add.maxHp) * 100}%`}}></div>
+                              <div className="bg-black/60 rounded-full h-3 overflow-hidden border border-purple-900/20">
+                                <div className="bg-gradient-to-r from-purple-700 to-purple-500 h-3 rounded-full transition-all duration-300" style={{width: `${(add.hp / add.maxHp) * 100}%`}}></div>
                               </div>
                             </div>
-                            <span className="text-purple-400 text-sm">{add.hp}/{add.maxHp}</span>
+                            <span className="text-purple-400/70 text-xs font-mono">{add.hp}/{add.maxHp}</span>
                           </div>
                         ))}
                       </div>
                       <button 
                         onClick={() => setTargetingAdds(!targetingAdds)}
-                        className={`w-full mt-3 py-2 rounded-lg font-bold text-sm transition-all ${
+                        className={`w-full mt-3 py-2 rounded-lg font-fantasy text-sm tracking-wide transition-all ${
                           targetingAdds 
-                            ? 'bg-purple-600 border-2 border-purple-400 text-white animate-pulse' 
-                            : 'bg-gray-700 border-2 border-gray-500 text-gray-300 hover:bg-gray-600'
+                            ? 'bg-purple-600/30 border border-purple-400/50 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.2)] animate-pulse' 
+                            : 'bg-black/40 border border-gray-700/50 text-gray-400 hover:text-gray-300 hover:border-gray-600/50'
                         }`}
                       >
-                        {targetingAdds ? '🎯 TARGETING ADDS (click to switch to boss)' : '⚔️ TARGETING BOSS (click to switch to adds)'}
+                        {targetingAdds ? '🎯 Targeting Adds — click to switch to boss' : '⚔️ Targeting Boss — click to switch to adds'}
                       </button>
-                      <p className="text-xs text-purple-300 mt-2 text-center italic">
+                      <p className="text-xs text-purple-400/50 mt-2 text-center italic">
                         {gauntletPhase === 3 ? 'Each add heals boss for 8 HP per turn. Max 3 adds.' : 'Kill it before Phase 3!'}
                       </p>
                     </div>
@@ -5313,122 +5359,210 @@ setMiniBossCount(0);
                   
                   {/* AOE Warning */}
                   {aoeWarning && gauntletPhase === 3 && (
-                    <div className="bg-red-900 bg-opacity-80 rounded-lg p-4 border-4 border-yellow-400 animate-pulse">
-                      <p className="text-yellow-400 font-bold text-center text-xl">⚠️ BOSS PREPARING DEVASTATING AOE!</p>
-                      <p className="text-white text-center text-sm mt-2">Next turn: 35 damage slam!</p>
-                      <div className="mt-3 pt-3 border-t border-yellow-600">
-                        <p className="text-cyan-300 text-center text-sm font-bold">🛡️ DODGE: Avoid damage completely (safe)</p>
-                        <p className="text-red-300 text-center text-sm font-bold">⚔️ ATTACK: Deal +50% damage but take counter-attack AND AOE (risky!)</p>
+                    <div className="bg-red-950/60 rounded-lg p-4 border-2 border-yellow-500/60 animate-pulse">
+                      <p className="text-yellow-400 font-fantasy-decorative text-center text-lg tracking-wider mb-2">⚠️ Devastating AOE Incoming</p>
+                      <p className="text-white/80 text-center text-sm">Next turn: 35 damage slam!</p>
+                      <div className="mt-3 pt-3 border-t border-yellow-700/30">
+                        <p className="text-cyan-300/80 text-center text-sm">🛡️ <span className="font-fantasy">Dodge</span> — Avoid damage completely</p>
+                        <p className="text-red-300/80 text-center text-sm mt-1">⚔️ <span className="font-fantasy">Attack</span> — +50% damage but take counter + AOE</p>
                       </div>
                     </div>
                   )}
                   
-                  {/* Enemy Dialogue Box - Positioned below enemy HP */}
+                  {/* Enemy Dialogue Box */}
                   {showTauntBoxes ? (
-                    <div className="bg-black bg-opacity-80 rounded-lg p-3 border-2 border-red-600 min-h-[60px] flex items-center">
-                      <p className="text-gray-300 text-sm italic leading-relaxed">{enemyTauntResponse ? `"${enemyTauntResponse}"` : '...'}</p>
+                    <div className="bg-black/50 rounded-lg p-3 border border-red-800/30 relative">
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-red-500/60 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
+                      <p className="text-gray-300/80 text-sm italic leading-relaxed">{enemyTauntResponse ? `"${enemyTauntResponse}"` : '...'}</p>
                     </div>
                   ) : enemyDialogue ? (
-                    <div className="bg-black bg-opacity-80 rounded-lg p-3 border-2 border-gray-600">
-                      <p className="text-gray-300 text-center italic text-sm leading-relaxed">"{enemyDialogue}"</p>
+                    <div className="bg-black/50 rounded-lg p-3 border border-gray-800/30 relative">
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-gray-500/60 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
+                      <p className="text-gray-400 text-center italic text-sm leading-relaxed">"{enemyDialogue}"</p>
                     </div>
                   ) : null}
+
+                  {/* Divider between enemy and player */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/40 to-transparent"></div>
+                    <span className="text-gray-600 text-xs font-fantasy tracking-widest">VS</span>
+                    <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/40 to-transparent"></div>
+                  </div>
                   
                   {/* Player HP and SP Bars */}
-                  <div>
+                  <div className="bg-black/40 rounded-lg p-4 border border-green-900/30">
                     <div className="flex justify-between mb-2">
-                      <span className="text-green-400 font-bold">{hero.name}</span>
-                      <span className="text-green-400">HP: {hp}/{getMaxHp()} | SP: {stamina}/{getMaxStamina()}</span>
+                      <span className="text-green-400 font-fantasy text-sm tracking-wide">{hero.name}</span>
+                      <span className="text-green-400/70 text-xs font-mono">HP: {hp}/{getMaxHp()} | SP: {stamina}/{getMaxStamina()}</span>
                     </div>
-                    <div className="bg-gray-800 rounded-full h-6 overflow-hidden mb-2">
-                      <div className={`bg-green-600 h-6 rounded-full transition-all duration-300 ${playerFlash ? 'hp-pulse' : ''}`} style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
+                    <div className="bg-black/60 rounded-full h-5 overflow-hidden mb-2 border border-green-900/20">
+                      <div className={`h-5 rounded-full transition-all duration-500 ${playerFlash ? 'hp-pulse' : ''} ${
+                        (hp / getMaxHp()) > 0.5 ? 'bg-gradient-to-r from-green-700 to-green-500 shadow-[0_0_12px_rgba(34,197,94,0.3)]' :
+                        (hp / getMaxHp()) > 0.25 ? 'bg-gradient-to-r from-yellow-700 to-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.3)]' :
+                        'bg-gradient-to-r from-red-700 to-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)] animate-pulse'
+                      }`} style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
                     </div>
-                    <div className="bg-gray-800 rounded-full h-4 overflow-hidden">
-                      <div className="bg-cyan-500 h-4 rounded-full transition-all duration-300" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
+                    <div className="bg-black/60 rounded-full h-3 overflow-hidden border border-cyan-900/20">
+                      <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-3 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(34,211,238,0.2)]" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                     </div>
                   </div>
                   
-                  {/* Player Dialogue Box - Positioned below player HP/SP */}
+                  {/* Player Dialogue Box */}
                   {showTauntBoxes && (
-                    <div className="bg-black bg-opacity-80 rounded-lg p-3 border-2 border-blue-600 min-h-[60px] flex items-center">
-                      <p className="text-white text-sm leading-relaxed">"{playerTaunt}"</p>
+                    <div className="bg-black/50 rounded-lg p-3 border border-blue-800/30 relative">
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-blue-500/60 text-[10px] font-fantasy tracking-widest uppercase">You</div>
+                      <p className="text-white/80 text-sm leading-relaxed">"{playerTaunt}"</p>
                     </div>
                   )}
                   
                   {/* Battle Actions */}
-                  {battling && bossHp > 0 && hp > 0 && (<><div className="flex gap-4 flex-wrap"><button onClick={attack} className="flex-1 bg-red-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-red-600/50 hover:scale-105 active:scale-95">ATTACK</button>{isTauntAvailable && (<button onClick={taunt} className="flex-1 bg-orange-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"><div>TAUNT</div><div className="text-sm">(Enrage Enemy)</div></button>)}{hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (<button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-cyan-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-cyan-700 transition-all shadow-lg hover:shadow-cyan-600/50 hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:scale-100"><div>{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name.toUpperCase()}</div><div className="text-sm">({GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`})</div></button>)}{healthPots > 0 && (<button onClick={useHealth} className="bg-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-700 transition-all hover:scale-105 active:scale-95">HEAL</button>)}{canFlee && (<button onClick={flee} disabled={stamina < 25} className="bg-yellow-600 px-6 py-4 rounded-lg font-bold hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">FLEE</button>)}</div>{showDodgeButton && (<button onClick={dodge} className="w-full bg-blue-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-cyan-400 mt-3"><div>DODGE</div><div className="text-sm">(Avoid AOE)</div></button>)}{showDodgeButton && (<p className="text-xs text-cyan-400 text-center italic mt-2">Dodge the AOE or attack for +50% damage (risky!)</p>)}{canFlee && (<p className="text-xs text-gray-400 text-center italic">Fleeing costs 25 Stamina but lets you escape</p>)}{showDebug && (<><button onClick={() => { setBossHp(1); addLog('DEBUG: Boss HP set to 1 - one more hit!'); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">DEBUG: Boss HP → 1</button><button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">DEBUG: Force Taunt Available</button></>)}</>)}
+                  {battling && bossHp > 0 && hp > 0 && (
+                    <>
+                      {/* Action divider */}
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
+                        <span className="text-yellow-600/50 text-[10px] font-fantasy tracking-[0.3em] uppercase">Actions</span>
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
+                      </div>
+                      
+                      <div className="flex gap-3 flex-wrap">
+                        <button onClick={attack} className="flex-1 bg-gradient-to-b from-red-800/80 to-red-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-red-200 hover:from-red-700/80 hover:to-red-900/80 transition-all shadow-[0_0_15px_rgba(220,38,38,0.15)] hover:shadow-[0_0_25px_rgba(220,38,38,0.3)] hover:scale-105 active:scale-95 border border-red-700/30">
+                          ⚔️ Attack
+                        </button>
+                        
+                        {isTauntAvailable && (
+                          <button onClick={taunt} className="flex-1 bg-gradient-to-b from-orange-800/80 to-orange-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-orange-200 hover:from-orange-700/80 hover:to-orange-900/80 transition-all shadow-[0_0_15px_rgba(234,88,12,0.15)] hover:shadow-[0_0_25px_rgba(234,88,12,0.3)] hover:scale-105 active:scale-95 border border-orange-600/40 animate-pulse">
+                            <div>🔥 Taunt</div>
+                            <div className="text-xs text-orange-300/60 mt-0.5">Enrage Enemy</div>
+                          </button>
+                        )}
+                        
+                        {hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (
+                          <button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-gradient-to-b from-cyan-800/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-700/80 hover:to-cyan-900/80 transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] hover:scale-105 active:scale-95 border border-cyan-700/30 disabled:from-gray-800/60 disabled:to-gray-900/60 disabled:text-gray-500 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none disabled:border-gray-700/20">
+                            <div>✨ {GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name}</div>
+                            <div className="text-xs text-cyan-300/60 mt-0.5">{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`}</div>
+                          </button>
+                        )}
+                        
+                        {healthPots > 0 && (
+                          <button onClick={useHealth} className="bg-gradient-to-b from-green-800/80 to-green-950/80 px-5 py-4 rounded-lg font-fantasy tracking-wide text-green-200 hover:from-green-700/80 hover:to-green-900/80 transition-all hover:scale-105 active:scale-95 border border-green-700/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
+                            💚 Heal
+                          </button>
+                        )}
+                        
+                        {canFlee && (
+                          <button onClick={flee} disabled={stamina < 25} className="bg-gradient-to-b from-yellow-800/60 to-yellow-950/60 px-5 py-4 rounded-lg font-fantasy tracking-wide text-yellow-200/80 hover:from-yellow-700/60 hover:to-yellow-900/60 transition-all hover:scale-105 active:scale-95 border border-yellow-700/20 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">
+                            🏃 Flee
+                          </button>
+                        )}
+                      </div>
+                      
+                      {showDodgeButton && (
+                        <button onClick={dodge} className="w-full bg-gradient-to-b from-blue-700/80 to-blue-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-blue-200 hover:from-blue-600/80 hover:to-blue-900/80 transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:scale-105 active:scale-95 animate-pulse border border-cyan-500/40 mt-1">
+                          <div>🛡️ Dodge</div>
+                          <div className="text-xs text-cyan-300/60 mt-0.5">Avoid the AOE</div>
+                        </button>
+                      )}
+                      
+                      {canFlee && (
+                        <p className="text-xs text-gray-600 text-center italic font-fantasy">Fleeing costs 25 Stamina but lets you escape</p>
+                      )}
+                      
+                      {showDebug && (
+                        <>
+                          <button onClick={() => { setBossHp(1); addLog('DEBUG: Boss HP set to 1 - one more hit!'); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">DEBUG: Boss HP → 1</button>
+                          <button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">DEBUG: Force Taunt Available</button>
+                        </>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Victory / Defeat / Phase Transition */}
                   {bossHp <= 0 && !phaseTransitioning && (
-                    <div className="text-center">
+                    <div className="text-center py-4">
                       {hasFled ? (
                         <>
-                          <p className="text-4xl font-bold text-yellow-400 mb-4 animate-pulse drop-shadow-[0_0_15px_rgba(250,204,21,0.6)]">FLED</p>
-                          <p className="text-gray-300 text-lg mb-6 italic">"Cowardice is also a strategy..."</p>
+                          <p className="text-4xl font-fantasy-decorative text-yellow-400 mb-4 animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.4)] tracking-widest">FLED</p>
+                          <p className="text-gray-500 text-sm mb-6 italic font-fantasy">"Cowardice is also a strategy..."</p>
                         </>
                       ) : (
                         <>
-                          <p className="text-3xl font-bold text-green-400 mb-2">{isFinalBoss ? 'CURSE BROKEN!' : 'VICTORY'}</p>
-                          <p className="text-gray-400 text-sm mb-4 italic">{isFinalBoss ? '"You are finally free..."' : '"The beast falls. You are healed and rewarded."'}</p>
+                          <p className="text-3xl font-fantasy-decorative tracking-widest mb-2 drop-shadow-[0_0_20px_rgba(34,197,94,0.4)] text-green-400">{isFinalBoss ? 'Curse Broken' : 'Victory'}</p>
+                          <p className="text-gray-500 text-sm mb-4 italic font-fantasy">{isFinalBoss ? '"You are finally free..."' : '"The beast falls. You are healed and rewarded."'}</p>
                         </>
                       )}
                       
                       {!hasFled && victoryLoot.length > 0 && (
-                        <div className="bg-black bg-opacity-60 rounded-lg p-4 mb-4 border-2 border-yellow-500">
-                          <p className="text-yellow-400 font-bold mb-2 text-lg">⚔️ SPOILS OF BATTLE ⚔️</p>
+                        <div className="bg-black/50 rounded-lg p-4 mb-5 border border-yellow-700/30">
+                          <div className="flex items-center justify-center gap-2 mb-3">
+                            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-yellow-600/30"></div>
+                            <p className="text-yellow-500/80 font-fantasy text-xs tracking-[0.3em] uppercase">Spoils of Battle</p>
+                            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-yellow-600/30"></div>
+                          </div>
                           <div className="space-y-1">
                             {victoryLoot.map((loot, idx) => (
-                              <p key={idx} className="text-white text-sm animate-pulse">{loot}</p>
+                              <p key={idx} className="text-white/80 text-sm">{loot}</p>
                             ))}
                           </div>
                         </div>
                       )}
                       
                       {(battleType === 'elite' || isFinalBoss) && (
-                        <button onClick={() => { sfx.playClick(); advance(); }} className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/50">{isFinalBoss ? 'CLAIM FREEDOM' : 'CONTINUE'}</button>
+                        <button onClick={() => { sfx.playClick(); advance(); }} className="bg-gradient-to-b from-yellow-600/80 to-yellow-800/80 text-yellow-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-yellow-500/80 hover:to-yellow-700/80 transition-all shadow-[0_0_25px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)] border border-yellow-500/40">{isFinalBoss ? '✨ Claim Freedom' : 'Continue'}</button>
                       )}
                       {(battleType === 'regular' || battleType === 'wave') && (
-                        <button onClick={() => { setShowBoss(false); setHasFled(false); addLog('⚔️ Ready for your next trial...'); }} className="bg-green-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-green-400 transition-all shadow-lg shadow-green-500/50">CONTINUE</button>
+                        <button onClick={() => { setShowBoss(false); setHasFled(false); addLog('⚔️ Ready for your next trial...'); }} className="bg-gradient-to-b from-green-700/80 to-green-900/80 text-green-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-green-600/80 hover:to-green-800/80 transition-all shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] border border-green-600/40">Continue</button>
                       )}
                     </div>
                   )}
                   
                   {/* Phase Transition Screen */}
                   {phaseTransitioning && (
-                    <div className="text-center">
+                    <div className="text-center py-4">
                       <div className="mb-6">
-                        <p className="text-2xl font-bold text-orange-400 mb-2 animate-pulse" style={{fontFamily: 'Cinzel, serif'}}>
-                          💀 {gauntletPhase === 1 ? bossName : `${bossName.split(' ')[0]}, The Accursed`} DEFEATED 💀
+                        <p className="text-2xl font-fantasy-decorative text-orange-400 mb-2 animate-pulse tracking-widest drop-shadow-[0_0_15px_rgba(234,88,12,0.4)]">
+                          💀 {gauntletPhase === 1 ? bossName : `${bossName.split(' ')[0]}, The Accursed`} Defeated 💀
                         </p>
-                        <p className="text-sm text-gray-400 italic mb-1">
+                        <p className="text-sm text-gray-500 italic font-fantasy mb-1">
                           {gauntletPhase === 1 ? '"The first seal cracks..."' : '"The curse wavers..."'}
                         </p>
-                        <p className="text-lg text-red-300 italic mb-4">
+                        <p className="text-lg text-red-300/80 italic mb-4 font-fantasy">
                           "{enemyDialogue}"
                         </p>
-                        <div className="bg-red-900 bg-opacity-60 rounded-lg p-4 border-2 border-red-500 mb-4">
-                          <p className="text-yellow-400 font-bold text-xl mb-3">
-                            ⚠️ {gauntletPhase + 1 === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`} AWAKENS
+                        <div className="bg-red-950/40 rounded-lg p-4 border border-red-700/30 mb-4">
+                          <p className="text-yellow-400 font-fantasy-decorative text-lg mb-3 tracking-wider">
+                            ⚠️ {gauntletPhase + 1 === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`} Awakens
                           </p>
                           {victoryLoot.map((line, idx) => (
-                            <p key={idx} className="text-white text-sm">{line}</p>
+                            <p key={idx} className="text-white/70 text-sm">{line}</p>
                           ))}
-                          <div className="mt-3 pt-3 border-t border-red-600">
-                            <p className="text-green-400 text-sm">❤️ Your HP will be fully restored</p>
-                            <p className="text-cyan-400 text-sm">⚡ Your Stamina will be fully restored</p>
-                            <p className="text-yellow-400 text-sm">💊 Potions will NOT be restored</p>
+                          <div className="mt-3 pt-3 border-t border-red-800/30">
+                            <p className="text-green-400/80 text-sm">❤️ HP fully restored</p>
+                            <p className="text-cyan-400/80 text-sm">⚡ Stamina fully restored</p>
+                            <p className="text-yellow-400/80 text-sm">💊 Potions will NOT be restored</p>
                           </div>
                         </div>
                       </div>
                       <button 
                         onClick={() => { sfx.playClick(); beginNextGauntletPhase(); }}
-                        className="bg-red-600 text-white px-10 py-4 rounded-lg font-bold text-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"
-                        style={{fontFamily: 'Cinzel, serif'}}
+                        className="bg-gradient-to-b from-red-700/80 to-red-950/80 text-red-100 px-10 py-4 rounded-lg font-fantasy-decorative text-xl tracking-widest hover:from-red-600/80 hover:to-red-900/80 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_40px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95 animate-pulse border border-yellow-500/40"
                       >
-                        ⚔️ FACE {gauntletPhase + 1 === 2 ? 'THE ACCURSED' : 'THE DEVOURER'} ⚔️
+                        ⚔️ Face {gauntletPhase + 1 === 2 ? 'The Accursed' : 'The Devourer'} ⚔️
                       </button>
                     </div>
                   )}
-                   {hp <= 0 && (<div className="text-center"><p className="text-3xl font-bold text-red-400 mb-2">DEFEATED</p><p className="text-gray-400 text-sm mb-4 italic">"The curse claims another victim..."</p><button onClick={() => { setShowBoss(false); die(); }} className="bg-red-600 text-white px-8 py-3 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50">CONTINUE</button></div>)}
+                  
+                  {hp <= 0 && (
+                    <div className="text-center py-4">
+                      <p className="text-3xl font-fantasy-decorative text-red-400 mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(220,38,38,0.4)]">Defeated</p>
+                      <p className="text-gray-500 text-sm mb-4 italic font-fantasy">"The curse claims another victim..."</p>
+                      <button onClick={() => { setShowBoss(false); die(); }} className="bg-gradient-to-b from-red-700/80 to-red-950/80 text-red-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-red-600/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.2)] border border-red-600/30">Continue</button>
+                    </div>
+                  )}
                 </div>
+                
+                {/* Decorative bottom edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"></div>
               </div>
             </div>
           )}
