@@ -3739,7 +3739,7 @@ setMiniBossCount(0);
               {plannerView === 'weekly' && (
               <div className="grid gap-3">
                 {Object.keys(weeklyPlan).map(day => (
-                  <div key={day} className="bg-black/30 rounded-lg p-4 border border-blue-900/20 hover:border-blue-800/30 transition-all">
+                  <div key={day} className="bg-gray-800/40 rounded-lg p-4 border border-gray-600/25 hover:border-blue-800/30 transition-all">
                     <div className="flex justify-between items-center mb-3">
                       <div>
                         <h3 className="text-lg font-fantasy tracking-wide text-blue-300">{day}</h3>
@@ -3873,7 +3873,7 @@ setMiniBossCount(0);
                       const completedTasks = dayTasks.filter(t => t.done).length;
                       const allDone = hasTasks && completedTasks === dayTasks.length;
                       days.push(
-                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-800/50 border border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-black/30 hover:bg-black/40 border border-transparent hover:border-gray-700/20'}`}>
+                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-800/50 border border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-gray-700/40 hover:bg-gray-600/40 border border-gray-600/20 hover:border-gray-500/30'}`}>
                           <div className="text-sm font-bold text-white/70">{day}</div>
                           {hasTasks && (<div className="text-[10px] text-white/50 mt-0.5">{completedTasks}/{dayTasks.length}</div>)}
                           {isToday && (<div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-pulse"></div>)}
@@ -3889,7 +3889,7 @@ setMiniBossCount(0);
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-800/50 border border-blue-500/40 rounded"></div><span className="text-gray-500 font-fantasy">Today</span></div>
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-500 font-fantasy">In Progress</span></div>
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-500 font-fantasy">Complete</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-black/30 rounded"></div><span className="text-gray-500 font-fantasy">Empty</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-500 font-fantasy">Empty</span></div>
               </div>
               </>
               )}
