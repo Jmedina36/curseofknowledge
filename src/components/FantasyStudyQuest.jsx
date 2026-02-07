@@ -2118,18 +2118,58 @@ if (enragedTurns > 0) {
               addLog(`💀 Boss succumbed to poison!`);
               
               setTimeout(() => {
+                // GAUNTLET PHASE TRANSITION - poison kill
+                if (isFinalBoss && gauntletPhase < 3) {
+                  const nextPhase = gauntletPhase + 1;
+                  const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
+                  const phaseHpPercents = { 2: 0.60, 3: 0.80 };
+                  const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
+                  
+                  const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
+                  const phaseEssence = 30;
+                  setXp(x => x + phaseXp);
+                  setEssence(e => e + phaseEssence);
+                  addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+                  
+                  setPhaseTransitioning(true);
+                  setBattling(false);
+                  
+                  const bossDialogueData = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
+                  setEnemyDialogue(nextPhase === 2 ? bossDialogueData.PHASE2 : bossDialogueData.PHASE3);
+                  
+                  setVictoryLoot([
+                    `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
+                    `🔮 +${phaseEssence} Essence`,
+                    `✨ +${phaseXp} XP`,
+                    `❤️ Full HP Restored`,
+                    `⚡ Stamina Restored`,
+                    `⚠️ Boss HP: ${nextPhaseHp}`,
+                  ]);
+                  
+                  setVictoryFlash(true);
+                  setTimeout(() => setVictoryFlash(false), 400);
+                  
+                  setBossMax(nextPhaseHp);
+                  // Note: setBossHp is handled by the functional update returning newHp below
+                  // We need to set it separately since we're inside setBossHp callback
+                  setTimeout(() => {
+                    setBossHp(nextPhaseHp);
+                  }, 0);
+                  
+                  return;
+                }
+                
                 const xpGain = isFinalBoss ? GAME_CONSTANTS.XP_REWARDS.finalBoss : GAME_CONSTANTS.XP_REWARDS.miniBoss;
                 const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : 10);
                 setXp(x => x + xpGain);
                 setEssence(e => e + essenceGain);
                 addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
                 
-                // Set victory dialogue
                 if (battleType === 'elite' || battleType === 'final') {
                   const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
-                  const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
-                  if (bossDialogue) {
-                    setEnemyDialogue(bossDialogue.VICTORY_PLAYER);
+                  const bossDialogueData = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
+                  if (bossDialogueData) {
+                    setEnemyDialogue(bossDialogueData.VICTORY_PLAYER);
                   }
                 } else {
                   const victoryQuotes = GAME_CONSTANTS.ENEMY_DIALOGUE.VICTORY_PLAYER;
@@ -2406,19 +2446,54 @@ if (enragedTurns > 0) {
       
       setRecklessStacks(0);
       
+      // GAUNTLET PHASE TRANSITION - if not on final phase, transition instead of victory
+      if (isFinalBoss && gauntletPhase < 3) {
+        const nextPhase = gauntletPhase + 1;
+        const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
+        const phaseHpPercents = { 2: 0.60, 3: 0.80 };
+        const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
+        
+        const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
+        const phaseEssence = 30;
+        setXp(x => x + phaseXp);
+        setEssence(e => e + phaseEssence);
+        addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+        
+        setPhaseTransitioning(true);
+        setBattling(false);
+        
+        const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
+        setEnemyDialogue(nextPhase === 2 ? bossDialogue.PHASE2 : bossDialogue.PHASE3);
+        
+        setVictoryLoot([
+          `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
+          `🔮 +${phaseEssence} Essence`,
+          `✨ +${phaseXp} XP`,
+          `❤️ Full HP Restored`,
+          `⚡ Stamina Restored`,
+          `⚠️ Boss HP: ${nextPhaseHp}`,
+        ]);
+        
+        setVictoryFlash(true);
+        setTimeout(() => setVictoryFlash(false), 400);
+        
+        setBossMax(nextPhaseHp);
+        setBossHp(nextPhaseHp);
+        
+        return;
+      }
+      
       const xpGain = isFinalBoss ? GAME_CONSTANTS.XP_REWARDS.finalBoss : GAME_CONSTANTS.XP_REWARDS.miniBoss;
       const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : (battleType === 'wave' ? 8 : 10));
       setXp(x => x + xpGain);
       setEssence(e => e + essenceGain);
       
-      // Accumulate wave essence for final display
       if (battleType === 'wave') {
         setWaveEssenceTotal(t => t + essenceGain);
       }
       
       addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
       
-      // Set victory dialogue
       if (battleType === 'elite' || battleType === 'final') {
         const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
         const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
@@ -2437,7 +2512,6 @@ if (enragedTurns > 0) {
       const lootMessages = [];
       
       if (!isFinalBoss) {
-  // Regular/wave enemies: potions only
   if (battleType === 'regular' || battleType === 'wave') {
     const lootRoll = Math.random();
     if (lootRoll < 0.2) {
@@ -2450,7 +2524,6 @@ if (enragedTurns > 0) {
       addLog('⚡ Looted: Stamina Potion!');
     }
   } else {
-    // Elite bosses: weapon/armor upgrades
     const lootRoll = Math.random();
     const luckMultiplier = luckyCharmActive ? 2 : 1;
     
@@ -2485,15 +2558,12 @@ if (enragedTurns > 0) {
         addLog('✨ Fully healed!');
       }
       
-      // Add essence gain to loot display
       const displayEssence = battleType === 'wave' ? waveEssenceTotal : essenceGain;
       lootMessages.unshift(`🔮 +${displayEssence} Essence`);
       
       setVictoryLoot(lootMessages);
       setVictoryFlash(true);
       setTimeout(() => setVictoryFlash(false), 400);
-      
-      // No auto-close - let player click continue button
       
       return;
     }
@@ -5185,7 +5255,7 @@ setMiniBossCount(0);
                   )}
                   
                   {/* Battle Actions */}
-                  {battling && bossHp > 0 && hp > 0 && (<><div className="flex gap-4"><button onClick={attack} className="flex-1 bg-red-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-red-600/50 hover:scale-105 active:scale-95">ATTACK</button>{isTauntAvailable && (<button onClick={taunt} className="flex-1 bg-orange-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"><div>TAUNT</div><div className="text-sm">(Enrage Enemy)</div></button>)}{hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (<button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-cyan-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-cyan-700 transition-all shadow-lg hover:shadow-cyan-600/50 hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:scale-100"><div>{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name.toUpperCase()}</div><div className="text-sm">({GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`})</div></button>)}{healthPots > 0 && (<button onClick={useHealth} className="bg-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-700 transition-all hover:scale-105 active:scale-95">HEAL</button>)}{canFlee && (<button onClick={flee} disabled={stamina < 25} className="bg-yellow-600 px-6 py-4 rounded-lg font-bold hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">FLEE</button>)}{showDodgeButton && (<button onClick={dodge} className="flex-1 bg-blue-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/50 hover:scale-105 active:scale-95 animate-pulse border-4 border-cyan-400"><div>🛡️ DODGE</div><div className="text-sm">(Avoid AOE)</div></button>)}</div>{showDodgeButton && (<p className="text-xs text-cyan-400 text-center italic mt-2">🛡️ Dodge the AOE or attack for +50% damage (risky!)</p>)}{canFlee && (<p className="text-xs text-gray-400 text-center italic">💨 Fleeing costs 25 Stamina but lets you escape</p>)}{showDebug && (<><button onClick={() => { setBossHp(0); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">🛠️ DEBUG: Kill Boss Instantly</button><button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">💬 DEBUG: Force Taunt Available</button></>)}</>)}
+                  {battling && bossHp > 0 && hp > 0 && (<><div className="flex gap-4"><button onClick={attack} className="flex-1 bg-red-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-red-600/50 hover:scale-105 active:scale-95">ATTACK</button>{isTauntAvailable && (<button onClick={taunt} className="flex-1 bg-orange-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"><div>TAUNT</div><div className="text-sm">(Enrage Enemy)</div></button>)}{hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (<button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-cyan-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-cyan-700 transition-all shadow-lg hover:shadow-cyan-600/50 hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:scale-100"><div>{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name.toUpperCase()}</div><div className="text-sm">({GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`})</div></button>)}{healthPots > 0 && (<button onClick={useHealth} className="bg-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-700 transition-all hover:scale-105 active:scale-95">HEAL</button>)}{canFlee && (<button onClick={flee} disabled={stamina < 25} className="bg-yellow-600 px-6 py-4 rounded-lg font-bold hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">FLEE</button>)}{showDodgeButton && (<button onClick={dodge} className="flex-1 bg-blue-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/50 hover:scale-105 active:scale-95 animate-pulse border-4 border-cyan-400"><div>🛡️ DODGE</div><div className="text-sm">(Avoid AOE)</div></button>)}</div>{showDodgeButton && (<p className="text-xs text-cyan-400 text-center italic mt-2">🛡️ Dodge the AOE or attack for +50% damage (risky!)</p>)}{canFlee && (<p className="text-xs text-gray-400 text-center italic">💨 Fleeing costs 25 Stamina but lets you escape</p>)}{showDebug && (<><button onClick={() => { setBossHp(1); addLog('🛠️ DEBUG: Boss HP set to 1 - one more hit!'); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">🛠️ DEBUG: Boss HP → 1</button><button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">💬 DEBUG: Force Taunt Available</button></>)}</>)}
                   {bossHp <= 0 && !phaseTransitioning && (
                     <div className="text-center">
                       {hasFled ? (
