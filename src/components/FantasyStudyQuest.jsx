@@ -1,6 +1,6 @@
-// FANTASY STUDY QUEST - v3.3 SEVEN DAYS EDITION (CALENDAR FIX)
-// PART 1 OF 3 - Copy this first
-// Last updated: 2026-01-14
+// FANTASY STUDY QUEST - v4.0 REBALANCE EDITION
+// Ported to Lovable
+// Last updated: 2026-02-07
 // FIXES: Calendar sync, date display on planner, missing dependencies, poison bug
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -5236,7 +5236,7 @@ setMiniBossCount(0);
         </div>
         
         <div className="text-center pb-4">
-          <p className="text-xs text-gray-600">v3.8.0 - Fourth-Wall Taunt System</p>
+          <p className="text-xs text-gray-600">v4.0 - Rebalance Edition</p>
         </div>
       </div>
       )}
