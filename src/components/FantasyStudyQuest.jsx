@@ -3350,7 +3350,16 @@ setMiniBossCount(0);
       setShowDodgeButton(false);
       setDodgeReady(false);
       setRecklessStacks(0);
+      setEnragedTurns(0);
       setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+      // Reset all dialogue state
+      setEnemyDialogue('');
+      setPlayerTaunt('');
+      setEnemyTauntResponse('');
+      setShowTauntBoxes(false);
+      setIsTauntAvailable(false);
+      setHasTriggeredLowHpTaunt(false);
+      setHasFled(false);
       addLog(`👹 DEBUG: ${bossNameGenerated} - THE UNDYING! (Phase 1 of 3)`);
     }} className="bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm transition-all">Spawn Final Boss</button>
     <button onClick={() => { 
