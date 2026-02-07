@@ -1,10 +1,11 @@
 // Web Audio API Sound Effects for Fantasy Study Quest
 // Synthesized sounds - no external APIs needed
 
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 
 const useGameSFX = () => {
   const audioCtxRef = useRef(null);
+  const musicNodesRef = useRef(null); // Holds all active battle music nodes
 
   const getCtx = useCallback(() => {
     if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
@@ -561,6 +562,184 @@ const useGameSFX = () => {
     } catch (e) { /* silent fail */ }
   }, [getCtx]);
 
+  // ─── BATTLE MUSIC (looping synthesized ambience) ───
+  const stopBattleMusic = useCallback(() => {
+    if (!musicNodesRef.current) return;
+    const { nodes, ctx } = musicNodesRef.current;
+    const now = ctx.currentTime;
+    // Fade out over 0.5s
+    nodes.forEach(({ gain }) => {
+      try {
+        gain.gain.setValueAtTime(gain.gain.value, now);
+        gain.gain.linearRampToValueAtTime(0, now + 0.5);
+      } catch (e) { /* silent */ }
+    });
+    // Stop all oscillators after fade
+    setTimeout(() => {
+      nodes.forEach(({ sources }) => {
+        sources.forEach(s => { try { s.stop(); } catch (e) { /* already stopped */ } });
+      });
+      musicNodesRef.current = null;
+    }, 600);
+  }, []);
+
+  const startBattleMusic = useCallback((intensity = 1) => {
+    // Stop any existing music first
+    if (musicNodesRef.current) stopBattleMusic();
+
+    // Small delay so stop can finish
+    setTimeout(() => {
+      try {
+        const ctx = getCtx();
+        const now = ctx.currentTime;
+        const allNodes = [];
+
+        // Master gain for overall volume control
+        const masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0, now);
+        masterGain.gain.linearRampToValueAtTime(0.18, now + 1.5); // Fade in
+        masterGain.connect(ctx.destination);
+
+        // ── Layer 1: Deep sub-bass drone ──
+        const subOsc = ctx.createOscillator();
+        const subGain = ctx.createGain();
+        subOsc.type = 'sine';
+        // Pitch shifts with intensity: 1=regular, 2=elite, 3+=gauntlet phases
+        const basePitch = intensity <= 1 ? 40 : intensity === 2 ? 35 : 30;
+        subOsc.frequency.setValueAtTime(basePitch, now);
+        // Subtle pitch wobble
+        const subLfo = ctx.createOscillator();
+        const subLfoGain = ctx.createGain();
+        subLfo.type = 'sine';
+        subLfo.frequency.value = 0.15;
+        subLfoGain.gain.value = 3;
+        subLfo.connect(subLfoGain);
+        subLfoGain.connect(subOsc.frequency);
+        subGain.gain.value = 0.6;
+        subOsc.connect(subGain);
+        subGain.connect(masterGain);
+        subLfo.start(now);
+        subOsc.start(now);
+        allNodes.push({ gain: subGain, sources: [subOsc, subLfo] });
+
+        // ── Layer 2: Mid-range menacing drone ──
+        const midOsc = ctx.createOscillator();
+        const midGain = ctx.createGain();
+        const midFilter = ctx.createBiquadFilter();
+        midOsc.type = 'sawtooth';
+        const midPitch = intensity <= 1 ? 55 : intensity === 2 ? 65 : 75;
+        midOsc.frequency.setValueAtTime(midPitch, now);
+        midFilter.type = 'lowpass';
+        midFilter.frequency.setValueAtTime(200 + intensity * 80, now);
+        midFilter.Q.value = 2;
+        // Slow filter sweep for movement
+        const filterLfo = ctx.createOscillator();
+        const filterLfoGain = ctx.createGain();
+        filterLfo.type = 'sine';
+        filterLfo.frequency.value = 0.08 + intensity * 0.02;
+        filterLfoGain.gain.value = 100 + intensity * 40;
+        filterLfo.connect(filterLfoGain);
+        filterLfoGain.connect(midFilter.frequency);
+        midGain.gain.value = 0.15 + intensity * 0.03;
+        midOsc.connect(midFilter);
+        midFilter.connect(midGain);
+        midGain.connect(masterGain);
+        filterLfo.start(now);
+        midOsc.start(now);
+        allNodes.push({ gain: midGain, sources: [midOsc, filterLfo] });
+
+        // ── Layer 3: Rhythmic pulse (heartbeat) ──
+        const pulseInterval = intensity <= 1 ? 1.2 : intensity === 2 ? 0.9 : 0.7;
+        const pulseOsc = ctx.createOscillator();
+        const pulseGain = ctx.createGain();
+        const pulseLfo = ctx.createOscillator();
+        const pulseLfoGain = ctx.createGain();
+        pulseOsc.type = 'sine';
+        pulseOsc.frequency.value = 50 + intensity * 5;
+        pulseLfo.type = 'square'; // Creates on/off pulse
+        pulseLfo.frequency.value = 1 / pulseInterval;
+        pulseLfoGain.gain.value = 0.2 + intensity * 0.02;
+        pulseLfo.connect(pulseLfoGain);
+        pulseLfoGain.connect(pulseGain.gain);
+        pulseGain.gain.value = 0;
+        pulseOsc.connect(pulseGain);
+        pulseGain.connect(masterGain);
+        pulseLfo.start(now);
+        pulseOsc.start(now);
+        allNodes.push({ gain: pulseGain, sources: [pulseOsc, pulseLfo] });
+
+        // ── Layer 4: High tension shimmer (intensity 2+) ──
+        if (intensity >= 2) {
+          const shimmerOsc = ctx.createOscillator();
+          const shimmerGain = ctx.createGain();
+          const shimmerFilter = ctx.createBiquadFilter();
+          shimmerOsc.type = 'triangle';
+          shimmerOsc.frequency.value = intensity >= 3 ? 220 : 180;
+          shimmerFilter.type = 'bandpass';
+          shimmerFilter.frequency.value = 400;
+          shimmerFilter.Q.value = 8;
+          // Tremolo
+          const tremolo = ctx.createOscillator();
+          const tremGain = ctx.createGain();
+          tremolo.type = 'sine';
+          tremolo.frequency.value = intensity >= 3 ? 6 : 4;
+          tremGain.gain.value = 0.06;
+          tremolo.connect(tremGain);
+          tremGain.connect(shimmerGain.gain);
+          shimmerGain.gain.value = 0;
+          shimmerOsc.connect(shimmerFilter);
+          shimmerFilter.connect(shimmerGain);
+          shimmerGain.connect(masterGain);
+          tremolo.start(now);
+          shimmerOsc.start(now);
+          allNodes.push({ gain: shimmerGain, sources: [shimmerOsc, tremolo] });
+        }
+
+        // ── Layer 5: Chaos noise bed (intensity 3+ / Gauntlet) ──
+        if (intensity >= 3) {
+          const noiseSource = ctx.createBufferSource();
+          noiseSource.buffer = createNoise(ctx, 10);
+          noiseSource.loop = true;
+          const noiseGain = ctx.createGain();
+          const noiseFilter = ctx.createBiquadFilter();
+          noiseFilter.type = 'bandpass';
+          noiseFilter.frequency.value = 300;
+          noiseFilter.Q.value = 1;
+          // Slow sweep
+          const noiseLfo = ctx.createOscillator();
+          const noiseLfoGain = ctx.createGain();
+          noiseLfo.type = 'sine';
+          noiseLfo.frequency.value = 0.05;
+          noiseLfoGain.gain.value = 200;
+          noiseLfo.connect(noiseLfoGain);
+          noiseLfoGain.connect(noiseFilter.frequency);
+          noiseGain.gain.value = 0.04;
+          noiseSource.connect(noiseFilter);
+          noiseFilter.connect(noiseGain);
+          noiseGain.connect(masterGain);
+          noiseLfo.start(now);
+          noiseSource.start(now);
+          allNodes.push({ gain: noiseGain, sources: [noiseSource, noiseLfo] });
+        }
+
+        musicNodesRef.current = { nodes: allNodes, ctx, masterGain };
+      } catch (e) { /* silent fail */ }
+    }, musicNodesRef.current ? 650 : 0);
+  }, [getCtx, createNoise, stopBattleMusic]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (musicNodesRef.current) {
+        const { nodes } = musicNodesRef.current;
+        nodes.forEach(({ sources }) => {
+          sources.forEach(s => { try { s.stop(); } catch (e) { /* */ } });
+        });
+        musicNodesRef.current = null;
+      }
+    };
+  }, []);
+
   return {
     playHit,
     playCritical,
@@ -577,6 +756,8 @@ const useGameSFX = () => {
     playAoeWarning,
     playLifeDrain,
     playClick,
+    startBattleMusic,
+    stopBattleMusic,
   };
 };
 
