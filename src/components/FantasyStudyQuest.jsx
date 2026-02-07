@@ -344,6 +344,7 @@ const HERO_TITLES = ['Novice', 'Seeker', 'Wanderer', 'Survivor', 'Warrior', 'Cha
 const FantasyStudyQuest = () => {
   const sfx = useGameSFX();
   const [activeTab, setActiveTab] = useState('quest');
+  const [plannerView, setPlannerView] = useState('weekly');
   const [currentDay, setCurrentDay] = useState(1);
   const [hasStarted, setHasStarted] = useState(false);
   const [hero, setHero] = useState(null);
@@ -3296,27 +3297,47 @@ setMiniBossCount(0);
             </div>
           </header>
 
-          <nav className="flex gap-2 mb-6 justify-center flex-wrap">
-            {[
-              {id:'quest', icon:Sword, label:'Quests'},
-              {id:'planner', icon:Calendar, label:'Weekly Planner'},
-              {id:'calendar', icon:Calendar, label:'Calendar'},
-              {id:'study', icon:Calendar, label:'Study'},
-              {id:'legacy', icon:Skull, label:'Legacy'},
-              {id:'progress', icon:Trophy, label:'Progress'},
-            ].map(t => (
-              <button 
-                key={t.id} 
-                onClick={() => { sfx.playClick(); setActiveTab(t.id); }} 
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                  activeTab === t.id 
-                    ? 'bg-yellow-500 text-black shadow-lg shadow-yellow-500/50' 
-                    : 'bg-black bg-opacity-50 text-yellow-300 hover:bg-opacity-70'
-                }`}
-              >
-                <t.icon size={18}/>{t.label}
-              </button>
-            ))}
+          <nav className="mb-6">
+            {/* Decorative top border */}
+            <div className="flex items-center gap-3 mb-3 px-4">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/40 to-transparent"></div>
+              <span className="text-yellow-600/60 text-xs font-fantasy tracking-[0.3em] uppercase">Navigation</span>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/40 to-transparent"></div>
+            </div>
+            
+            <div className="flex gap-1.5 justify-center flex-wrap px-2">
+              {[
+                {id:'quest', icon:Sword, label:'Quests'},
+                {id:'planner', icon:Calendar, label:'Planner'},
+                {id:'study', icon:Calendar, label:'Forge'},
+                {id:'legacy', icon:Skull, label:'Legacy'},
+                {id:'progress', icon:Trophy, label:'Progress'},
+              ].map(t => (
+                <button 
+                  key={t.id} 
+                  onClick={() => { sfx.playClick(); setActiveTab(t.id); }} 
+                  className={`group relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-lg transition-all duration-300 font-fantasy text-sm tracking-wide ${
+                    activeTab === t.id 
+                      ? 'bg-gradient-to-b from-yellow-500/20 to-yellow-700/10 text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.15)] border border-yellow-500/40' 
+                      : 'bg-black/40 text-yellow-200/50 hover:text-yellow-200/80 hover:bg-black/60 border border-transparent hover:border-yellow-900/30'
+                  }`}
+                >
+                  {/* Active glow indicator */}
+                  {activeTab === t.id && (
+                    <div className="absolute -top-px left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+                  )}
+                  <t.icon size={18} className={`transition-all duration-300 ${activeTab === t.id ? 'drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]' : 'opacity-60 group-hover:opacity-80'}`}/>
+                  <span className={`transition-all duration-300 ${activeTab === t.id ? 'text-yellow-300' : ''}`}>{t.label}</span>
+                </button>
+              ))}
+            </div>
+            
+            {/* Decorative bottom border */}
+            <div className="flex items-center gap-3 mt-3 px-4">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
+              <div className="w-1.5 h-1.5 rotate-45 bg-yellow-600/30"></div>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
+            </div>
           </nav>
 
           {showDebug && (
@@ -3607,11 +3628,38 @@ setMiniBossCount(0);
             </div>
           )}
 
-          {activeTab === 'planner' && (
+           {activeTab === 'planner' && (
             <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-blue-900">
-              <h2 className="text-2xl font-bold text-blue-400 mb-2 text-center">WEEKLY PLANNER</h2>
-              <p className="text-gray-400 text-sm mb-6 italic text-center">"Chart your path through the coming trials..."</p>
+              <h2 className="text-2xl font-bold text-blue-400 mb-2 text-center font-fantasy-decorative tracking-wider">BATTLE PLANNER</h2>
+              <p className="text-gray-400 text-sm mb-4 italic text-center">"Chart your path through the coming trials..."</p>
               
+              {/* Sub-toggle: Weekly / Calendar */}
+              <div className="flex justify-center mb-6">
+                <div className="inline-flex bg-black/60 rounded-lg border border-blue-900/50 p-1 gap-1">
+                  <button 
+                    onClick={() => setPlannerView('weekly')}
+                    className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
+                      plannerView === 'weekly' 
+                        ? 'bg-blue-600/30 text-blue-300 border border-blue-500/40 shadow-[0_0_10px_rgba(59,130,246,0.15)]' 
+                        : 'text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    Weekly Plan
+                  </button>
+                  <button 
+                    onClick={() => setPlannerView('calendar')}
+                    className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
+                      plannerView === 'calendar' 
+                        ? 'bg-green-600/30 text-green-300 border border-green-500/40 shadow-[0_0_10px_rgba(34,197,94,0.15)]' 
+                        : 'text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    Calendar
+                  </button>
+                </div>
+              </div>
+
+              {plannerView === 'weekly' && (
               <div className="grid gap-4">
                 {Object.keys(weeklyPlan).map(day => (
                   <div key={day} className="bg-gray-800 rounded-lg p-4 border-2 border-gray-700">
@@ -3717,14 +3765,10 @@ setMiniBossCount(0);
                   </div>
                 ))}
               </div>
-            </div>
-          )}
+              )}
 
-          {activeTab === 'calendar' && (
-            <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-green-900">
-              <h2 className="text-2xl font-bold text-green-400 mb-2 text-center">MONTHLY CALENDAR</h2>
-              <p className="text-gray-400 text-sm mb-6 italic text-center">"Mark your victories and defeats across the passage of time..."</p>
-              
+              {plannerView === 'calendar' && (
+              <>
               <div className="flex justify-between items-center mb-6">
                 <button onClick={() => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } else { setCurrentMonth(currentMonth - 1); } }} className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded transition-all">← Previous</button>
                 <h3 className="text-2xl font-bold text-green-300">{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}</h3>
@@ -3770,6 +3814,8 @@ setMiniBossCount(0);
                 <div className="flex items-center gap-2"><div className="w-4 h-4 bg-green-700 border-2 border-green-500 rounded"></div><span className="text-gray-300">All Tasks Complete</span></div>
                 <div className="flex items-center gap-2"><div className="w-4 h-4 bg-gray-700 rounded"></div><span className="text-gray-300">No Tasks</span></div>
               </div>
+              </>
+              )}
             </div>
           )}
 
