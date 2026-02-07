@@ -5319,6 +5319,12 @@ setMiniBossCount(0);
                           const nextPhase = gauntletPhase + 1;
                           setGauntletPhase(nextPhase);
                           
+                          // Calculate and set boss HP for the new phase
+                          const phaseHpPercents = { 2: 0.60, 3: 0.80 };
+                          const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
+                          setBossHp(nextPhaseHp);
+                          setBossMax(nextPhaseHp);
+                          
                           // Set phase flags
                           setInPhase1(nextPhase === 1);
                           setInPhase2(nextPhase === 2);
