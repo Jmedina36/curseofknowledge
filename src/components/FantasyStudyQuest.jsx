@@ -571,7 +571,7 @@ const getNextDayOfWeek = useCallback((dayName) => {
   const todayIndex = today.getDay();
   
   let daysUntil = targetDayIndex - todayIndex;
-  if (daysUntil <= 0) daysUntil += 7;
+  if (daysUntil < 0) daysUntil += 7;
   
   const targetDate = new Date(today);
   targetDate.setDate(today.getDate() + daysUntil);
