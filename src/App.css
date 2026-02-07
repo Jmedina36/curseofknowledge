@@ -40,3 +40,45 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Gauntlet Phase Themes */
+.gauntlet-phase-1 {
+  background: linear-gradient(to bottom, #7f1d1d, #000000) !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.4), 0 0 60px rgba(220, 38, 38, 0.15) !important;
+}
+
+.gauntlet-phase-2 {
+  background: linear-gradient(to bottom, #78350f, #1c0a00, #000000) !important;
+  border-color: #f97316 !important;
+  box-shadow: 0 0 40px rgba(249, 115, 22, 0.5), 0 0 80px rgba(234, 88, 12, 0.25), inset 0 0 60px rgba(249, 115, 22, 0.08) !important;
+  animation: phase2-flicker 3s ease-in-out infinite alternate;
+}
+
+@keyframes phase2-flicker {
+  0% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.5), 0 0 80px rgba(234, 88, 12, 0.25), inset 0 0 60px rgba(249, 115, 22, 0.08); }
+  50% { box-shadow: 0 0 50px rgba(249, 115, 22, 0.6), 0 0 100px rgba(234, 88, 12, 0.35), inset 0 0 80px rgba(249, 115, 22, 0.12); }
+  100% { box-shadow: 0 0 40px rgba(249, 115, 22, 0.5), 0 0 80px rgba(234, 88, 12, 0.25), inset 0 0 60px rgba(249, 115, 22, 0.08); }
+}
+
+.gauntlet-phase-2 .phase-overlay {
+  background: radial-gradient(ellipse at bottom, rgba(249, 115, 22, 0.06) 0%, transparent 70%);
+}
+
+.gauntlet-phase-3 {
+  background: linear-gradient(to bottom, #3b0764, #1a0033, #000000) !important;
+  border-color: #a855f7 !important;
+  box-shadow: 0 0 50px rgba(168, 85, 247, 0.5), 0 0 100px rgba(126, 34, 206, 0.3), 0 0 150px rgba(88, 28, 135, 0.15), inset 0 0 80px rgba(168, 85, 247, 0.06) !important;
+  animation: phase3-void 4s ease-in-out infinite alternate;
+}
+
+@keyframes phase3-void {
+  0% { box-shadow: 0 0 50px rgba(168, 85, 247, 0.5), 0 0 100px rgba(126, 34, 206, 0.3), 0 0 150px rgba(88, 28, 135, 0.15), inset 0 0 80px rgba(168, 85, 247, 0.06); border-color: #a855f7; }
+  33% { box-shadow: 0 0 60px rgba(168, 85, 247, 0.6), 0 0 120px rgba(126, 34, 206, 0.4), 0 0 180px rgba(88, 28, 135, 0.2), inset 0 0 100px rgba(168, 85, 247, 0.1); border-color: #c084fc; }
+  66% { box-shadow: 0 0 45px rgba(139, 92, 246, 0.5), 0 0 90px rgba(109, 40, 217, 0.3), 0 0 140px rgba(76, 29, 149, 0.15), inset 0 0 70px rgba(139, 92, 246, 0.06); border-color: #9333ea; }
+  100% { box-shadow: 0 0 55px rgba(168, 85, 247, 0.55), 0 0 110px rgba(126, 34, 206, 0.35), 0 0 160px rgba(88, 28, 135, 0.18), inset 0 0 90px rgba(168, 85, 247, 0.08); border-color: #a855f7; }
+}
+
+.gauntlet-phase-3 .phase-overlay {
+  background: radial-gradient(ellipse at center, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+}

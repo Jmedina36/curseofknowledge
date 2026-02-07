@@ -5166,10 +5166,11 @@ setMiniBossCount(0);
 )}
 
           {showBoss && (
-            <div className="fixed inset-0 bg-black bg-opacity-90 flex items-start justify-center p-4 z-50 overflow-y-auto">
-              <div className={`bg-gradient-to-b from-red-900 to-black rounded-xl p-8 max-w-2xl w-full border-4 border-red-600 shadow-2xl shadow-red-900/50 boss-enter my-8 ${bossFlash ? 'damage-flash-boss' : ''}`}>
+             <div className={`fixed inset-0 ${isFinalBoss && gauntletPhase === 3 ? 'bg-purple-950 bg-opacity-95' : isFinalBoss && gauntletPhase === 2 ? 'bg-orange-950 bg-opacity-95' : 'bg-black bg-opacity-90'} flex items-start justify-center p-4 z-50 overflow-y-auto transition-colors duration-1000`}>
+              <div className={`rounded-xl p-8 max-w-2xl w-full border-4 boss-enter my-8 ${bossFlash ? 'damage-flash-boss' : ''} ${isFinalBoss ? (gauntletPhase === 3 ? 'gauntlet-phase-3' : gauntletPhase === 2 ? 'gauntlet-phase-2' : 'gauntlet-phase-1') : 'bg-gradient-to-b from-red-900 to-black border-red-600 shadow-2xl shadow-red-900/50'}`}>
+                <div className="phase-overlay rounded-xl">
                {bossName && (<h2 className="text-5xl text-center text-yellow-400 mb-2 font-bold" style={{fontFamily: 'Cinzel, serif'}}>{isFinalBoss ? (gauntletPhase === 1 ? bossName : gauntletPhase === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`) : bossName}{bossDebuffs.poisonTurns > 0 && (<span className="ml-3 text-lg text-green-400 animate-pulse">☠️ POISONED ({bossDebuffs.poisonTurns})</span>)}{bossDebuffs.marked && (<span className="ml-3 text-lg text-cyan-400 animate-pulse">🎯 MARKED</span>)}{bossDebuffs.stunned && (<span className="ml-3 text-lg text-purple-400 animate-pulse">✨ STUNNED</span>)}</h2>)}
-               <p className="text-xl font-bold text-center text-red-400 mb-1">
+               <p className={`text-xl font-bold text-center mb-1 ${isFinalBoss ? (gauntletPhase === 3 ? 'text-purple-400' : gauntletPhase === 2 ? 'text-orange-400' : 'text-red-400') : 'text-red-400'}`}>
   {isFinalBoss ? 'THE GAUNTLET' : 
    battleType === 'elite' ? 'TORMENTED CHAMPION' : 
    battleType === 'wave' ? `WAVE ASSAULT - Enemy ${currentWaveEnemy}/${totalWaveEnemies}` : 
