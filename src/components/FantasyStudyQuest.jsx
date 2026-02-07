@@ -721,6 +721,19 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
     }
  }, [hero, currentDay, hp, stamina, xp, essence, level, healthPots, staminaPots, cleansePots, weapon, armor, tasks, graveyard, heroes, hasStarted, skipCount, consecutiveDays, lastPlayedDate, curseLevel, eliteBossDefeatedToday, lastRealDay, studyStats, weeklyPlan, calendarTasks, flashcardDecks, gauntletMilestone, gauntletUnlocked, isDayActive]);
   
+  // Battle music - auto-manage based on battleMode and phase
+  useEffect(() => {
+    if (battleMode) {
+      // Determine intensity: 1=regular/wave, 2=elite, 3+=gauntlet phases
+      let intensity = 1;
+      if (battleType === 'elite') intensity = 2;
+      if (battleType === 'final') intensity = 1 + gauntletPhase; // 2, 3, 4
+      sfx.startBattleMusic(intensity);
+    } else {
+      sfx.stopBattleMusic();
+    }
+  }, [battleMode, battleType, gauntletPhase]);
+
   // Check if XP crosses Gauntlet milestone
   useEffect(() => {
     if (xp >= gauntletMilestone && !gauntletUnlocked) {
