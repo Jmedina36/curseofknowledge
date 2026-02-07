@@ -6,6 +6,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calendar, Hammer } from 'lucide-react';
 import useGameSFX from '../hooks/useGameSFX';
+import DebugPanel from './DebugPanel';
 
 const GAME_CONSTANTS = {
   LATE_START_PENALTY: 15,
@@ -3318,172 +3319,110 @@ setMiniBossCount(0);
           </nav>
 
           {showDebug && (
-            <div className="bg-purple-950 bg-opacity-50 border-2 border-purple-600 rounded-xl p-4 mb-6">
-              <h3 className="text-lg font-bold text-purple-300 mb-3 text-center">Debug / Testing Panel</h3>
-              
-              <div className="mb-3">
-                <h4 className="text-sm font-semibold text-purple-200 mb-2">⚡ Stats & Resources</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                  <button onClick={() => { setHp(30); addLog('Debug: HP set to 30'); }} className="bg-orange-700 hover:bg-orange-600 px-3 py-2 rounded text-sm transition-all">Set HP to 30</button>
-                  <button onClick={() => { setHp(getMaxHp()); addLog('Debug: Full heal'); }} className="bg-green-700 hover:bg-green-600 px-3 py-2 rounded text-sm transition-all">Full Heal</button>
-                  <button onClick={() => { setXp(x => x + 50); addLog('Debug: +50 XP'); }} className="bg-yellow-700 hover:bg-yellow-600 px-3 py-2 rounded text-sm transition-all">+50 XP</button>
-                  <button onClick={() => { setXp(x => x + 100); addLog('Debug: +100 XP (craft cost)'); }} className="bg-yellow-800 hover:bg-yellow-700 px-3 py-2 rounded text-sm transition-all">+100 XP</button>
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <h4 className="text-sm font-semibold text-purple-200 mb-2">🎒 Items & Equipment</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <button onClick={() => { setHealthPots(h => h + 3); setStaminaPots(s => s + 3); addLog('Debug: +3 of each potion'); }} className="bg-green-700 hover:bg-green-600 px-3 py-2 rounded text-sm transition-all">+3 Potions</button>
-                  <button onClick={() => { setCleansePots(c => c + 1); addLog('Debug: +1 Cleanse Potion'); }} className="bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm transition-all">+1 Cleanse Potion</button>
-                  <button onClick={() => { setWeapon(w => w + 10); setArmor(a => a + 10); addLog('Debug: +10 weapon/armor'); }} className="bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm transition-all">+10 Weapon/Armor</button>
-                </div>
-              </div>
-
-              <div className="mb-3">
-  <h4 className="text-sm font-semibold text-purple-200 mb-2">⚔️ Combat & Progression</h4>
-  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-    <button onClick={() => spawnRegularEnemy(false, 0, 1)} className="bg-orange-700 hover:bg-orange-600 px-3 py-2 rounded text-sm transition-all">Spawn Regular Enemy</button>
-    <button onClick={() => {
-      const numEnemies = Math.floor(Math.random() * 3) + 2;
-      setWaveCount(numEnemies);
-      addLog(`⚠️ DEBUG WAVE: ${numEnemies} enemies`);
-      spawnRegularEnemy(true, 1, numEnemies);
-    }} className="bg-red-700 hover:bg-red-600 px-3 py-2 rounded text-sm transition-all">Spawn Wave (2-4)</button>
-    <button onClick={() => { 
-      setBattleType('elite'); 
-      spawnRandomMiniBoss(true); 
-    }} className="bg-red-700 hover:bg-red-600 px-3 py-2 rounded text-sm transition-all">Spawn Elite Boss</button>
-    <button onClick={() => {
-      setBattleType('final');
-      const bossHealth = 300;
-      const bossNameGenerated = makeBossName();
-      setBossName(bossNameGenerated);
-      setBossHp(bossHealth);
-      setBossMax(bossHealth);
-      setGauntletBaseHp(bossHealth);
-      setShowBoss(true);
-      setBattling(true);
-      setBattleMode(true);
-      sfx.playBattleStart('gauntlet');
-      setIsFinalBoss(true);
-      setCanFlee(false);
-      setVictoryLoot([]);
-      // Reset gauntlet state to phase 1
-      setGauntletPhase(1);
-      setInPhase1(true);
-      setInPhase2(false);
-      setInPhase3(false);
-      setPhaseTransitioning(false);
-      setPhase1TurnCounter(0);
-      setPhase2TurnCounter(0);
-      setPhase2DamageStacks(0);
-      setPhase3TurnCounter(0);
-      setLifeDrainCounter(0);
-      setHasSpawnedPreviewAdd(false);
-      setHasTriggeredPhase1Enrage(false);
-      setTargetingAdds(false);
-      setShadowAdds([]);
-      setAoeWarning(false);
-      setShowDodgeButton(false);
-      setDodgeReady(false);
-      setRecklessStacks(0);
-      setEnragedTurns(0);
-      setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
-      // Reset all dialogue state
-      setEnemyDialogue('');
-      setPlayerTaunt('');
-      setEnemyTauntResponse('');
-      setShowTauntBoxes(false);
-      setIsTauntAvailable(false);
-      setHasTriggeredLowHpTaunt(false);
-      setHasFled(false);
-      addLog(`👹 DEBUG: ${bossNameGenerated} - THE UNDYING! (Phase 1 of 3)`);
-    }} className="bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm transition-all">Spawn Final Boss</button>
-    <button onClick={() => { 
-      const currentIndex = classes.findIndex(c => c.name === hero.class.name); 
-      const nextIndex = (currentIndex + 1) % classes.length; 
-      setHero(prev => ({ ...prev, class: classes[nextIndex] })); 
-      addLog(`Debug: Changed to ${classes[nextIndex].name}`); 
-    }} className="bg-blue-700 hover:bg-blue-600 px-3 py-2 rounded text-sm transition-all">Change Class</button>
-    <button onClick={() => { 
-      setSkipCount(s => Math.min(3, s + 1)); 
-      addLog('Debug: +1 skip count'); 
-    }} className="bg-red-900 hover:bg-red-800 px-3 py-2 rounded text-sm transition-all">+1 Skip Count</button>
-  </div>
-</div>
-
-              <div className="mb-3">
-  <h4 className="text-sm font-semibold text-purple-200 mb-2">🌙 Curse Level</h4>
-  <div className="grid grid-cols-4 gap-2">
-    <button onClick={() => { setCurseLevel(0); addLog('Debug: Curse cleared'); }} className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-sm transition-all">Clear</button>
-    <button onClick={() => { setCurseLevel(1); addLog('Debug: Cursed (Lvl 1)'); }} className="bg-purple-800 hover:bg-purple-700 px-3 py-2 rounded text-sm transition-all">Lvl 1</button>
-    <button onClick={() => { setCurseLevel(2); addLog('Debug: Deep Curse (Lvl 2)'); }} className="bg-purple-900 hover:bg-purple-800 px-3 py-2 rounded text-sm transition-all">Lvl 2</button>
-    <button onClick={() => { setCurseLevel(3); addLog('Debug: CONDEMNED (Lvl 3)'); }} className="bg-red-900 hover:bg-red-800 px-3 py-2 rounded text-sm transition-all">Lvl 3</button>
-  </div>
-</div>
-
-              <div>
-  <h4 className="text-sm font-semibold text-purple-200 mb-2">🗑️ Data Management</h4>
-  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-    <button onClick={() => { setLog([]); addLog('Debug: Chronicle cleared'); }} className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-sm transition-all">Clear Chronicle</button>
-    <button onClick={() => { setGraveyard([]); setHeroes([]); addLog('Debug: Legacy tab cleared'); }} className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded text-sm transition-all">Clear Legacy</button>
-    <button onClick={() => { if (window.confirm('Clear ALL achievements & history?')) { setGraveyard([]); setHeroes([]); setStudyStats({ totalMinutesToday: 0, totalMinutesWeek: 0, sessionsToday: 0, longestStreak: 0, currentStreak: 0, tasksCompletedToday: 0, deepWorkSessions: 0, earlyBirdDays: 0, perfectDays: 0, weeklyHistory: [] }); addLog('Debug: Achievements cleared'); } }} className="bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm transition-all">Clear Achievements</button>
-    <button onClick={() => { if (window.confirm('Clear all calendar tasks?')) { setCalendarTasks({}); addLog('Debug: Calendar cleared'); } }} className="bg-green-700 hover:bg-green-600 px-3 py-2 rounded text-sm transition-all">Clear Calendar</button>
-    <button onClick={() => { if (window.confirm('Clear weekly planner?')) { setWeeklyPlan({ Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: [] }); addLog('Debug: Planner cleared'); } }} className="bg-blue-700 hover:bg-blue-600 px-3 py-2 rounded text-sm transition-all">Clear Planner</button>
-    <button onClick={() => { localStorage.removeItem('fantasyStudyQuest'); alert('LocalStorage cleared! Refresh the page to start fresh.'); }} className="bg-orange-700 hover:bg-orange-600 px-3 py-2 rounded text-sm transition-all">Clear LocalStorage</button>
-  </div>
-  
-  <button 
-    onClick={() => { 
-      if (window.confirm('⚠️ FULL RESET - Delete EVERYTHING and start completely fresh? This cannot be undone!')) {
-        const newHero = makeName();
-        setHero(newHero);
-        setCanCustomize(true);
-        setCurrentDay(1);
-        setHasStarted(false);
-        setHp(GAME_CONSTANTS.MAX_HP);
-        setStamina(GAME_CONSTANTS.MAX_STAMINA);
-        setXp(0);
-        setLevel(1);
-        setHealthPots(0);
-        setStaminaPots(0);
-        setCleansePots(0);
-        setWeapon(0);
-        setArmor(0);
-        setTasks([]);
-        setActiveTask(null);
-        setTimer(0);
-        setRunning(false);
-        setShowPomodoro(false);
-        setPomodoroTask(null);
-        setWeeklyPlan({ Monday: [], Tuesday: [], Wednesday: [], Thursday: [], Friday: [], Saturday: [], Sunday: [] });
-        setCalendarTasks({});
-        setShowBoss(false);
-        setBattling(false);
-        setLog([]);
-        setGraveyard([]);
-        setHeroes([]);
-        setSkipCount(0);
-        setConsecutiveDays(0);
-        setLastPlayedDate(null);
-        setMiniBossCount(0);
-        setStudyStats({ totalMinutesToday: 0, totalMinutesWeek: 0, sessionsToday: 0, longestStreak: 0, currentStreak: 0, tasksCompletedToday: 0, deepWorkSessions: 0, earlyBirdDays: 0, perfectDays: 0, weeklyHistory: [] });
-        localStorage.removeItem('fantasyStudyQuest');
-        addLog('🔄 FULL RESET - Everything cleared!');
-        setActiveTab('quest');
-      }
-    }}
-    className="w-full mt-3 bg-red-900 hover:bg-red-800 px-4 py-3 rounded text-sm font-bold transition-all border-2 border-red-500 animate-pulse"
-  >
-    🔄 FULL RESET - Delete Everything
-  </button>
-</div>
-
-              <p className="text-xs text-gray-400 mt-3 italic">
-  Current: {hero.class.name} • Day {currentDay} • HP: {hp} • SP: {stamina} • Level: {level} • XP: {xp} • Skips: {skipCount} • Curse Lvl: {curseLevel} • Cleanse: {cleansePots}
-</p>
-            </div>
+            <DebugPanel
+              hero={hero}
+              currentDay={currentDay}
+              hp={hp}
+              stamina={stamina}
+              xp={xp}
+              essence={essence}
+              level={level}
+              skipCount={skipCount}
+              curseLevel={curseLevel}
+              cleansePots={cleansePots}
+              healthPots={healthPots}
+              staminaPots={staminaPots}
+              weapon={weapon}
+              armor={armor}
+              gauntletUnlocked={gauntletUnlocked}
+              gauntletMilestone={gauntletMilestone}
+              consecutiveDays={consecutiveDays}
+              miniBossCount={miniBossCount}
+              battleType={battleType}
+              classes={classes}
+              setHp={setHp}
+              setStamina={setStamina}
+              setXp={setXp}
+              setEssence={setEssence}
+              setLevel={setLevel}
+              setHealthPots={setHealthPots}
+              setStaminaPots={setStaminaPots}
+              setCleansePots={setCleansePots}
+              setWeapon={setWeapon}
+              setArmor={setArmor}
+              setSkipCount={setSkipCount}
+              setCurseLevel={setCurseLevel}
+              setConsecutiveDays={setConsecutiveDays}
+              setGauntletUnlocked={setGauntletUnlocked}
+              setGauntletMilestone={setGauntletMilestone}
+              setHero={setHero}
+              setLog={setLog}
+              setGraveyard={setGraveyard}
+              setHeroes={setHeroes}
+              setStudyStats={setStudyStats}
+              setCalendarTasks={setCalendarTasks}
+              setWeeklyPlan={setWeeklyPlan}
+              setCurrentDay={setCurrentDay}
+              setHasStarted={setHasStarted}
+              setCanCustomize={setCanCustomize}
+              setTasks={setTasks}
+              setActiveTask={setActiveTask}
+              setTimer={setTimer}
+              setRunning={setRunning}
+              setShowPomodoro={setShowPomodoro}
+              setPomodoroTask={setPomodoroTask}
+              setShowBoss={setShowBoss}
+              setBattling={setBattling}
+              setLastPlayedDate={setLastPlayedDate}
+              setMiniBossCount={setMiniBossCount}
+              setActiveTab={setActiveTab}
+              setWaveCount={setWaveCount}
+              setBattleType={setBattleType}
+              getMaxHp={getMaxHp}
+              getMaxStamina={getMaxStamina}
+              addLog={addLog}
+              spawnRegularEnemy={spawnRegularEnemy}
+              spawnRandomMiniBoss={spawnRandomMiniBoss}
+              makeName={makeName}
+              sfx={sfx}
+              makeBossName={makeBossName}
+              setBossName={setBossName}
+              setBossHp={setBossHp}
+              setBossMax={setBossMax}
+              setGauntletBaseHp={setGauntletBaseHp}
+              setBattleMode={setBattleMode}
+              setIsFinalBoss={setIsFinalBoss}
+              setCanFlee={setCanFlee}
+              setVictoryLoot={setVictoryLoot}
+              setGauntletPhase={setGauntletPhase}
+              setInPhase1={setInPhase1}
+              setInPhase2={setInPhase2}
+              setInPhase3={setInPhase3}
+              setPhaseTransitioning={setPhaseTransitioning}
+              setPhase1TurnCounter={setPhase1TurnCounter}
+              setPhase2TurnCounter={setPhase2TurnCounter}
+              setPhase2DamageStacks={setPhase2DamageStacks}
+              setPhase3TurnCounter={setPhase3TurnCounter}
+              setLifeDrainCounter={setLifeDrainCounter}
+              setHasSpawnedPreviewAdd={setHasSpawnedPreviewAdd}
+              setHasTriggeredPhase1Enrage={setHasTriggeredPhase1Enrage}
+              setTargetingAdds={setTargetingAdds}
+              setShadowAdds={setShadowAdds}
+              setAoeWarning={setAoeWarning}
+              setShowDodgeButton={setShowDodgeButton}
+              setDodgeReady={setDodgeReady}
+              setRecklessStacks={setRecklessStacks}
+              setEnragedTurns={setEnragedTurns}
+              setBossDebuffs={setBossDebuffs}
+              setEnemyDialogue={setEnemyDialogue}
+              setPlayerTaunt={setPlayerTaunt}
+              setEnemyTauntResponse={setEnemyTauntResponse}
+              setShowTauntBoxes={setShowTauntBoxes}
+              setIsTauntAvailable={setIsTauntAvailable}
+              setHasTriggeredLowHpTaunt={setHasTriggeredLowHpTaunt}
+              setHasFled={setHasFled}
+              GAME_CONSTANTS={GAME_CONSTANTS}
+            />
           )}
 
 
@@ -5334,7 +5273,7 @@ setMiniBossCount(0);
                   )}
                   
                   {/* Battle Actions */}
-                  {battling && bossHp > 0 && hp > 0 && (<><div className="flex gap-4 flex-wrap"><button onClick={attack} className="flex-1 bg-red-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-red-600/50 hover:scale-105 active:scale-95">ATTACK</button>{isTauntAvailable && (<button onClick={taunt} className="flex-1 bg-orange-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"><div>TAUNT</div><div className="text-sm">(Enrage Enemy)</div></button>)}{hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (<button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-cyan-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-cyan-700 transition-all shadow-lg hover:shadow-cyan-600/50 hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:scale-100"><div>{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name.toUpperCase()}</div><div className="text-sm">({GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`})</div></button>)}{healthPots > 0 && (<button onClick={useHealth} className="bg-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-700 transition-all hover:scale-105 active:scale-95">HEAL</button>)}{canFlee && (<button onClick={flee} disabled={stamina < 25} className="bg-yellow-600 px-6 py-4 rounded-lg font-bold hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">FLEE</button>)}</div>{showDodgeButton && (<button onClick={dodge} className="w-full bg-blue-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-cyan-400 mt-3"><div>🛡️ DODGE</div><div className="text-sm">(Avoid AOE)</div></button>)}{showDodgeButton && (<p className="text-xs text-cyan-400 text-center italic mt-2">🛡️ Dodge the AOE or attack for +50% damage (risky!)</p>)}{canFlee && (<p className="text-xs text-gray-400 text-center italic">💨 Fleeing costs 25 Stamina but lets you escape</p>)}{showDebug && (<><button onClick={() => { setBossHp(1); addLog('🛠️ DEBUG: Boss HP set to 1 - one more hit!'); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">🛠️ DEBUG: Boss HP → 1</button><button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">💬 DEBUG: Force Taunt Available</button></>)}</>)}
+                  {battling && bossHp > 0 && hp > 0 && (<><div className="flex gap-4 flex-wrap"><button onClick={attack} className="flex-1 bg-red-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-red-700 transition-all shadow-lg hover:shadow-red-600/50 hover:scale-105 active:scale-95">ATTACK</button>{isTauntAvailable && (<button onClick={taunt} className="flex-1 bg-orange-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-orange-700 transition-all shadow-lg hover:shadow-orange-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"><div>TAUNT</div><div className="text-sm">(Enrage Enemy)</div></button>)}{hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (<button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-cyan-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-cyan-700 transition-all shadow-lg hover:shadow-cyan-600/50 hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:scale-100"><div>{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name.toUpperCase()}</div><div className="text-sm">({GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`})</div></button>)}{healthPots > 0 && (<button onClick={useHealth} className="bg-green-600 px-6 py-4 rounded-lg font-bold hover:bg-green-700 transition-all hover:scale-105 active:scale-95">HEAL</button>)}{canFlee && (<button onClick={flee} disabled={stamina < 25} className="bg-yellow-600 px-6 py-4 rounded-lg font-bold hover:bg-yellow-700 transition-all hover:scale-105 active:scale-95 disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">FLEE</button>)}</div>{showDodgeButton && (<button onClick={dodge} className="w-full bg-blue-600 px-6 py-4 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-blue-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-cyan-400 mt-3"><div>DODGE</div><div className="text-sm">(Avoid AOE)</div></button>)}{showDodgeButton && (<p className="text-xs text-cyan-400 text-center italic mt-2">Dodge the AOE or attack for +50% damage (risky!)</p>)}{canFlee && (<p className="text-xs text-gray-400 text-center italic">Fleeing costs 25 Stamina but lets you escape</p>)}{showDebug && (<><button onClick={() => { setBossHp(1); addLog('DEBUG: Boss HP set to 1 - one more hit!'); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">DEBUG: Boss HP → 1</button><button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">DEBUG: Force Taunt Available</button></>)}</>)}
                   {bossHp <= 0 && !phaseTransitioning && (
                     <div className="text-center">
                       {hasFled ? (
