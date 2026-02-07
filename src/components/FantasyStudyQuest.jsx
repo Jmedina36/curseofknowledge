@@ -7,6 +7,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calendar, Hammer } from 'lucide-react';
 import useGameSFX from '../hooks/useGameSFX';
 import DebugPanel from './DebugPanel';
+import AchievementsPanel from './AchievementsPanel';
 
 const GAME_CONSTANTS = {
   LATE_START_PENALTY: 15,
@@ -3971,59 +3972,53 @@ setMiniBossCount(0);
                 </div>
               </div>
               
-              {/* Achievements */}
-              <div className="bg-gradient-to-r from-purple-900 to-pink-900 rounded-xl p-6 border-2 border-purple-600">
-                <h3 className="text-xl font-bold text-purple-300 mb-4 text-center">Trials Conquered</h3>
-                <div className="space-y-3">
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${heroes.length > 0 ? 'bg-yellow-900 bg-opacity-50' : 'bg-gray-800 opacity-50'}`}>
-                    <div className="flex-1">
-                      <p className="font-bold text-white">Curse Breaker</p>
-                      <p className="text-xs text-gray-400">Complete a full 7-day cycle</p>
-                    </div>
-                    <span className="text-lg font-bold text-yellow-400">{heroes.length > 0 ? '✓' : '—'}</span>
+              {/* Study Stats */}
+              <div className="mb-6 bg-gradient-to-r from-cyan-950/80 to-blue-950/80 rounded-xl p-6 border-2 border-cyan-700/50">
+                <h3 className="text-xl font-bold text-cyan-300 mb-4 text-center">Study Stats</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
+                    <p className="text-sm text-gray-400">Sessions Today</p>
+                    <p className="text-3xl font-bold text-cyan-400">{studyStats.sessionsToday}</p>
+                    <p className="text-xs text-gray-500">tasks started</p>
                   </div>
-                  
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${heroes.some(h => h.skipCount === 0) ? 'bg-green-900 bg-opacity-50' : 'bg-gray-800 opacity-50'}`}>
-                    <div className="flex-1">
-                      <p className="font-bold text-white">Flawless Victory</p>
-                      <p className="text-xs text-gray-400">Complete a cycle with zero skips</p>
-                    </div>
-                    <span className="text-lg font-bold text-green-400">{heroes.some(h => h.skipCount === 0) ? '✓' : '—'}</span>
+                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
+                    <p className="text-sm text-gray-400">Deep Work</p>
+                    <p className="text-3xl font-bold text-blue-400">{studyStats.deepWorkSessions}</p>
+                    <p className="text-xs text-gray-500">25+ min sessions</p>
                   </div>
-                  
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${level >= 10 ? 'bg-purple-900 bg-opacity-50' : 'bg-gray-800 opacity-50'}`}>
-                    <div className="flex-1">
-                      <p className="font-bold text-white">Veteran Warrior</p>
-                      <p className="text-xs text-gray-400">Reach level 10</p>
-                    </div>
-                    <span className="text-lg font-bold text-purple-400">{level >= 10 ? '✓' : `${level}/10`}</span>
+                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
+                    <p className="text-sm text-gray-400">Early Bird Days</p>
+                    <p className="text-3xl font-bold text-yellow-400">{studyStats.earlyBirdDays}</p>
+                    <p className="text-xs text-gray-500">started early</p>
                   </div>
-                  
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${essence >= 500 ? 'bg-cyan-900 bg-opacity-50' : 'bg-gray-800 opacity-50'}`}>
-                    <div className="flex-1">
-                      <p className="font-bold text-white">Soul Collector</p>
-                      <p className="text-xs text-gray-400">Accumulate 500 essence</p>
-                    </div>
-                    <span className="text-lg font-bold text-cyan-400">{essence >= 500 ? '✓' : `${essence}/500`}</span>
-                  </div>
-                  
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${heroes.length >= 3 ? 'bg-orange-900 bg-opacity-50' : 'bg-gray-800 opacity-50'}`}>
-                    <div className="flex-1">
-                      <p className="font-bold text-white">Legend Born</p>
-                      <p className="text-xs text-gray-400">Liberate 3 heroes from the curse</p>
-                    </div>
-                    <span className="text-lg font-bold text-orange-400">{heroes.length >= 3 ? '✓' : `${heroes.length}/3`}</span>
-                  </div>
-                  
-                  <div className={`flex items-center gap-3 p-3 rounded-lg ${consecutiveDays >= 7 ? 'bg-red-900 bg-opacity-50' : 'bg-gray-800 opacity-50'}`}>
-                    <div className="flex-1">
-                      <p className="font-bold text-white">Unbroken Spirit</p>
-                      <p className="text-xs text-gray-400">7-day streak without skipping</p>
-                    </div>
-                    <span className="text-lg font-bold text-red-400">{consecutiveDays >= 7 ? '✓' : `${consecutiveDays}/7`}</span>
+                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
+                    <p className="text-sm text-gray-400">Perfect Days</p>
+                    <p className="text-3xl font-bold text-green-400">{studyStats.perfectDays}</p>
+                    <p className="text-xs text-gray-500">all tasks done</p>
                   </div>
                 </div>
+                {studyStats.longestStreak > 0 && (
+                  <div className="mt-3 text-center">
+                    <span className="text-xs text-gray-400">Longest Streak: </span>
+                    <span className="text-sm font-bold text-orange-400">{studyStats.longestStreak} days</span>
+                  </div>
+                )}
               </div>
+
+              {/* Achievements */}
+              <AchievementsPanel
+                heroes={heroes}
+                graveyard={graveyard}
+                level={level}
+                xp={xp}
+                essence={essence}
+                consecutiveDays={consecutiveDays}
+                studyStats={studyStats}
+                miniBossCount={miniBossCount}
+                weapon={weapon}
+                armor={armor}
+                gauntletUnlocked={gauntletUnlocked}
+              />
             </div>
           )}
 
