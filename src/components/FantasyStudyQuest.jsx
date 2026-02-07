@@ -1584,6 +1584,112 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     addLog(`💀 Defeat this foe 3 times. Each form grows stronger.`);
   };
   
+  // Unified Gauntlet phase transition handler (wave-style)
+  // Called from all victory paths (normal attack, poison, special attack)
+  const handleGauntletPhaseDefeat = () => {
+    const nextPhase = gauntletPhase + 1;
+    const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
+    const phaseHpPercents = { 2: 0.60, 3: 0.80 };
+    const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
+    
+    // Per-phase XP reward (smaller than full victory)
+    const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
+    const phaseEssence = 30;
+    setXp(x => x + phaseXp);
+    setEssence(e => e + phaseEssence);
+    addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+    
+    // Show transition screen — do NOT set bossHp yet (button handler does that)
+    setPhaseTransitioning(true);
+    setBattling(false);
+    
+    // Set phase transition dialogue
+    const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
+    setEnemyDialogue(nextPhase === 2 ? bossDialogue.PHASE2 : bossDialogue.PHASE3);
+    
+    // Store transition info for display
+    setVictoryLoot([
+      `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
+      `🔮 +${phaseEssence} Essence`,
+      `✨ +${phaseXp} XP`,
+      `❤️ Full HP Restored`,
+      `⚡ Stamina Restored`,
+      `⚠️ Boss HP: ${nextPhaseHp}`,
+    ]);
+    
+    setVictoryFlash(true);
+    setTimeout(() => setVictoryFlash(false), 400);
+  };
+  
+  // Start a new gauntlet phase cleanly (called by NEXT PHASE button)
+  const beginNextGauntletPhase = () => {
+    const nextPhase = gauntletPhase + 1;
+    const phaseHpPercents = { 2: 0.60, 3: 0.80 };
+    const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
+    
+    // Set phase number
+    setGauntletPhase(nextPhase);
+    
+    // Set boss HP fresh
+    setBossHp(nextPhaseHp);
+    setBossMax(nextPhaseHp);
+    
+    // Set phase flags
+    setInPhase1(false);
+    setInPhase2(nextPhase === 2);
+    setInPhase3(nextPhase === 3);
+    
+    // Reset all phase-specific mechanics
+    setPhase1TurnCounter(0);
+    setPhase2TurnCounter(0);
+    setPhase2DamageStacks(0);
+    setPhase3TurnCounter(0);
+    setLifeDrainCounter(0);
+    setHasSpawnedPreviewAdd(false);
+    setHasTriggeredPhase1Enrage(false);
+    setTargetingAdds(false);
+    setShadowAdds([]);
+    setAoeWarning(false);
+    setShowDodgeButton(false);
+    setDodgeReady(false);
+    setEnragedTurns(0);
+    setRecklessStacks(0);
+    
+    // Reset debuffs
+    setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+    
+    // Reset taunt state
+    setIsTauntAvailable(false);
+    setHasTriggeredLowHpTaunt(false);
+    setPlayerTaunt('');
+    setEnemyTauntResponse('');
+    setShowTauntBoxes(false);
+    
+    // Full heal + stamina reset (potions stay)
+    setHp(getMaxHp());
+    setStamina(getMaxStamina());
+    
+    // Resume battle
+    setPhaseTransitioning(false);
+    setBattling(true);
+    
+    // Set phase dialogue
+    const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
+    if (nextPhase === 2) {
+      setEnemyDialogue(bossDialogue.PHASE2);
+      addLog(`⚔️ PHASE 2: THE PRESSURE BEGINS!`);
+      addLog(`💀 Boss damage ramps each turn!`);
+    } else {
+      setEnemyDialogue(bossDialogue.PHASE3);
+      addLog(`💀 PHASE 3: ABYSS AWAKENING!`);
+      addLog(`🌑 Shadow adds spawn! Life drain active!`);
+    }
+    addLog(`❤️ HP restored! ⚡ Stamina restored!`);
+    
+    setCurrentAnimation('screen-shake');
+    setTimeout(() => setCurrentAnimation(null), 500);
+  };
+  
   const taunt = () => {
     if (!battling || !isTauntAvailable) return;
     
@@ -1791,50 +1897,9 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   
   setRecklessStacks(0);
   
-  // GAUNTLET PHASE TRANSITION - if not on final phase, transition instead of victory
+  // GAUNTLET PHASE TRANSITION - wave-style: delegate to unified handler
   if (isFinalBoss && gauntletPhase < 3) {
-    const nextPhase = gauntletPhase + 1;
-    const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
-    const phaseHpPercents = { 2: 0.60, 3: 0.80 };
-    const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
-    
-    // Per-phase XP reward (smaller than full victory)
-    const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
-    const phaseEssence = 30;
-    setXp(x => x + phaseXp);
-    setEssence(e => e + phaseEssence);
-    addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
-    
-    // Show transition screen
-    setPhaseTransitioning(true);
-    setBattling(false);
-    
-    // Set phase transition dialogue
-    const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
-    if (nextPhase === 2) {
-      setEnemyDialogue(bossDialogue.PHASE2);
-    } else {
-      setEnemyDialogue(bossDialogue.PHASE3);
-    }
-    
-    // Store next phase info for the transition button handler
-    setVictoryLoot([
-      `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
-      `🔮 +${phaseEssence} Essence`,
-      `✨ +${phaseXp} XP`,
-      `❤️ Full HP Restored`,
-      `⚡ Stamina Restored`,
-      `⚠️ Boss HP: ${nextPhaseHp}`,
-    ]);
-    
-    setVictoryFlash(true);
-    setTimeout(() => setVictoryFlash(false), 400);
-    
-    // The actual transition happens when player clicks the "NEXT PHASE" button
-    // Store the transition data we need
-    setBossMax(nextPhaseHp);
-    setBossHp(nextPhaseHp);
-    
+    handleGauntletPhaseDefeat();
     return;
   }
   
@@ -2118,44 +2183,9 @@ if (enragedTurns > 0) {
               addLog(`💀 Boss succumbed to poison!`);
               
               setTimeout(() => {
-                // GAUNTLET PHASE TRANSITION - poison kill
+                // GAUNTLET PHASE TRANSITION - poison kill: delegate to unified handler
                 if (isFinalBoss && gauntletPhase < 3) {
-                  const nextPhase = gauntletPhase + 1;
-                  const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
-                  const phaseHpPercents = { 2: 0.60, 3: 0.80 };
-                  const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
-                  
-                  const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
-                  const phaseEssence = 30;
-                  setXp(x => x + phaseXp);
-                  setEssence(e => e + phaseEssence);
-                  addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
-                  
-                  setPhaseTransitioning(true);
-                  setBattling(false);
-                  
-                  const bossDialogueData = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
-                  setEnemyDialogue(nextPhase === 2 ? bossDialogueData.PHASE2 : bossDialogueData.PHASE3);
-                  
-                  setVictoryLoot([
-                    `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
-                    `🔮 +${phaseEssence} Essence`,
-                    `✨ +${phaseXp} XP`,
-                    `❤️ Full HP Restored`,
-                    `⚡ Stamina Restored`,
-                    `⚠️ Boss HP: ${nextPhaseHp}`,
-                  ]);
-                  
-                  setVictoryFlash(true);
-                  setTimeout(() => setVictoryFlash(false), 400);
-                  
-                  setBossMax(nextPhaseHp);
-                  // Note: setBossHp is handled by the functional update returning newHp below
-                  // We need to set it separately since we're inside setBossHp callback
-                  setTimeout(() => {
-                    setBossHp(nextPhaseHp);
-                  }, 0);
-                  
+                  handleGauntletPhaseDefeat();
                   return;
                 }
                 
@@ -2446,40 +2476,9 @@ if (enragedTurns > 0) {
       
       setRecklessStacks(0);
       
-      // GAUNTLET PHASE TRANSITION - if not on final phase, transition instead of victory
+      // GAUNTLET PHASE TRANSITION - special attack kill: delegate to unified handler
       if (isFinalBoss && gauntletPhase < 3) {
-        const nextPhase = gauntletPhase + 1;
-        const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
-        const phaseHpPercents = { 2: 0.60, 3: 0.80 };
-        const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
-        
-        const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
-        const phaseEssence = 30;
-        setXp(x => x + phaseXp);
-        setEssence(e => e + phaseEssence);
-        addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
-        
-        setPhaseTransitioning(true);
-        setBattling(false);
-        
-        const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
-        setEnemyDialogue(nextPhase === 2 ? bossDialogue.PHASE2 : bossDialogue.PHASE3);
-        
-        setVictoryLoot([
-          `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
-          `🔮 +${phaseEssence} Essence`,
-          `✨ +${phaseXp} XP`,
-          `❤️ Full HP Restored`,
-          `⚡ Stamina Restored`,
-          `⚠️ Boss HP: ${nextPhaseHp}`,
-        ]);
-        
-        setVictoryFlash(true);
-        setTimeout(() => setVictoryFlash(false), 400);
-        
-        setBossMax(nextPhaseHp);
-        setBossHp(nextPhaseHp);
-        
+        handleGauntletPhaseDefeat();
         return;
       }
       
@@ -3322,13 +3321,34 @@ setMiniBossCount(0);
       setBossName(bossNameGenerated);
       setBossHp(bossHealth);
       setBossMax(bossHealth);
+      setGauntletBaseHp(bossHealth);
       setShowBoss(true);
       setBattling(true);
       setBattleMode(true);
       setIsFinalBoss(true);
       setCanFlee(false);
-      setVictoryLoot([]); // Clear previous loot
-      addLog(`👹 DEBUG: ${bossNameGenerated} - THE UNDYING!`);
+      setVictoryLoot([]);
+      // Reset gauntlet state to phase 1
+      setGauntletPhase(1);
+      setInPhase1(true);
+      setInPhase2(false);
+      setInPhase3(false);
+      setPhaseTransitioning(false);
+      setPhase1TurnCounter(0);
+      setPhase2TurnCounter(0);
+      setPhase2DamageStacks(0);
+      setPhase3TurnCounter(0);
+      setLifeDrainCounter(0);
+      setHasSpawnedPreviewAdd(false);
+      setHasTriggeredPhase1Enrage(false);
+      setTargetingAdds(false);
+      setShadowAdds([]);
+      setAoeWarning(false);
+      setShowDodgeButton(false);
+      setDodgeReady(false);
+      setRecklessStacks(0);
+      setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+      addLog(`👹 DEBUG: ${bossNameGenerated} - THE UNDYING! (Phase 1 of 3)`);
     }} className="bg-purple-700 hover:bg-purple-600 px-3 py-2 rounded text-sm transition-all">Spawn Final Boss</button>
     <button onClick={() => { 
       const currentIndex = classes.findIndex(c => c.name === hero.class.name); 
@@ -5315,71 +5335,7 @@ setMiniBossCount(0);
                         </div>
                       </div>
                       <button 
-                        onClick={() => {
-                          const nextPhase = gauntletPhase + 1;
-                          setGauntletPhase(nextPhase);
-                          
-                          // Calculate and set boss HP for the new phase
-                          const phaseHpPercents = { 2: 0.60, 3: 0.80 };
-                          const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
-                          setBossHp(nextPhaseHp);
-                          setBossMax(nextPhaseHp);
-                          
-                          // Set phase flags
-                          setInPhase1(nextPhase === 1);
-                          setInPhase2(nextPhase === 2);
-                          setInPhase3(nextPhase === 3);
-                          
-                          // Reset phase-specific mechanics
-                          setPhase1TurnCounter(0);
-                          setPhase2TurnCounter(0);
-                          setPhase2DamageStacks(0);
-                          setPhase3TurnCounter(0);
-                          setLifeDrainCounter(0);
-                          setHasSpawnedPreviewAdd(false);
-                          setHasTriggeredPhase1Enrage(false);
-                          setTargetingAdds(false);
-                          setShadowAdds([]);
-                          setAoeWarning(false);
-                          setShowDodgeButton(false);
-                          setDodgeReady(false);
-                          setEnragedTurns(0);
-                          setRecklessStacks(0);
-                          
-                          // Reset debuffs
-                          setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
-                          
-                          // Reset taunt state
-                          setIsTauntAvailable(false);
-                          setHasTriggeredLowHpTaunt(false);
-                          setPlayerTaunt('');
-                          setEnemyTauntResponse('');
-                          setShowTauntBoxes(false);
-                          
-                          // Full heal + stamina reset (potions stay)
-                          setHp(getMaxHp());
-                          setStamina(getMaxStamina());
-                          
-                          // Resume battle
-                          setPhaseTransitioning(false);
-                          setBattling(true);
-                          
-                          // Set phase dialogue
-                          const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
-                          if (nextPhase === 2) {
-                            setEnemyDialogue(bossDialogue.PHASE2);
-                            addLog(`⚔️ PHASE 2: THE PRESSURE BEGINS!`);
-                            addLog(`💀 Boss damage ramps each turn!`);
-                          } else {
-                            setEnemyDialogue(bossDialogue.PHASE3);
-                            addLog(`💀 PHASE 3: ABYSS AWAKENING!`);
-                            addLog(`🌑 Shadow adds spawn! Life drain active!`);
-                          }
-                          addLog(`❤️ HP restored! ⚡ Stamina restored!`);
-                          
-                          setCurrentAnimation('screen-shake');
-                          setTimeout(() => setCurrentAnimation(null), 500);
-                        }}
+                        onClick={beginNextGauntletPhase}
                         className="bg-red-600 text-white px-10 py-4 rounded-lg font-bold text-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"
                         style={{fontFamily: 'Cinzel, serif'}}
                       >
