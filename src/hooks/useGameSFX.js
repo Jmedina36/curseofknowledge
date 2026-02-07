@@ -356,77 +356,137 @@ const useGameSFX = () => {
     } catch (e) { /* silent fail */ }
   }, [getCtx]);
 
-  // ─── BATTLE START (war drums + horn swell) ───
-  const playBattleStart = useCallback(() => {
+  // ─── BATTLE START (war drums + horn swell, varies by type) ───
+  // type: 'regular' | 'elite' | 'gauntlet'
+  const playBattleStart = useCallback((type = 'regular') => {
     try {
       const ctx = getCtx();
       const now = ctx.currentTime;
 
-      // War drum hits — three rapid thuds with increasing intensity
-      [0, 0.18, 0.33].forEach((delay, i) => {
+      const isElite = type === 'elite';
+      const isGauntlet = type === 'gauntlet';
+
+      // --- Drum config per type ---
+      const drumBaseFreq = isGauntlet ? 60 : isElite ? 70 : 90;
+      const drumCount = isGauntlet ? 5 : isElite ? 4 : 3;
+      const drumSpacing = isGauntlet ? 0.14 : isElite ? 0.16 : 0.18;
+      const drumVolume = isGauntlet ? 0.45 : isElite ? 0.4 : 0.3;
+      const drumDecay = isGauntlet ? 0.35 : isElite ? 0.3 : 0.25;
+
+      // War drum hits
+      Array.from({ length: drumCount }).forEach((_, i) => {
+        const delay = i * drumSpacing;
         const drum = ctx.createOscillator();
         const drumGain = ctx.createGain();
         drum.type = 'sine';
-        const startFreq = 90 - i * 10;
+        const startFreq = drumBaseFreq - i * (isGauntlet ? 6 : isElite ? 8 : 10);
         drum.frequency.setValueAtTime(startFreq, now + delay);
-        drum.frequency.exponentialRampToValueAtTime(30, now + delay + 0.2);
-        drumGain.gain.setValueAtTime(0.3 + i * 0.1, now + delay);
-        drumGain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.25);
+        drum.frequency.exponentialRampToValueAtTime(20, now + delay + drumDecay);
+        drumGain.gain.setValueAtTime(drumVolume + i * 0.05, now + delay);
+        drumGain.gain.exponentialRampToValueAtTime(0.01, now + delay + drumDecay);
         drum.connect(drumGain);
         drumGain.connect(ctx.destination);
         drum.start(now + delay);
-        drum.stop(now + delay + 0.25);
+        drum.stop(now + delay + drumDecay);
 
         // Drum skin noise layer
         const skin = ctx.createBufferSource();
-        skin.buffer = createNoise(ctx, 0.08);
+        skin.buffer = createNoise(ctx, 0.1);
         const skinGain = ctx.createGain();
         const skinFilter = ctx.createBiquadFilter();
         skinFilter.type = 'bandpass';
-        skinFilter.frequency.value = 400 + i * 200;
-        skinFilter.Q.value = 3;
-        skinGain.gain.setValueAtTime(0.15 + i * 0.05, now + delay);
-        skinGain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.08);
+        skinFilter.frequency.value = (isElite ? 250 : 400) + i * (isGauntlet ? 100 : 200);
+        skinFilter.Q.value = isElite ? 2 : 3;
+        skinGain.gain.setValueAtTime(0.15 + i * 0.04, now + delay);
+        skinGain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
         skin.connect(skinFilter);
         skinFilter.connect(skinGain);
         skinGain.connect(ctx.destination);
         skin.start(now + delay);
-        skin.stop(now + delay + 0.08);
+        skin.stop(now + delay + 0.1);
       });
 
-      // Horn swell — rising brass-like tone after drums
+      const drumsEnd = drumCount * drumSpacing;
+
+      // --- Horn config per type ---
+      const hornStart = drumsEnd + 0.12;
+      const hornBaseFreq = isGauntlet ? 85 : isElite ? 100 : 130;
+      const hornPeakFreq = isGauntlet ? 260 : isElite ? 200 : 220;
+      const hornVolume = isGauntlet ? 0.28 : isElite ? 0.22 : 0.18;
+      const hornDuration = isGauntlet ? 1.2 : isElite ? 1.0 : 0.85;
+
+      // Primary horn
       const horn = ctx.createOscillator();
       const hornGain = ctx.createGain();
       horn.type = 'sawtooth';
-      horn.frequency.setValueAtTime(130, now + 0.45);
-      horn.frequency.linearRampToValueAtTime(175, now + 0.75);
-      horn.frequency.linearRampToValueAtTime(220, now + 1.1);
-      hornGain.gain.setValueAtTime(0.0, now + 0.45);
-      hornGain.gain.linearRampToValueAtTime(0.18, now + 0.65);
-      hornGain.gain.setValueAtTime(0.18, now + 0.9);
-      hornGain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
+      horn.frequency.setValueAtTime(hornBaseFreq, now + hornStart);
+      horn.frequency.linearRampToValueAtTime(hornBaseFreq * 1.3, now + hornStart + hornDuration * 0.4);
+      horn.frequency.linearRampToValueAtTime(hornPeakFreq, now + hornStart + hornDuration * 0.85);
+      hornGain.gain.setValueAtTime(0.0, now + hornStart);
+      hornGain.gain.linearRampToValueAtTime(hornVolume, now + hornStart + hornDuration * 0.25);
+      hornGain.gain.setValueAtTime(hornVolume, now + hornStart + hornDuration * 0.65);
+      hornGain.gain.exponentialRampToValueAtTime(0.01, now + hornStart + hornDuration);
       const hornFilter = ctx.createBiquadFilter();
       hornFilter.type = 'lowpass';
-      hornFilter.frequency.setValueAtTime(400, now + 0.45);
-      hornFilter.frequency.linearRampToValueAtTime(1200, now + 1.0);
+      hornFilter.frequency.setValueAtTime(isElite ? 350 : 400, now + hornStart);
+      hornFilter.frequency.linearRampToValueAtTime(isGauntlet ? 1800 : 1200, now + hornStart + hornDuration * 0.8);
       horn.connect(hornFilter);
       hornFilter.connect(hornGain);
       hornGain.connect(ctx.destination);
-      horn.start(now + 0.45);
-      horn.stop(now + 1.3);
+      horn.start(now + hornStart);
+      horn.stop(now + hornStart + hornDuration);
 
-      // Sub-bass undertone for weight
+      // Gauntlet: second harmony horn a 5th above for epic feel
+      if (isGauntlet) {
+        const horn2 = ctx.createOscillator();
+        const horn2Gain = ctx.createGain();
+        horn2.type = 'sawtooth';
+        horn2.frequency.setValueAtTime(hornBaseFreq * 1.5, now + hornStart + 0.15);
+        horn2.frequency.linearRampToValueAtTime(hornPeakFreq * 1.5, now + hornStart + hornDuration * 0.85);
+        horn2Gain.gain.setValueAtTime(0.0, now + hornStart + 0.15);
+        horn2Gain.gain.linearRampToValueAtTime(0.14, now + hornStart + hornDuration * 0.35);
+        horn2Gain.gain.exponentialRampToValueAtTime(0.01, now + hornStart + hornDuration);
+        const horn2Filter = ctx.createBiquadFilter();
+        horn2Filter.type = 'lowpass';
+        horn2Filter.frequency.value = 1400;
+        horn2.connect(horn2Filter);
+        horn2Filter.connect(horn2Gain);
+        horn2Gain.connect(ctx.destination);
+        horn2.start(now + hornStart + 0.15);
+        horn2.stop(now + hornStart + hornDuration);
+      }
+
+      // Sub-bass undertone
+      const totalDuration = hornStart + hornDuration;
       const sub = ctx.createOscillator();
       const subGain = ctx.createGain();
       sub.type = 'sine';
-      sub.frequency.setValueAtTime(45, now);
-      subGain.gain.setValueAtTime(0.25, now);
-      subGain.gain.linearRampToValueAtTime(0.35, now + 0.5);
-      subGain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
+      sub.frequency.setValueAtTime(isGauntlet ? 30 : isElite ? 35 : 45, now);
+      subGain.gain.setValueAtTime(isGauntlet ? 0.35 : isElite ? 0.3 : 0.25, now);
+      subGain.gain.linearRampToValueAtTime(isGauntlet ? 0.45 : 0.35, now + totalDuration * 0.4);
+      subGain.gain.exponentialRampToValueAtTime(0.01, now + totalDuration);
       sub.connect(subGain);
       subGain.connect(ctx.destination);
       sub.start(now);
-      sub.stop(now + 1.3);
+      sub.stop(now + totalDuration);
+
+      // Gauntlet: ominous rumble noise bed
+      if (isGauntlet) {
+        const rumble = ctx.createBufferSource();
+        rumble.buffer = createNoise(ctx, totalDuration);
+        const rumbleGain = ctx.createGain();
+        const rumbleFilter = ctx.createBiquadFilter();
+        rumbleFilter.type = 'lowpass';
+        rumbleFilter.frequency.value = 150;
+        rumbleGain.gain.setValueAtTime(0.08, now);
+        rumbleGain.gain.linearRampToValueAtTime(0.15, now + totalDuration * 0.5);
+        rumbleGain.gain.exponentialRampToValueAtTime(0.01, now + totalDuration);
+        rumble.connect(rumbleFilter);
+        rumbleFilter.connect(rumbleGain);
+        rumbleGain.connect(ctx.destination);
+        rumble.start(now);
+        rumble.stop(now + totalDuration);
+      }
     } catch (e) { /* silent fail */ }
   }, [getCtx, createNoise]);
 
