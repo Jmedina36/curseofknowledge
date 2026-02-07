@@ -1364,6 +1364,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   setShowBoss(true);
   setBattling(true);
   setBattleMode(true);
+  sfx.playBattleStart();
   setIsFinalBoss(false);
   setCanFlee(true); // Allow fleeing from regular and wave enemies
   setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
@@ -1426,7 +1427,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setShowBoss(true);
     setBattling(true);
     setBattleMode(true);
-    sfx.playBossSpawn();
+    sfx.playBattleStart();
     setIsFinalBoss(false);
     setCanFlee(true);
     setMiniBossCount(bossNumber);
@@ -1558,7 +1559,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setShowBoss(true);
     setBattling(true);
     setBattleMode(true);
-    sfx.playBossSpawn();
+    sfx.playBattleStart();
     setIsFinalBoss(true);
     setCanFlee(false);
     setVictoryLoot([]);
@@ -3364,6 +3365,7 @@ setMiniBossCount(0);
       setShowBoss(true);
       setBattling(true);
       setBattleMode(true);
+      sfx.playBattleStart();
       setIsFinalBoss(true);
       setCanFlee(false);
       setVictoryLoot([]);

@@ -356,6 +356,80 @@ const useGameSFX = () => {
     } catch (e) { /* silent fail */ }
   }, [getCtx]);
 
+  // ─── BATTLE START (war drums + horn swell) ───
+  const playBattleStart = useCallback(() => {
+    try {
+      const ctx = getCtx();
+      const now = ctx.currentTime;
+
+      // War drum hits — three rapid thuds with increasing intensity
+      [0, 0.18, 0.33].forEach((delay, i) => {
+        const drum = ctx.createOscillator();
+        const drumGain = ctx.createGain();
+        drum.type = 'sine';
+        const startFreq = 90 - i * 10;
+        drum.frequency.setValueAtTime(startFreq, now + delay);
+        drum.frequency.exponentialRampToValueAtTime(30, now + delay + 0.2);
+        drumGain.gain.setValueAtTime(0.3 + i * 0.1, now + delay);
+        drumGain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.25);
+        drum.connect(drumGain);
+        drumGain.connect(ctx.destination);
+        drum.start(now + delay);
+        drum.stop(now + delay + 0.25);
+
+        // Drum skin noise layer
+        const skin = ctx.createBufferSource();
+        skin.buffer = createNoise(ctx, 0.08);
+        const skinGain = ctx.createGain();
+        const skinFilter = ctx.createBiquadFilter();
+        skinFilter.type = 'bandpass';
+        skinFilter.frequency.value = 400 + i * 200;
+        skinFilter.Q.value = 3;
+        skinGain.gain.setValueAtTime(0.15 + i * 0.05, now + delay);
+        skinGain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.08);
+        skin.connect(skinFilter);
+        skinFilter.connect(skinGain);
+        skinGain.connect(ctx.destination);
+        skin.start(now + delay);
+        skin.stop(now + delay + 0.08);
+      });
+
+      // Horn swell — rising brass-like tone after drums
+      const horn = ctx.createOscillator();
+      const hornGain = ctx.createGain();
+      horn.type = 'sawtooth';
+      horn.frequency.setValueAtTime(130, now + 0.45);
+      horn.frequency.linearRampToValueAtTime(175, now + 0.75);
+      horn.frequency.linearRampToValueAtTime(220, now + 1.1);
+      hornGain.gain.setValueAtTime(0.0, now + 0.45);
+      hornGain.gain.linearRampToValueAtTime(0.18, now + 0.65);
+      hornGain.gain.setValueAtTime(0.18, now + 0.9);
+      hornGain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
+      const hornFilter = ctx.createBiquadFilter();
+      hornFilter.type = 'lowpass';
+      hornFilter.frequency.setValueAtTime(400, now + 0.45);
+      hornFilter.frequency.linearRampToValueAtTime(1200, now + 1.0);
+      horn.connect(hornFilter);
+      hornFilter.connect(hornGain);
+      hornGain.connect(ctx.destination);
+      horn.start(now + 0.45);
+      horn.stop(now + 1.3);
+
+      // Sub-bass undertone for weight
+      const sub = ctx.createOscillator();
+      const subGain = ctx.createGain();
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(45, now);
+      subGain.gain.setValueAtTime(0.25, now);
+      subGain.gain.linearRampToValueAtTime(0.35, now + 0.5);
+      subGain.gain.exponentialRampToValueAtTime(0.01, now + 1.3);
+      sub.connect(subGain);
+      subGain.connect(ctx.destination);
+      sub.start(now);
+      sub.stop(now + 1.3);
+    } catch (e) { /* silent fail */ }
+  }, [getCtx, createNoise]);
+
   // ─── BOSS SPAWN ───
   const playBossSpawn = useCallback(() => {
     try {
@@ -756,6 +830,7 @@ const useGameSFX = () => {
     playAoeWarning,
     playLifeDrain,
     playClick,
+    playBattleStart,
     startBattleMusic,
     stopBattleMusic,
   };
