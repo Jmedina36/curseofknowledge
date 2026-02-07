@@ -1597,7 +1597,8 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     const phaseEssence = 30;
     setXp(x => x + phaseXp);
     setEssence(e => e + phaseEssence);
-    addLog(`⚔️ Phase ${gauntletPhase} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+    const phaseTitles = { 1: bossName, 2: `${bossName}, The Accursed`, 3: `${bossName}, Devourer of Souls` };
+    addLog(`⚔️ ${phaseTitles[gauntletPhase]} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
     
     // Show transition screen — do NOT set bossHp yet (button handler does that)
     setPhaseTransitioning(true);
@@ -1677,12 +1678,12 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
     if (nextPhase === 2) {
       setEnemyDialogue(bossDialogue.PHASE2);
-      addLog(`⚔️ PHASE 2: THE PRESSURE BEGINS!`);
-      addLog(`💀 Boss damage ramps each turn!`);
+      addLog(`⚔️ ${bossName}, THE ACCURSED awakens!`);
+      addLog(`💀 The curse tightens. Boss damage ramps each turn!`);
     } else {
       setEnemyDialogue(bossDialogue.PHASE3);
-      addLog(`💀 PHASE 3: ABYSS AWAKENING!`);
-      addLog(`🌑 Shadow adds spawn! Life drain active!`);
+      addLog(`💀 ${bossName}, DEVOURER OF SOULS emerges!`);
+      addLog(`🌑 Shadows swarm! Life drain active!`);
     }
     addLog(`❤️ HP restored! ⚡ Stamina restored!`);
     
@@ -5165,13 +5166,21 @@ setMiniBossCount(0);
           {showBoss && (
             <div className="fixed inset-0 bg-black bg-opacity-90 flex items-start justify-center p-4 z-50 overflow-y-auto">
               <div className={`bg-gradient-to-b from-red-900 to-black rounded-xl p-8 max-w-2xl w-full border-4 border-red-600 shadow-2xl shadow-red-900/50 boss-enter my-8 ${bossFlash ? 'damage-flash-boss' : ''}`}>
-               {bossName && (<h2 className="text-5xl text-center text-yellow-400 mb-2 font-bold" style={{fontFamily: 'Cinzel, serif'}}>{bossName}{bossDebuffs.poisonTurns > 0 && (<span className="ml-3 text-lg text-green-400 animate-pulse">☠️ POISONED ({bossDebuffs.poisonTurns})</span>)}{bossDebuffs.marked && (<span className="ml-3 text-lg text-cyan-400 animate-pulse">🎯 MARKED</span>)}{bossDebuffs.stunned && (<span className="ml-3 text-lg text-purple-400 animate-pulse">✨ STUNNED</span>)}</h2>)}
-               <p className="text-xl font-bold text-center text-red-400 mb-4">
-  {isFinalBoss ? `PHASE ${gauntletPhase} of 3: ${gauntletPhase === 1 ? 'THE UNDYING LEGEND' : gauntletPhase === 2 ? 'THE PRESSURE' : 'ABYSS AWAKENING'}` : 
+               {bossName && (<h2 className="text-5xl text-center text-yellow-400 mb-2 font-bold" style={{fontFamily: 'Cinzel, serif'}}>{isFinalBoss ? (gauntletPhase === 1 ? bossName : gauntletPhase === 2 ? `${bossName}, The Accursed` : `${bossName}, Devourer of Souls`) : bossName}{bossDebuffs.poisonTurns > 0 && (<span className="ml-3 text-lg text-green-400 animate-pulse">☠️ POISONED ({bossDebuffs.poisonTurns})</span>)}{bossDebuffs.marked && (<span className="ml-3 text-lg text-cyan-400 animate-pulse">🎯 MARKED</span>)}{bossDebuffs.stunned && (<span className="ml-3 text-lg text-purple-400 animate-pulse">✨ STUNNED</span>)}</h2>)}
+               <p className="text-xl font-bold text-center text-red-400 mb-1">
+  {isFinalBoss ? `PHASE ${gauntletPhase} of 3` : 
    battleType === 'elite' ? 'TORMENTED CHAMPION' : 
    battleType === 'wave' ? `WAVE ASSAULT - Enemy ${currentWaveEnemy}/${totalWaveEnemies}` : 
    'ENEMY ENCOUNTER'}
 </p>
+{isFinalBoss && (
+  <p className="text-sm text-center text-gray-400 italic mb-4">
+    {gauntletPhase === 1 ? '"Prove your worth against the cursed guardian..."' :
+     gauntletPhase === 2 ? '"The curse tightens its grip. Each blow hits harder..."' :
+     '"Shadows swarm. The abyss hungers for your soul..."'}
+  </p>
+)}
+{!isFinalBoss && <div className="mb-4" />}
                 
                 <div className="space-y-6">
                   {/* Boss HP Bar */}
@@ -5315,14 +5324,17 @@ setMiniBossCount(0);
                     <div className="text-center">
                       <div className="mb-6">
                         <p className="text-2xl font-bold text-orange-400 mb-2 animate-pulse" style={{fontFamily: 'Cinzel, serif'}}>
-                          💀 PHASE {gauntletPhase} DEFEATED 💀
+                          💀 {gauntletPhase === 1 ? bossName : `${bossName}, The Accursed`} DEFEATED 💀
+                        </p>
+                        <p className="text-sm text-gray-400 italic mb-1">
+                          {gauntletPhase === 1 ? '"The first seal cracks..."' : '"The curse wavers..."'}
                         </p>
                         <p className="text-lg text-red-300 italic mb-4">
                           "{enemyDialogue}"
                         </p>
                         <div className="bg-red-900 bg-opacity-60 rounded-lg p-4 border-2 border-red-500 mb-4">
                           <p className="text-yellow-400 font-bold text-xl mb-3">
-                            ⚠️ PHASE {gauntletPhase + 1}: {gauntletPhase + 1 === 2 ? 'THE PRESSURE' : 'ABYSS AWAKENING'}
+                            ⚠️ {gauntletPhase + 1 === 2 ? `${bossName}, The Accursed` : `${bossName}, Devourer of Souls`} AWAKENS
                           </p>
                           {victoryLoot.map((line, idx) => (
                             <p key={idx} className="text-white text-sm">{line}</p>
@@ -5339,7 +5351,7 @@ setMiniBossCount(0);
                         className="bg-red-600 text-white px-10 py-4 rounded-lg font-bold text-2xl hover:bg-red-700 transition-all shadow-lg shadow-red-600/50 hover:scale-105 active:scale-95 animate-pulse border-2 border-yellow-400"
                         style={{fontFamily: 'Cinzel, serif'}}
                       >
-                        ⚔️ BEGIN PHASE {gauntletPhase + 1} ⚔️
+                        ⚔️ FACE {gauntletPhase + 1 === 2 ? 'THE ACCURSED' : 'THE DEVOURER'} ⚔️
                       </button>
                     </div>
                   )}
