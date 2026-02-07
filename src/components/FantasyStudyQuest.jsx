@@ -1412,7 +1412,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     const baseHp = GAME_CONSTANTS.MINI_BOSS_BASE + dayScaling + levelScaling;
     
     // Diminishing returns cap instead of hard cap - grows but decelerates
-    const cappedBaseHp = Math.min(baseHp, 600 + Math.floor(Math.sqrt(baseHp - 600) * 20));
+    const cappedBaseHp = baseHp <= 600 ? baseHp : 600 + Math.floor(Math.sqrt(baseHp - 600) * 20);
     
     const scaledHp = Math.floor(cappedBaseHp * (1 + bossNumber * 0.2));
     const bossHealth = Math.floor(scaledHp * (2 - completionRate));
