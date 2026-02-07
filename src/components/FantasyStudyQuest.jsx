@@ -3085,10 +3085,10 @@ setMiniBossCount(0);
       <div className="relative z-10 p-6">
         <div className={`max-w-6xl mx-auto rounded-xl transition-all`}>
           <header className="text-center mb-8">
-            <h1 className="text-6xl font-black text-red-400 mb-2 tracking-wider" style={{fontFamily: 'Cinzel, serif', textShadow: '0 0 30px rgba(220, 38, 38, 0.8), 0 0 60px rgba(139, 0, 0, 0.5)', letterSpacing: '0.15em'}}>
+            <h1 className="text-6xl font-black text-red-400 mb-2 tracking-wider font-fantasy-decorative title-reveal" style={{textShadow: '0 0 30px rgba(220, 38, 38, 0.8), 0 0 60px rgba(139, 0, 0, 0.5)', letterSpacing: '0.15em'}}>
               CURSE OF KNOWLEDGE
             </h1>
-            <p className="text-gray-400 text-sm mb-4 italic">"Study or be consumed by the abyss..."</p>
+            <p className="text-gray-400 text-sm mb-4 italic font-fantasy">"Study or be consumed by the abyss..."</p>
             
             <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl p-6 max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{border: getCardStyle(hero.class, currentDay).border}}>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white opacity-15 pointer-events-none" style={{fontSize: '20rem', lineHeight: 1}}>
@@ -3110,8 +3110,8 @@ setMiniBossCount(0);
                     </div>
                   </div>
                   <div className="text-center">
-                    <p className="text-3xl font-bold text-white leading-tight">{hero.name}</p>
-                    <p className="text-lg text-white text-opacity-90">{hero.title} {hero.class.name}</p>
+                    <p className="text-3xl font-bold text-white leading-tight font-fantasy">{hero.name}</p>
+                    <p className="text-lg text-white text-opacity-90 font-fantasy">{hero.title} {hero.class.name}</p>
                   </div>
                 </div>
                 
@@ -3431,21 +3431,63 @@ setMiniBossCount(0);
           {activeTab === 'quest' && (
             <div className="space-y-6">
               {!hasStarted ? (
-                <div className="bg-black bg-opacity-50 rounded-xl p-8 text-center border-2 border-red-900">
-                  <h2 className="text-3xl font-bold text-yellow-400 mb-2">
-                    {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                  </h2>
-                  <p className="text-lg text-gray-300 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
-                  <p className="text-sm text-gray-400 italic mb-4">"Begin your trials for today..."</p>
-                  <p className="mb-4 text-sm text-gray-400">⚠️ Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
-                  <button onClick={() => { sfx.playClick(); start(); }} className="bg-yellow-500 text-black px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-400 transition-all shadow-lg shadow-yellow-500/50">START DAY</button>
+                <div className="start-day-entrance rounded-xl overflow-hidden border-2 border-red-900/50 pulse-border-gold">
+                  {/* Atmospheric background */}
+                  <div className="relative bg-gradient-to-b from-gray-950 via-red-950/30 to-gray-950 p-10 md:p-14">
+                    <div className="absolute inset-0 opacity-5" style={{
+                      backgroundImage: 'radial-gradient(circle at 30% 40%, rgba(220, 38, 38, 0.4) 0%, transparent 60%), radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.3) 0%, transparent 60%)'
+                    }} />
+                    
+                    <div className="relative z-10 text-center">
+                      {/* Class emblem - large, atmospheric */}
+                      <div className="text-8xl md:text-9xl mb-6 opacity-80" style={{ filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.5))' }}>
+                        {hero.class.emblem}
+                      </div>
+                      
+                      {/* Hero name */}
+                      <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 font-fantasy tracking-wide">
+                        {hero.name}
+                      </h2>
+                      <p className="text-sm text-gray-400 mb-6 font-fantasy">
+                        {hero.title} {hero.class.name} — Level {level}
+                      </p>
+                      
+                      {/* Date */}
+                      <div className="subtitle-fade">
+                        <p className="text-xl md:text-2xl font-semibold text-yellow-400/90 mb-1 font-fantasy">
+                          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                        </p>
+                        <p className="text-sm text-gray-500 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
+                      </div>
+                      
+                      {/* Divider */}
+                      <div className="flex items-center justify-center gap-3 my-6">
+                        <div className="h-px w-16 bg-gradient-to-r from-transparent to-red-600/50" />
+                        <span className="text-red-600/60 text-xs font-fantasy tracking-widest uppercase">Begin Your Trials</span>
+                        <div className="h-px w-16 bg-gradient-to-l from-transparent to-red-600/50" />
+                      </div>
+                      
+                      <p className="text-sm text-gray-500 italic mb-6 subtitle-fade font-fantasy">
+                        "The abyss awaits those who hesitate..."
+                      </p>
+                      
+                      <p className="mb-6 text-xs text-gray-500">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
+                      
+                      <button 
+                        onClick={() => { sfx.playClick(); start(); }} 
+                        className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-black px-10 py-4 rounded-lg font-bold text-xl hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 hover:scale-105 active:scale-95 font-fantasy tracking-wider"
+                      >
+                        START DAY
+                      </button>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <>
                   <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-red-900">
                     <div className="text-center mb-4">
-                      <h2 className="text-2xl font-bold text-red-400 mb-1">Trials of the Cursed</h2>
-                      <p className="text-sm text-gray-400">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
+                      <h2 className="text-2xl font-bold text-red-400 mb-1 font-fantasy tracking-wide">Trials of the Cursed</h2>
+                      <p className="text-sm text-gray-400 font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
                     </div>
                     
                     <div className="flex gap-2 justify-center mb-4">
@@ -3857,30 +3899,30 @@ setMiniBossCount(0);
 
           {activeTab === 'progress' && (
             <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-yellow-900">
-              <h2 className="text-2xl font-bold text-yellow-400 mb-2 text-center">CHRONICLES OF THE CURSED</h2>
-              <p className="text-gray-400 text-sm mb-6 italic text-center">"Your struggle against the eternal darkness..."</p>
+              <h2 className="text-2xl font-bold text-yellow-400 mb-2 text-center font-fantasy-decorative tracking-wider">CHRONICLES OF THE CURSED</h2>
+              <p className="text-gray-400 text-sm mb-6 italic text-center font-fantasy">"Your struggle against the eternal darkness..."</p>
               
               {/* Current Cycle Status */}
-              <div className="mb-6 bg-gradient-to-r from-red-900 to-gray-900 rounded-xl p-6 border-2 border-red-600">
-                <h3 className="text-xl font-bold text-red-300 mb-4 text-center">Current Cycle</h3>
+              <div className="mb-6 bg-gradient-to-br from-red-900/80 to-gray-900/80 rounded-xl p-6 border border-red-600/50 stat-card-texture">
+                <h3 className="text-xl font-bold text-red-300 mb-4 text-center font-fantasy tracking-wide">Current Cycle</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Day</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-red-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Day</p>
                     <p className="text-3xl font-bold text-red-400">{currentDay}/7</p>
                     <p className="text-xs text-gray-500">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name}</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Curse Level</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-purple-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Curse Level</p>
                     <p className="text-3xl font-bold text-purple-400">{curseLevel}</p>
                     <p className="text-xs text-gray-500">{curseLevel === 0 ? 'Pure' : curseLevel === 1 ? 'Cursed' : curseLevel === 2 ? 'Deep Curse' : 'Condemned'}</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Skip Count</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Skip Count</p>
                     <p className="text-3xl font-bold text-yellow-400">{skipCount}</p>
                     <p className="text-xs text-gray-500">{skipCount >= 3 ? 'DANGER' : 'of 4 max'}</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Trials Today</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-cyan-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Trials Today</p>
                     <p className="text-3xl font-bold text-cyan-400">{tasks.filter(t => t.done).length}/{tasks.length}</p>
                     <p className="text-xs text-gray-500">{tasks.length > 0 ? `${Math.floor((tasks.filter(t => t.done).length / tasks.length) * 100)}%` : 'None'}</p>
                   </div>
@@ -3888,55 +3930,55 @@ setMiniBossCount(0);
               </div>
               
               {/* Combat Power */}
-              <div className="mb-6 bg-gradient-to-r from-blue-900 to-purple-900 rounded-xl p-6 border-2 border-blue-600">
-                <h3 className="text-xl font-bold text-blue-300 mb-4 text-center">Combat Power</h3>
+              <div className="mb-6 bg-gradient-to-br from-blue-950/80 to-purple-950/80 rounded-xl p-6 border border-blue-600/40 stat-card-runes">
+                <h3 className="text-xl font-bold text-blue-300 mb-4 text-center font-fantasy tracking-wide">Combat Power</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Health</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-red-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Health</p>
                     <p className="text-3xl font-bold text-red-400">{hp}/{getMaxHp()}</p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                      <div className="bg-red-500 h-2 rounded-full" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
+                    <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
+                      <div className="bg-gradient-to-r from-red-600 to-red-400 h-2 rounded-full transition-all duration-500" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
                     </div>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Stamina</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-cyan-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Stamina</p>
                     <p className="text-3xl font-bold text-cyan-400">{stamina}/{getMaxStamina()}</p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                      <div className="bg-cyan-500 h-2 rounded-full" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
+                    <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
+                      <div className="bg-gradient-to-r from-cyan-600 to-cyan-400 h-2 rounded-full transition-all duration-500" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                     </div>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Attack</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-orange-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Attack</p>
                     <p className="text-3xl font-bold text-orange-400">{GAME_CONSTANTS.BASE_ATTACK + (level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY) + weapon}</p>
-                    <p className="text-xs text-gray-500">Base: {GAME_CONSTANTS.BASE_ATTACK} • Weapon: +{weapon}</p>
+                    <p className="text-xs text-gray-500">Base: {GAME_CONSTANTS.BASE_ATTACK} + Weapon: {weapon}</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Defense</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-green-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Defense</p>
                     <p className="text-3xl font-bold text-green-400">{getBaseDefense() + armor}</p>
-                    <p className="text-xs text-gray-500">Base: {GAME_CONSTANTS.BASE_DEFENSE} • Armor: +{armor}</p>
+                    <p className="text-xs text-gray-500">Base: {GAME_CONSTANTS.BASE_DEFENSE} + Armor: {armor}</p>
                   </div>
                 </div>
               </div>
               
               {/* Progression */}
-              <div className="mb-6 bg-gradient-to-r from-yellow-900 to-orange-900 rounded-xl p-6 border-2 border-yellow-600">
-                <h3 className="text-xl font-bold text-yellow-300 mb-4 text-center">Progression</h3>
+              <div className="mb-6 bg-gradient-to-br from-yellow-950/80 to-orange-950/80 rounded-xl p-6 border border-yellow-600/40 stat-card-weave">
+                <h3 className="text-xl font-bold text-yellow-300 mb-4 text-center font-fantasy tracking-wide">Progression</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Level</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Level</p>
                     <p className="text-3xl font-bold text-yellow-400">{level}</p>
-                    <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
-                      <div className="bg-yellow-500 h-2 rounded-full" style={{width: `${(xp % GAME_CONSTANTS.XP_PER_LEVEL) / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`}}></div>
+                    <div className="w-full bg-gray-800 rounded-full h-2 mt-2">
+                      <div className="bg-gradient-to-r from-yellow-600 to-yellow-400 h-2 rounded-full transition-all duration-500" style={{width: `${(xp % GAME_CONSTANTS.XP_PER_LEVEL) / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`}}></div>
                     </div>
                     <p className="text-xs text-gray-500 mt-1">{xp % GAME_CONSTANTS.XP_PER_LEVEL}/{GAME_CONSTANTS.XP_PER_LEVEL} XP</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Total XP</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-purple-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Total XP</p>
                     <p className="text-3xl font-bold text-purple-400">{xp}</p>
-                    <p className="text-xs text-gray-500">earned</p>
+                    <p className="text-xs text-gray-500">earned across all time</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Essence</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-purple-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Essence</p>
                     <p className="text-3xl font-bold text-purple-400">{essence}</p>
                     <p className="text-xs text-gray-500">souls collected</p>
                   </div>
@@ -3944,28 +3986,28 @@ setMiniBossCount(0);
               </div>
               
               {/* Legacy Stats */}
-              <div className="mb-6 bg-gradient-to-r from-green-900 to-teal-900 rounded-xl p-6 border-2 border-green-600">
-                <h3 className="text-xl font-bold text-green-300 mb-4 text-center">Legacy</h3>
+              <div className="mb-6 bg-gradient-to-br from-green-950/80 to-teal-950/80 rounded-xl p-6 border border-green-600/40 stat-card-texture">
+                <h3 className="text-xl font-bold text-green-300 mb-4 text-center font-fantasy tracking-wide">Legacy</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Liberated</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-green-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Liberated</p>
                     <p className="text-3xl font-bold text-green-400">{heroes.length}</p>
                     <p className="text-xs text-gray-500">broke the curse</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Consumed</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-red-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Consumed</p>
                     <p className="text-3xl font-bold text-red-400">{graveyard.length}</p>
                     <p className="text-xs text-gray-500">claimed by darkness</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Survival Rate</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Survival Rate</p>
                     <p className="text-3xl font-bold text-yellow-400">
                       {heroes.length + graveyard.length > 0 ? Math.floor((heroes.length / (heroes.length + graveyard.length)) * 100) : 0}%
                     </p>
                     <p className="text-xs text-gray-500">{heroes.length + graveyard.length} total cycles</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Current Streak</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-orange-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Current Streak</p>
                     <p className="text-3xl font-bold text-orange-400">{consecutiveDays}</p>
                     <p className="text-xs text-gray-500">days without skip</p>
                   </div>
@@ -3973,33 +4015,33 @@ setMiniBossCount(0);
               </div>
               
               {/* Study Stats */}
-              <div className="mb-6 bg-gradient-to-r from-cyan-950/80 to-blue-950/80 rounded-xl p-6 border-2 border-cyan-700/50">
-                <h3 className="text-xl font-bold text-cyan-300 mb-4 text-center">Study Stats</h3>
+              <div className="mb-6 bg-gradient-to-br from-cyan-950/80 to-blue-950/80 rounded-xl p-6 border border-cyan-600/40 stat-card-runes">
+                <h3 className="text-xl font-bold text-cyan-300 mb-4 text-center font-fantasy tracking-wide">Study Stats</h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Sessions Today</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-cyan-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Sessions Today</p>
                     <p className="text-3xl font-bold text-cyan-400">{studyStats.sessionsToday}</p>
                     <p className="text-xs text-gray-500">tasks started</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Deep Work</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-blue-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Deep Work</p>
                     <p className="text-3xl font-bold text-blue-400">{studyStats.deepWorkSessions}</p>
                     <p className="text-xs text-gray-500">25+ min sessions</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Early Bird Days</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-yellow-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Early Bird Days</p>
                     <p className="text-3xl font-bold text-yellow-400">{studyStats.earlyBirdDays}</p>
                     <p className="text-xs text-gray-500">started early</p>
                   </div>
-                  <div className="bg-black bg-opacity-40 rounded-lg p-4">
-                    <p className="text-sm text-gray-400">Perfect Days</p>
+                  <div className="bg-black/40 rounded-lg p-4 border border-green-800/20">
+                    <p className="text-xs text-gray-500 uppercase tracking-wider font-fantasy">Perfect Days</p>
                     <p className="text-3xl font-bold text-green-400">{studyStats.perfectDays}</p>
                     <p className="text-xs text-gray-500">all tasks done</p>
                   </div>
                 </div>
                 {studyStats.longestStreak > 0 && (
                   <div className="mt-3 text-center">
-                    <span className="text-xs text-gray-400">Longest Streak: </span>
+                    <span className="text-xs text-gray-400 font-fantasy">Longest Streak: </span>
                     <span className="text-sm font-bold text-orange-400">{studyStats.longestStreak} days</span>
                   </div>
                 )}
