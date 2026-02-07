@@ -79,11 +79,11 @@ const GAME_CONSTANTS = {
   DEEP_WORK_BONUS: 30,
   PERFECT_DAY_BONUS: 50,
   SPECIAL_ATTACKS: {
-    Warrior: { name: 'Reckless Strike', cost: 30, hpCost: 15, damageMultiplier: 4.0, effect: 'Massive damage but costs 15 HP' },
-    Mage: { name: 'Arcane Blast', cost: 40, damageMultiplier: 3.0, effect: 'Boss stunned - no counter-attack this turn' },
-    Rogue: { name: "Venom's Ruin", cost: 30, damageMultiplier: 1.6, effect: 'Boss takes 10 damage per turn. Poisoned enemies take +25% damage from all attacks' },
-    Paladin: { name: 'Divine Smite', cost: 30, damageMultiplier: 3.0, effect: 'Heals you for 30 HP' },
-    Ranger: { name: 'Marked Shot', cost: 35, damageMultiplier: 1.8, effect: 'Boss takes +50% damage from your next attack. Creates devastating combos' }
+    Warrior: { name: 'Reckless Strike', cost: 30, hpCost: 15, damageMultiplier: 4.0, effect: 'Massive damage but costs HP. Scales with level' },
+    Mage: { name: 'Arcane Blast', cost: 40, damageMultiplier: 3.0, effect: 'Boss stunned - no counter-attack. Scales with level' },
+    Rogue: { name: "Venom's Ruin", cost: 30, damageMultiplier: 1.6, effect: 'Scaling poison + 15% vulnerability on all attacks' },
+    Paladin: { name: 'Divine Smite', cost: 30, damageMultiplier: 3.0, effect: 'Heals 20 + 10% max HP. Scales with level' },
+    Ranger: { name: 'Marked Shot', cost: 35, damageMultiplier: 1.8, effect: '+35% damage on next attack. Scales with level' }
   },
   
   ENEMY_DIALOGUE: {
@@ -2241,7 +2241,9 @@ if (enragedTurns > 0) {
     setCurrentAnimation('battle-shake');
     setTimeout(() => setCurrentAnimation(null), 250);
     
-    let damage = Math.floor((getBaseAttack() + weapon + Math.floor(Math.random() * 10) + (level - 1) * 2) * special.damageMultiplier);
+    // Special attacks scale with level: +10% damage per level beyond 1
+    const levelScaling = 1 + (level - 1) * 0.1;
+    let damage = Math.floor((getBaseAttack() + weapon + Math.floor(Math.random() * 10) + (level - 1) * 2) * special.damageMultiplier * levelScaling);
     
     const wasMarked = bossDebuffs.marked;
     if (wasMarked && hero.class.name !== 'Ranger') {
@@ -2280,11 +2282,13 @@ if (enragedTurns > 0) {
         addLog('⚠️ But boss is too focused on AOE to be stopped!');
       }
     } else if (hero.class.name === 'Rogue') {
-      setBossDebuffs(prev => ({ ...prev, poisonTurns: 5, poisonDamage: 5, poisonedVulnerability: 0.15, marked: false }));
-      effectMessage = "☠️ Boss poisoned! Takes +15% damage from all attacks!";
+      const poisonDmg = 5 + Math.floor(level * 2); // Scales: 7 at lvl 1, 15 at lvl 5, 25 at lvl 10
+      setBossDebuffs(prev => ({ ...prev, poisonTurns: 5, poisonDamage: poisonDmg, poisonedVulnerability: 0.15, marked: false }));
+      effectMessage = `☠️ Boss poisoned for ${poisonDmg}/turn! Takes +15% damage from all attacks!`;
     } else if (hero.class.name === 'Paladin') {
-      setHp(h => Math.min(getMaxHp(), h + 20));
-      effectMessage = '✨ Healed for 20 HP!';
+      const healAmount = 20 + Math.floor(getMaxHp() * 0.1); // 20 base + 10% of max HP
+      setHp(h => Math.min(getMaxHp(), h + healAmount));
+      effectMessage = `✨ Healed for ${healAmount} HP!`;
       if (wasMarked) {
         setBossDebuffs(prev => ({ ...prev, marked: false }));
       }
