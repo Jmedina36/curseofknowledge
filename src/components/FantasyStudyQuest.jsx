@@ -3550,53 +3550,65 @@ setMiniBossCount(0);
                 </div>
               ) : (
                 <>
-                  <div className="bg-black bg-opacity-50 rounded-xl p-6 border-2 border-red-900">
-                    <div className="text-center mb-4">
-                      <h2 className="text-2xl font-bold text-red-400 mb-1 font-fantasy tracking-wide">Trials of the Cursed</h2>
-                      <p className="text-sm text-gray-400 font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
+                  <div className="bg-black/50 rounded-xl overflow-hidden border border-red-900/40">
+                    {/* Header */}
+                    <div className="px-6 pt-6 pb-4 text-center">
+                      <h2 className="text-2xl font-fantasy-decorative text-red-400 mb-1 tracking-wider drop-shadow-[0_0_12px_rgba(220,38,38,0.3)]">Trials of the Cursed</h2>
+                      <p className="text-sm text-gray-500 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
                     </div>
                     
-                    <div className="flex gap-2 justify-center mb-4">
-                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
-                        <Calendar size={20}/>Import from Planner
+                    {/* Divider */}
+                    <div className="flex items-center gap-3 px-6">
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/25 to-transparent"></div>
+                      <div className="w-1.5 h-1.5 rotate-45 bg-red-600/30"></div>
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/25 to-transparent"></div>
+                    </div>
+                    
+                    {/* Action buttons */}
+                    <div className="flex gap-2 justify-center px-6 py-4">
+                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-blue-800/50 to-blue-950/50 px-4 py-2 rounded-lg hover:from-blue-700/60 hover:to-blue-900/60 transition-all font-fantasy tracking-wide text-blue-200/80 border border-blue-700/25 text-sm">
+                        <Calendar size={16}/>Import from Planner
                       </button>
-                      <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-all">
-                        <Plus size={20}/>Accept Trial
+                      <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-red-800/50 to-red-950/50 px-4 py-2 rounded-lg hover:from-red-700/60 hover:to-red-900/60 transition-all font-fantasy tracking-wide text-red-200/80 border border-red-700/25 text-sm">
+                        <Plus size={16}/>Accept Trial
                       </button>
                     </div>
                     
+                    {/* Task list */}
+                    <div className="px-6 pb-6">
                     {tasks.length === 0 ? (
-                      <div className="text-center py-8 text-gray-400">
-                        <p>No trials yet. Accept your first trial to begin.</p>
+                      <div className="text-center py-8">
+                        <p className="text-gray-600 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
                       </div>
                     ) : (
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
                         {[...tasks].sort((a, b) => {
-  // Important tasks first
   if (a.priority === 'important' && b.priority !== 'important') return -1;
   if (a.priority !== 'important' && b.priority === 'important') return 1;
   return 0;
 }).map(t => (
-  <div key={t.id} className={`rounded-lg p-4 border-2 ${
+  <div key={t.id} className={`rounded-lg p-4 border transition-all ${
     t.done 
-      ? 'bg-gray-800 border-green-700 opacity-60' 
+      ? 'bg-black/30 border-green-800/20 opacity-50' 
       : t.overdue
-        ? 'bg-red-900/20 border-red-600 opacity-80'
+        ? 'bg-red-950/30 border-red-700/40'
       : t.priority === 'important'
-        ? 'bg-gradient-to-r from-yellow-900/30 to-gray-800 border-yellow-500 shadow-lg shadow-yellow-500/20'
-        : 'bg-gray-800 border-gray-700'
+        ? 'bg-gradient-to-r from-yellow-950/30 to-black/30 border-yellow-700/30 shadow-[0_0_15px_rgba(234,179,8,0.06)]'
+        : 'bg-black/30 border-gray-800/30 hover:border-gray-700/40'
   }`}>
     <div className="flex items-center gap-3">
       {t.overdue && !t.done && (
-        <span className="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">OVERDUE</span>
+        <span className="bg-red-700/60 text-red-200 text-[10px] font-fantasy tracking-wider px-2 py-0.5 rounded uppercase">Overdue</span>
       )}
       <div className="flex-1">
-        <p className={t.done ? 'line-through text-gray-500' : t.overdue ? 'text-red-300 font-medium text-lg' : 'text-white font-medium text-lg'}>
+        <p className={`${t.done ? 'line-through text-gray-600' : t.overdue ? 'text-red-300/80' : 'text-white/90'} font-medium text-base`}>
           {t.title}
         </p>
-        <p className="text-sm text-gray-400 mt-1">
-          {t.priority === 'important' ? 'IMPORTANT • 1.25x XP' : 'ROUTINE • 1.0x XP'}
-          {t.overdue && !t.done && <span className="text-red-400 ml-2">• 50% XP Penalty</span>}
+        <p className="text-xs mt-1">
+          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500/60' : 'text-gray-600'}`}>
+            {t.priority === 'important' ? '⭐ Important • 1.25x XP' : 'Routine • 1.0x XP'}
+          </span>
+          {t.overdue && !t.done && <span className="text-red-500/50 ml-2">• 50% XP Penalty</span>}
         </p>
       </div>
       
@@ -3612,42 +3624,44 @@ setMiniBossCount(0);
               setPomodoroRunning(true);
               addLog(`Starting focus session: ${t.title}`);
             }} 
-            className="bg-purple-600 px-3 py-1 rounded hover:bg-purple-700 transition-all flex items-center gap-1"
+            className="bg-gradient-to-b from-purple-800/60 to-purple-950/60 px-3 py-1.5 rounded-lg hover:from-purple-700/70 hover:to-purple-900/70 transition-all text-purple-200/70 text-sm font-fantasy tracking-wide border border-purple-700/20"
           >
             Focus
           </button>
           <button 
             onClick={() => complete(t.id)} 
-            className="bg-green-600 px-4 py-1 rounded font-bold hover:bg-green-700 transition-all flex items-center gap-1"
+            className="bg-gradient-to-b from-green-800/60 to-green-950/60 px-4 py-1.5 rounded-lg hover:from-green-700/70 hover:to-green-900/70 transition-all text-green-200/80 text-sm font-fantasy tracking-wide font-bold border border-green-700/20"
           >
             Complete
           </button>
         </div>
       )}
-      {t.done && (<span className="text-green-400 font-bold flex items-center gap-1">Done</span>)}
+      {t.done && (<span className="text-green-500/60 font-fantasy text-sm tracking-wide flex items-center gap-1">✓ Done</span>)}
     </div>
   </div>
 ))}   
                       </div>
                     )}
+                    </div>
                   </div>
                   
-                  <div className="grid md:grid-cols-2 gap-4">
+                  {/* Boss challenge buttons */}
+                  <div className="grid md:grid-cols-2 gap-3">
                     <button 
   onClick={() => { sfx.playClick(); miniBoss(); }} 
   disabled={!isDayActive || eliteBossDefeatedToday || xp < 200} 
-  className="bg-red-900 px-6 py-4 rounded-xl font-bold text-xl hover:bg-red-800 transition-all shadow-lg shadow-red-900/50 border-2 border-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600"
+  className="bg-gradient-to-b from-red-900/70 to-red-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-red-200 hover:from-red-800/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.1)] border border-red-700/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-700/20"
 >
-  FACE THE DARKNESS
+  ⚔️ Face the Darkness
   {!isDayActive ? (
-    <div className="text-sm font-normal mt-1 text-gray-400">Day dormant - add tasks to begin</div>
+    <div className="text-xs font-normal mt-1 text-gray-500">Day dormant — add tasks to begin</div>
   ) : eliteBossDefeatedToday ? (
-    <div className="text-sm font-normal mt-1 text-green-400">✓ Today's trial complete</div>
+    <div className="text-xs font-normal mt-1 text-green-400/60">✓ Today's trial complete</div>
   ) : (
-    <div className={`text-sm font-normal mt-1 ${xp >= 200 ? 'text-green-400' : 'text-yellow-400'}`}>
+    <div className={`text-xs font-normal mt-1 ${xp >= 200 ? 'text-green-400/60' : 'text-yellow-400/60'}`}>
       {xp >= 200 ? `Ready • 200 XP` : `${200 - xp} XP needed`}
       {timeUntilMidnight && !eliteBossDefeatedToday && xp >= 200 && (
-        <span className="text-red-400 ml-2">• ⏰ {timeUntilMidnight} until midnight!</span>
+        <span className="text-red-400/60 ml-2">• ⏰ {timeUntilMidnight}</span>
       )}
     </div>
   )}
@@ -3655,18 +3669,25 @@ setMiniBossCount(0);
                     <button 
   onClick={() => { sfx.playClick(); finalBoss(); }} 
   disabled={!gauntletUnlocked || tasks.length === 0 || tasks.filter(t => t.done).length < tasks.length} 
-  className="bg-purple-900 px-6 py-4 rounded-xl font-bold text-xl hover:bg-purple-800 transition-all shadow-lg shadow-purple-900/50 border-2 border-red-500 disabled:bg-gray-700 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600"
+  className="bg-gradient-to-b from-purple-900/70 to-purple-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-purple-200 hover:from-purple-800/80 hover:to-purple-900/80 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)] border border-red-600/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-700/20"
 >
-  THE GAUNTLET
+  💀 The Gauntlet
   {!gauntletUnlocked && (
-    <div className="text-sm font-normal mt-1">{gauntletMilestone - xp} XP needed</div>
+    <div className="text-xs font-normal mt-1 text-gray-500">{gauntletMilestone - xp} XP needed</div>
   )}
 </button>
                   </div>
                   
-                  <div className="bg-black bg-opacity-50 rounded-xl p-4 border border-gray-800">
-                    <h3 className="text-lg font-bold text-red-400 mb-2">Chronicle of Events</h3>
-                    {log.length === 0 ? (<p className="text-sm text-gray-500 italic">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-300">{l}</p>))}</div>)}
+                  {/* Chronicle of Events */}
+                  <div className="bg-black/50 rounded-xl overflow-hidden border border-gray-800/30">
+                    <div className="px-5 py-3">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                        <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400/60 uppercase">Chronicle of Events</h3>
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                      </div>
+                      {log.length === 0 ? (<p className="text-sm text-gray-700 italic font-fantasy">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-400/70">{l}</p>))}</div>)}
+                    </div>
                   </div>
                 </>
               )}
