@@ -104,6 +104,96 @@ All colors MUST be HSL.
   }
 }
 
+/* Fantasy font utility */
+.font-fantasy {
+  font-family: 'Cinzel', serif;
+}
+
+.font-fantasy-decorative {
+  font-family: 'Cinzel Decorative', 'Cinzel', serif;
+}
+
+/* Stat card texture overlays */
+.stat-card-texture {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.stat-card-runes {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-runes::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.stat-card-weave {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card-weave::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M15 0C6.716 0 0 6.716 0 15c8.284 0 15-6.716 15-15zM15 30c8.284 0 15-6.716 15-15-8.284 0-15 6.716-15 15z' fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Start Day cinematic */
+@keyframes hero-entrance {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+  60% { opacity: 1; transform: scale(1.02) translateY(-4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes title-reveal {
+  0% { opacity: 0; letter-spacing: 0.5em; }
+  100% { opacity: 1; letter-spacing: 0.15em; }
+}
+
+@keyframes subtitle-fade {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(234, 179, 8, 0.3); box-shadow: 0 0 20px rgba(234, 179, 8, 0.1); }
+  50% { border-color: rgba(234, 179, 8, 0.7); box-shadow: 0 0 40px rgba(234, 179, 8, 0.3); }
+}
+
+.start-day-entrance {
+  animation: hero-entrance 0.8s ease-out;
+}
+
+.title-reveal {
+  animation: title-reveal 1.2s ease-out;
+}
+
+.subtitle-fade {
+  animation: subtitle-fade 0.8s ease-out 0.4s both;
+}
+
+.pulse-border-gold {
+  animation: pulse-border 3s ease-in-out infinite;
+}
+
 /* Achievement animations */
 @keyframes achievement-glow {
   0%, 100% { box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.3); }
