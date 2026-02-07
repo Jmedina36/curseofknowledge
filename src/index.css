@@ -103,3 +103,40 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Achievement animations */
+@keyframes achievement-glow {
+  0%, 100% { box-shadow: 0 0 8px 2px rgba(168, 85, 247, 0.3); }
+  50% { box-shadow: 0 0 20px 6px rgba(168, 85, 247, 0.6); }
+}
+
+@keyframes achievement-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes achievement-pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.achievement-new {
+  animation: achievement-glow 1.5s ease-in-out 3, achievement-pop 0.5s ease-out;
+}
+
+.achievement-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.04),
+    transparent
+  );
+  animation: achievement-shimmer 4s ease-in-out infinite;
+}
