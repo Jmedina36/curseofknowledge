@@ -535,9 +535,9 @@ const [lastRealDay, setLastRealDay] = useState(null);
   const classes = [
     { name: 'Warrior', color: 'red', emblem: '⚔︎', gradient: ['from-red-900', 'from-red-800', 'from-red-700', 'from-red-600'], glow: ['shadow-red-900/50', 'shadow-red-700/60', 'shadow-red-600/70', 'shadow-red-500/80'] },
     { name: 'Mage', color: 'purple', emblem: '✦', gradient: ['from-purple-900', 'from-purple-800', 'from-purple-700', 'from-purple-600'], glow: ['shadow-purple-900/50', 'shadow-purple-700/60', 'shadow-purple-600/70', 'shadow-purple-500/80'] },
-    { name: 'Rogue', color: 'green', emblem: '†', gradient: ['from-green-900', 'from-green-800', 'from-green-700', 'from-green-600'], glow: ['shadow-green-900/50', 'shadow-green-700/60', 'shadow-green-600/70', 'shadow-green-500/80'] },
+    { name: 'Rogue', color: 'emerald', emblem: '†', gradient: ['from-emerald-950', 'from-emerald-900', 'from-emerald-800', 'from-emerald-700'], glow: ['shadow-emerald-900/50', 'shadow-emerald-800/60', 'shadow-emerald-700/70', 'shadow-emerald-600/80'] },
     { name: 'Paladin', color: 'yellow', emblem: '✙', gradient: ['from-yellow-900', 'from-yellow-800', 'from-yellow-700', 'from-yellow-600'], glow: ['shadow-yellow-900/50', 'shadow-yellow-700/60', 'shadow-yellow-600/70', 'shadow-yellow-500/80'] },
-    { name: 'Ranger', color: 'amber', emblem: '➶', gradient: ['from-amber-900', 'from-amber-800', 'from-amber-700', 'from-amber-600'], glow: ['shadow-amber-900/50', 'shadow-amber-700/60', 'shadow-amber-600/70', 'shadow-amber-500/80'] }
+    { name: 'Ranger', color: 'teal', emblem: '➶', gradient: ['from-teal-950', 'from-teal-900', 'from-teal-800', 'from-teal-700'], glow: ['shadow-teal-900/50', 'shadow-teal-800/60', 'shadow-teal-700/70', 'shadow-teal-600/80'] }
   ];
 
   const makeName = useCallback(() => {
@@ -592,24 +592,26 @@ const getDateKey = useCallback((date) => {
     const borderColors = {
       red: ['#8B0000', '#8B0000', '#B22222', '#DC143C', '#DC143C', '#FF4500', '#FF4500'],
       purple: ['#4B0082', '#4B0082', '#6A0DAD', '#8B008B', '#8B008B', '#9370DB', '#9370DB'],
-      green: ['#004d00', '#004d00', '#006400', '#228B22', '#228B22', '#32CD32', '#32CD32'],
+      emerald: ['#022c22', '#022c22', '#064e3b', '#065f46', '#065f46', '#059669', '#059669'],
       yellow: ['#B8860B', '#B8860B', '#DAA520', '#FFD700', '#FFD700', '#FFEC8B', '#FFEC8B'],
-      amber: ['#8B4513', '#8B4513', '#A0522D', '#CD853F', '#CD853F', '#DEB887', '#DEB887']
+      teal: ['#042f2e', '#042f2e', '#115e59', '#0f766e', '#0f766e', '#14b8a6', '#14b8a6']
     };
     const toColors = {
       red: ['to-red-800', 'to-red-800', 'to-red-700', 'to-red-600', 'to-red-600', 'to-orange-500', 'to-orange-500'],
       purple: ['to-purple-800', 'to-purple-800', 'to-purple-700', 'to-indigo-600', 'to-indigo-600', 'to-pink-500', 'to-pink-500'],
-      green: ['to-green-800', 'to-green-800', 'to-green-700', 'to-emerald-600', 'to-emerald-600', 'to-teal-500', 'to-teal-500'],
+      emerald: ['to-emerald-800', 'to-emerald-800', 'to-emerald-700', 'to-emerald-600', 'to-emerald-600', 'to-green-500', 'to-green-500'],
       yellow: ['to-yellow-800', 'to-yellow-800', 'to-yellow-700', 'to-amber-600', 'to-amber-600', 'to-orange-400', 'to-orange-400'],
-      amber: ['to-amber-800', 'to-amber-800', 'to-orange-700', 'to-orange-600', 'to-orange-600', 'to-yellow-500', 'to-yellow-500']
+      teal: ['to-teal-800', 'to-teal-800', 'to-teal-700', 'to-teal-600', 'to-teal-600', 'to-cyan-500', 'to-cyan-500']
     };
     
     const d = day - 1;
     const pulse = day === 7 ? ' animate-pulse' : '';
+    // Fallback for legacy saved data with old color keys
+    const colorKey = heroClass.color === 'green' ? 'emerald' : heroClass.color === 'amber' ? 'teal' : heroClass.color;
     
     return {
-      border: `${borders[d]} ${borderColors[heroClass.color][d]}`,
-      bg: `${heroClass.gradient[Math.min(d, 3)]} ${toColors[heroClass.color][d]}`,
+      border: `${borders[d]} ${(borderColors[colorKey] || borderColors.red)[d]}`,
+      bg: `${heroClass.gradient[Math.min(d, 3)]} ${(toColors[colorKey] || toColors.red)[d]}`,
       glow: `shadow-xl ${heroClass.glow[Math.min(d, 3)]}${pulse}`,
       emblem: heroClass.emblem
     };
