@@ -8,6 +8,7 @@ import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calenda
 import useGameSFX from '../hooks/useGameSFX';
 import DebugPanel from './DebugPanel';
 import AchievementsPanel from './AchievementsPanel';
+import ClassEmblem from './ClassEmblem';
 
 const GAME_CONSTANTS = {
   LATE_START_PENALTY: 15,
@@ -3093,8 +3094,8 @@ setMiniBossCount(0);
             
             <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{border: getCardStyle(hero.class, currentDay).border}}>
               {/* Watermark emblem */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white opacity-10 pointer-events-none" style={{fontSize: '18rem', lineHeight: 1}}>
-                {getCardStyle(hero.class, currentDay).emblem}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-[0.07] pointer-events-none">
+                <ClassEmblem heroClass={hero.class.name} size={280} />
               </div>
               
               {/* Decorative top edge */}
@@ -3104,7 +3105,7 @@ setMiniBossCount(0);
                 {/* Hero Identity Section */}
                 <div className="px-6 pt-6 pb-4">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{getCardStyle(hero.class, currentDay).emblem}</div>
+                    <div className="drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]"><ClassEmblem heroClass={hero.class.name} size={56} /></div>
                     <div className="text-right">
                       <p className="text-xs text-white/70 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
                       <p className="text-sm text-white/85">
@@ -3506,8 +3507,8 @@ setMiniBossCount(0);
                     
                     <div className="relative z-10 text-center">
                       {/* Class emblem - large, atmospheric */}
-                      <div className="text-8xl md:text-9xl mb-6 opacity-80" style={{ filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.5))' }}>
-                        {hero.class.emblem}
+                      <div className="mb-6 opacity-80 flex justify-center" style={{ filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.5))' }}>
+                        <ClassEmblem heroClass={hero.class.name} size={140} />
                       </div>
                       
                       {/* Hero name */}
@@ -4261,7 +4262,7 @@ setMiniBossCount(0);
                         <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"></div>
                         <div className="p-5">
                           <div className="flex items-center gap-4">
-                            <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{hero.class ? hero.class.emblem : '✨'}</div>
+                            <div className="drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{hero.class ? <ClassEmblem heroClass={hero.class.name} size={56} /> : '✨'}</div>
                             <div className="flex-1">
                               <h3 className="text-xl font-fantasy-decorative text-yellow-300/90 tracking-wider">{hero.name}</h3>
                               <p className="text-sm text-white/80 font-fantasy">{hero.title} {hero.class ? hero.class.name : ''}</p>
@@ -4311,7 +4312,7 @@ setMiniBossCount(0);
                     {graveyard.slice().reverse().map((fallen, i) => (
                       <div key={i} className="bg-black/30 rounded-lg p-4 border border-red-900/20 opacity-60 hover:opacity-85 transition-all">
                         <div className="flex items-center gap-4">
-                          <div className="text-3xl opacity-40">{fallen.class ? fallen.class.emblem : '☠️'}</div>
+                          <div className="opacity-40">{fallen.class ? <ClassEmblem heroClass={fallen.class.name} size={36} /> : '☠️'}</div>
                           <div className="flex-1">
                             <h3 className="text-base font-fantasy tracking-wide text-red-400">{fallen.name}</h3>
                             <p className="text-xs text-gray-400 font-fantasy">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p>
@@ -4621,7 +4622,7 @@ setMiniBossCount(0);
                   : 'bg-gray-800 border-gray-700 hover:border-gray-500'
               }`}
             >
-              <div className="text-4xl mb-2">{cls.emblem}</div>
+              <div className="mb-2 flex justify-center"><ClassEmblem heroClass={cls.name} size={44} /></div>
               <div className="font-bold text-white">{cls.name}</div>
             </button>
           ))}
