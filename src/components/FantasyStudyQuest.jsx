@@ -4331,30 +4331,41 @@ setMiniBossCount(0);
           )}
 
           {showInventoryModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowInventoryModal(false)}>
-              <div className="bg-gray-900 rounded-xl p-6 max-w-lg w-full border-2 border-red-500 relative" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setShowInventoryModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white"><X size={24}/></button>
+            <div className="fixed inset-0 bg-black bg-opacity-85 flex items-start justify-center p-4 z-50" onClick={() => setShowInventoryModal(false)}>
+              <div className="bg-gradient-to-b from-red-950 via-gray-950 to-black rounded-xl max-w-lg w-full border border-red-700/40 relative overflow-hidden shadow-[0_0_60px_rgba(220,38,38,0.15)]" onClick={e => e.stopPropagation()}>
+                {/* Decorative top edge */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent"></div>
                 
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-red-400">SUPPLIES</h2>
-                  <p className="text-gray-400 text-sm mt-1 italic">"What keeps you alive in the darkness..."</p>
+                <button onClick={() => setShowInventoryModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white z-10"><X size={24}/></button>
+                
+                {/* Header */}
+                <div className="px-6 pt-8 pb-4 text-center">
+                  <h2 className="text-2xl font-fantasy-decorative text-red-400 tracking-wider drop-shadow-[0_0_12px_rgba(220,38,38,0.3)]">Supplies</h2>
+                  <p className="text-gray-400 text-sm italic font-fantasy mt-1">"What keeps you alive in the darkness..."</p>
                 </div>
                 
-                <div className="space-y-4">
+                {/* Divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/25 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-red-600/30"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/25 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-5 space-y-3">
                   {/* Health Potions */}
-                  <div className="bg-red-900 bg-opacity-50 rounded-lg p-4 border-2 border-red-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-gradient-to-r from-red-950/60 to-black/40 rounded-lg p-4 border border-red-700/30 hover:border-red-600/40 transition-all">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white text-lg">Health Potion</p>
-                        <p className="text-sm text-red-300 mb-1">Restores 30 HP</p>
-                        <p className="text-xs text-gray-400 italic">"Crimson elixir. Mends wounds."</p>
+                        <p className="font-fantasy tracking-wide text-red-200 text-lg">Health Potion</p>
+                        <p className="text-sm text-red-300/80 mb-1 font-fantasy">Restores 30 HP</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Crimson elixir. Mends wounds."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-red-400 font-bold mb-2">{healthPots}</p>
+                        <p className="text-3xl text-red-400 font-bold font-mono mb-2">{healthPots}</p>
                         <button 
                           onClick={useHealth} 
                           disabled={healthPots === 0 || hp >= getMaxHp()}
-                          className="bg-red-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-red-500 transition-all text-sm text-white font-medium"
+                          className="bg-gradient-to-b from-red-700/80 to-red-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-red-600/80 hover:to-red-800/80 transition-all text-sm text-red-100 font-fantasy tracking-wide border border-red-600/30 disabled:border-gray-600/20"
                         >
                           Use
                         </button>
@@ -4363,15 +4374,15 @@ setMiniBossCount(0);
                   </div>
                   
                   {/* Stamina Potions */}
-                  <div className="bg-blue-900 bg-opacity-50 rounded-lg p-4 border-2 border-blue-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-gradient-to-r from-blue-950/60 to-black/40 rounded-lg p-4 border border-blue-700/30 hover:border-blue-600/40 transition-all">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white text-lg">Stamina Potion</p>
-                        <p className="text-sm text-cyan-300 mb-1">Restores 50 SP</p>
-                        <p className="text-xs text-gray-400 italic">"Azure draught. Vigor renewed."</p>
+                        <p className="font-fantasy tracking-wide text-blue-200 text-lg">Stamina Potion</p>
+                        <p className="text-sm text-cyan-300/80 mb-1 font-fantasy">Restores 50 SP</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Azure draught. Vigor renewed."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-blue-400 font-bold mb-2">{staminaPots}</p>
+                        <p className="text-3xl text-blue-400 font-bold font-mono mb-2">{staminaPots}</p>
                         <button 
                           onClick={() => { 
                             if (staminaPots > 0 && stamina < getMaxStamina()) { 
@@ -4381,7 +4392,7 @@ setMiniBossCount(0);
                             } 
                           }} 
                           disabled={staminaPots === 0 || stamina >= getMaxStamina()}
-                          className="bg-blue-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-500 transition-all text-sm text-white font-medium"
+                          className="bg-gradient-to-b from-blue-700/80 to-blue-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-blue-600/80 hover:to-blue-800/80 transition-all text-sm text-blue-100 font-fantasy tracking-wide border border-blue-600/30 disabled:border-gray-600/20"
                         >
                           Use
                         </button>
@@ -4390,19 +4401,19 @@ setMiniBossCount(0);
                   </div>
                   
                   {/* Cleanse Potions */}
-                  <div className={`bg-purple-900 bg-opacity-50 rounded-lg p-4 border-2 ${curseLevel > 0 ? 'border-purple-400 ring-2 ring-purple-500 animate-pulse' : 'border-purple-700'}`}>
-                    <div className="flex justify-between items-center mb-2">
+                  <div className={`bg-gradient-to-r from-purple-950/60 to-black/40 rounded-lg p-4 border ${curseLevel > 0 ? 'border-purple-400/60 ring-1 ring-purple-500/40 animate-pulse' : 'border-purple-700/30'} hover:border-purple-600/40 transition-all`}>
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white text-lg">Cleanse Potion</p>
-                        <p className="text-sm text-purple-300 mb-1">Removes curse</p>
-                        <p className="text-xs text-gray-400 italic">"Purifying brew. Breaks the hold."</p>
+                        <p className="font-fantasy tracking-wide text-purple-200 text-lg">Cleanse Potion</p>
+                        <p className="text-sm text-purple-300/80 mb-1 font-fantasy">Removes curse</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Purifying brew. Breaks the hold."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-purple-400 font-bold mb-2">{cleansePots}</p>
+                        <p className="text-3xl text-purple-400 font-bold font-mono mb-2">{cleansePots}</p>
                         <button 
                           onClick={useCleanse} 
                           disabled={cleansePots === 0 || curseLevel === 0}
-                          className="bg-purple-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-purple-500 transition-all text-sm text-white font-medium"
+                          className="bg-gradient-to-b from-purple-700/80 to-purple-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-purple-600/80 hover:to-purple-800/80 transition-all text-sm text-purple-100 font-fantasy tracking-wide border border-purple-600/30 disabled:border-gray-600/20"
                         >
                           Use
                         </button>
@@ -4412,135 +4423,164 @@ setMiniBossCount(0);
                   
                   {/* Lucky Charm (if active) */}
                   {luckyCharmActive && (
-                    <div className="bg-green-900 bg-opacity-50 rounded-lg p-4 border-2 border-green-500">
+                    <div className="bg-gradient-to-r from-green-950/60 to-black/40 rounded-lg p-4 border border-green-500/40 hover:border-green-400/50 transition-all">
                       <div>
-                        <p className="font-bold text-white text-lg mb-1">Lucky Charm</p>
-                        <p className="text-sm text-green-300 mb-1">2x loot from next elite boss</p>
-                        <p className="text-xs text-gray-400 italic">"Fortune favors the bold."</p>
-                        <p className="text-xs text-green-400 mt-2">✓ Active</p>
+                        <p className="font-fantasy tracking-wide text-green-200 text-lg mb-1">Lucky Charm</p>
+                        <p className="text-sm text-green-300/80 mb-1 font-fantasy">2x loot from next elite boss</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Fortune favors the bold."</p>
+                        <p className="text-xs text-green-400 mt-2 font-fantasy tracking-wide">✓ Active</p>
                       </div>
                     </div>
                   )}
                 </div>
                 
-                <button 
-                  onClick={() => setShowInventoryModal(false)} 
-                  className="w-full mt-6 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
-                >
-                  Close
-                </button>
+                {/* Bottom divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                  <div className="w-1 h-1 rotate-45 bg-red-600/20"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-4">
+                  <button 
+                    onClick={() => setShowInventoryModal(false)} 
+                    className="w-full bg-gradient-to-b from-gray-700/60 to-gray-800/60 py-2.5 rounded-lg hover:from-gray-600/60 hover:to-gray-700/60 transition-all text-gray-200 font-fantasy tracking-wide border border-gray-600/30 hover:border-gray-500/30"
+                  >
+                    Close
+                  </button>
+                </div>
+                
+                {/* Decorative bottom edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
               </div>
             </div>
           )}
 
           {showCraftingModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50 overflow-y-auto" onClick={() => setShowCraftingModal(false)}>
-              <div className="bg-gray-900 rounded-xl p-6 max-w-2xl w-full border-2 border-orange-500 my-8 relative" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setShowCraftingModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white"><X size={24}/></button>
+            <div className="fixed inset-0 bg-black bg-opacity-85 flex items-start justify-center p-4 z-50 overflow-y-auto" onClick={() => setShowCraftingModal(false)}>
+              <div className="bg-gradient-to-b from-orange-950 via-gray-950 to-black rounded-xl max-w-2xl w-full border border-orange-700/40 my-8 relative overflow-hidden shadow-[0_0_60px_rgba(234,88,12,0.15)]" onClick={e => e.stopPropagation()}>
+                {/* Decorative top edge */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent"></div>
                 
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-orange-400">
-                    THE MERCHANT
-                  </h2>
-                  <p className="text-gray-400 text-sm mt-1 italic">"{getMerchantDialogue()}"</p>
+                <button onClick={() => setShowCraftingModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white z-10"><X size={24}/></button>
+                
+                {/* Header */}
+                <div className="px-6 pt-8 pb-4 text-center">
+                  <h2 className="text-2xl font-fantasy-decorative text-orange-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,88,12,0.3)]">The Merchant</h2>
+                  <p className="text-gray-400 text-sm italic font-fantasy mt-1">"{getMerchantDialogue()}"</p>
                 </div>
                 
-                <div className="bg-black bg-opacity-50 rounded-lg p-4 mb-6 border border-purple-600">
-                  <p className="text-center text-lg">
-                    <span className="text-gray-400">Current Essence:</span> 
-                    <span className="text-purple-400 font-bold text-2xl ml-2">{essence}</span>
-                  </p>
+                {/* Divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/25 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-orange-600/30"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/25 to-transparent"></div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                {/* Essence Display */}
+                <div className="px-6 pt-5 pb-3">
+                  <div className="bg-black/40 rounded-lg p-4 border border-purple-700/30">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent to-purple-600/20"></div>
+                      <p className="text-[10px] font-fantasy tracking-[0.2em] text-purple-400 uppercase">Soul Currency</p>
+                      <div className="h-px flex-1 bg-gradient-to-l from-transparent to-purple-600/20"></div>
+                    </div>
+                    <p className="text-center">
+                      <span className="text-gray-300 font-fantasy tracking-wide">Current Essence:</span> 
+                      <span className="text-purple-400 font-bold text-3xl ml-3 font-mono drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{essence}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="px-6 pb-5 grid grid-cols-2 gap-3">
                   <button 
                     onClick={() => craftItem('healthPotion')} 
                     disabled={essence < 25}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 25 ? 'bg-red-900 bg-opacity-50 border-red-700 hover:bg-red-800 hover:border-red-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 25 ? 'bg-gradient-to-br from-red-950/60 to-black/40 border-red-700/30 hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(220,38,38,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Health Potion</p>
-                      <p className="text-sm text-red-300 mb-2">Restores 30 HP</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">25 Essence</p>
-                      <p className="text-xs text-gray-400 italic">"Crimson elixir. Mends wounds, not souls."</p>
-                    </div>
+                    <p className="font-fantasy tracking-wide text-red-200 text-lg mb-1">Health Potion</p>
+                    <p className="text-sm text-red-300/70 mb-1.5 font-fantasy">Restores 30 HP</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">25 Essence</p>
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Crimson elixir. Mends wounds, not souls."</p>
                   </button>
                   
                   <button 
                     onClick={() => craftItem('staminaPotion')} 
                     disabled={essence < 20}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 20 ? 'bg-blue-900 bg-opacity-50 border-blue-700 hover:bg-blue-800 hover:border-blue-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 20 ? 'bg-gradient-to-br from-blue-950/60 to-black/40 border-blue-700/30 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Stamina Potion</p>
-                      <p className="text-sm text-cyan-300 mb-2">Restores 50 SP</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">20 Essence</p>
-                      <p className="text-xs text-gray-400 italic">"Azure draught. Vigor renewed."</p>
-                    </div>
+                    <p className="font-fantasy tracking-wide text-blue-200 text-lg mb-1">Stamina Potion</p>
+                    <p className="text-sm text-cyan-300/70 mb-1.5 font-fantasy">Restores 50 SP</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">20 Essence</p>
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Azure draught. Vigor renewed."</p>
                   </button>
                   
                   <button 
                     onClick={() => craftItem('cleansePotion')} 
                     disabled={essence < 50}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 50 ? 'bg-purple-900 bg-opacity-50 border-purple-700 hover:bg-purple-800 hover:border-purple-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 50 ? 'bg-gradient-to-br from-purple-950/60 to-black/40 border-purple-700/30 hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Cleanse Potion</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">50 Essence</p>
-                      <p className="text-sm text-purple-300 mb-2">Removes curse</p>
-                      <p className="text-xs text-gray-400 italic">"Purifying brew. Breaks the curse's hold."</p>
-                    </div>
+                    <p className="font-fantasy tracking-wide text-purple-200 text-lg mb-1">Cleanse Potion</p>
+                    <p className="text-sm text-purple-300/70 mb-1.5 font-fantasy">Removes curse</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">50 Essence</p>
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Purifying brew. Breaks the curse's hold."</p>
                   </button>
                   
                   <button 
                     onClick={() => craftItem('weaponOil')} 
                     disabled={essence < 40 || weaponOilActive}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !weaponOilActive ? 'bg-orange-900 bg-opacity-50 border-orange-700 hover:bg-orange-800 hover:border-orange-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 40 && !weaponOilActive ? 'bg-gradient-to-br from-orange-950/60 to-black/40 border-orange-700/30 hover:border-orange-500/50 hover:shadow-[0_0_20px_rgba(234,88,12,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Weapon Oil</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">40 Essence</p>
-                      <p className="text-sm text-orange-300 mb-1">+5 weapon until dawn</p>
-                      {weaponOilActive && <p className="text-xs text-green-400 mb-2">✓ Active</p>}
-                      <p className="text-xs text-gray-400 italic">"Darkened oil. Edges sharpen, strikes deepen."</p>
-                    </div>
+                    <p className="font-fantasy tracking-wide text-orange-200 text-lg mb-1">Weapon Oil</p>
+                    <p className="text-sm text-orange-300/70 mb-1.5 font-fantasy">+5 weapon until dawn</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">40 Essence</p>
+                    {weaponOilActive && <p className="text-xs text-green-400 mb-1.5 font-fantasy tracking-wide">✓ Active</p>}
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Darkened oil. Edges sharpen, strikes deepen."</p>
                   </button>
                   
                   <button 
                     onClick={() => craftItem('armorPolish')} 
                     disabled={essence < 40 || armorPolishActive}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !armorPolishActive ? 'bg-cyan-900 bg-opacity-50 border-cyan-700 hover:bg-cyan-800 hover:border-cyan-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 40 && !armorPolishActive ? 'bg-gradient-to-br from-cyan-950/60 to-black/40 border-cyan-700/30 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Armor Polish</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">40 Essence</p>
-                      <p className="text-sm text-cyan-300 mb-1">+5 armor until dawn</p>
-                      {armorPolishActive && <p className="text-xs text-green-400 mb-2">✓ Active</p>}
-                      <p className="text-xs text-gray-400 italic">"Protective salve. Steel hardens, flesh endures."</p>
-                    </div>
+                    <p className="font-fantasy tracking-wide text-cyan-200 text-lg mb-1">Armor Polish</p>
+                    <p className="text-sm text-cyan-300/70 mb-1.5 font-fantasy">+5 armor until dawn</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">40 Essence</p>
+                    {armorPolishActive && <p className="text-xs text-green-400 mb-1.5 font-fantasy tracking-wide">✓ Active</p>}
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Protective salve. Steel hardens, flesh endures."</p>
                   </button>
                   
                   <button 
                     onClick={() => craftItem('luckyCharm')} 
                     disabled={essence < 80 || luckyCharmActive}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 80 && !luckyCharmActive ? 'bg-green-900 bg-opacity-50 border-green-700 hover:bg-green-800 hover:border-green-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 80 && !luckyCharmActive ? 'bg-gradient-to-br from-green-950/60 to-black/40 border-green-700/30 hover:border-green-500/50 hover:shadow-[0_0_20px_rgba(34,197,94,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Lucky Charm</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">80 Essence</p>
-                      <p className="text-sm text-green-300 mb-1">2x loot from next elite boss</p>
-                      {luckyCharmActive && <p className="text-xs text-green-400 mb-2">✓ Active</p>}
-                      <p className="text-xs text-gray-400 italic">"Blessed talisman. Fortune favors the bold."</p>
-                    </div>
+                    <p className="font-fantasy tracking-wide text-green-200 text-lg mb-1">Lucky Charm</p>
+                    <p className="text-sm text-green-300/70 mb-1.5 font-fantasy">2x loot from next elite boss</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">80 Essence</p>
+                    {luckyCharmActive && <p className="text-xs text-green-400 mb-1.5 font-fantasy tracking-wide">✓ Active</p>}
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Blessed talisman. Fortune favors the bold."</p>
                   </button>
                 </div>
                 
-                <button 
-                  onClick={() => setShowCraftingModal(false)} 
-                  className="w-full mt-6 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
-                >
-                  Close
-                </button>
+                {/* Bottom divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/15 to-transparent"></div>
+                  <div className="w-1 h-1 rotate-45 bg-orange-600/20"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/15 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-4">
+                  <button 
+                    onClick={() => setShowCraftingModal(false)} 
+                    className="w-full bg-gradient-to-b from-gray-700/60 to-gray-800/60 py-2.5 rounded-lg hover:from-gray-600/60 hover:to-gray-700/60 transition-all text-gray-200 font-fantasy tracking-wide border border-gray-600/30 hover:border-gray-500/30"
+                  >
+                    Close
+                  </button>
+                </div>
+                
+                {/* Decorative bottom edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent"></div>
               </div>
             </div>
           )}
