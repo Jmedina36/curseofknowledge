@@ -3,43 +3,47 @@ import { useState, useEffect } from 'react';
 const ACHIEVEMENT_TIERS = {
   common: {
     label: 'Common',
-    border: 'border-gray-500',
-    bg: 'bg-gray-800',
+    border: 'border-gray-600/60',
+    bg: 'bg-gray-900/50',
     glow: '',
     text: 'text-gray-300',
-    badge: 'bg-gray-600 text-gray-200',
+    badge: 'bg-gray-700/80 text-gray-300',
+    accent: 'text-gray-400',
   },
   rare: {
     label: 'Rare',
-    border: 'border-blue-500',
-    bg: 'bg-blue-950/60',
-    glow: 'shadow-blue-500/20',
+    border: 'border-blue-700/60',
+    bg: 'bg-blue-950/40',
+    glow: 'shadow-[0_0_12px_rgba(59,130,246,0.15)]',
     text: 'text-blue-300',
-    badge: 'bg-blue-700 text-blue-100',
+    badge: 'bg-blue-900/80 text-blue-200',
+    accent: 'text-blue-400',
   },
   epic: {
     label: 'Epic',
-    border: 'border-purple-500',
-    bg: 'bg-purple-950/60',
-    glow: 'shadow-purple-500/30',
+    border: 'border-purple-600/60',
+    bg: 'bg-purple-950/40',
+    glow: 'shadow-[0_0_15px_rgba(168,85,247,0.2)]',
     text: 'text-purple-300',
-    badge: 'bg-purple-700 text-purple-100',
+    badge: 'bg-purple-900/80 text-purple-200',
+    accent: 'text-purple-400',
   },
   legendary: {
     label: 'Legendary',
-    border: 'border-yellow-500',
-    bg: 'bg-yellow-950/60',
-    glow: 'shadow-yellow-500/40',
-    text: 'text-yellow-300',
-    badge: 'bg-yellow-700 text-yellow-100',
+    border: 'border-amber-500/60',
+    bg: 'bg-amber-950/30',
+    glow: 'shadow-[0_0_20px_rgba(245,158,11,0.25)]',
+    text: 'text-amber-300',
+    badge: 'bg-amber-900/80 text-amber-200',
+    accent: 'text-amber-400',
   },
 };
 
 const CATEGORIES = {
-  study: { label: 'Study', color: 'text-cyan-400' },
-  combat: { label: 'Combat', color: 'text-red-400' },
-  persistence: { label: 'Persistence', color: 'text-green-400' },
-  mastery: { label: 'Mastery', color: 'text-yellow-400' },
+  study: { label: 'Study', color: 'text-cyan-400', icon: '📖' },
+  combat: { label: 'Combat', color: 'text-red-400', icon: '⚔' },
+  persistence: { label: 'Persistence', color: 'text-green-400', icon: '🛡' },
+  mastery: { label: 'Mastery', color: 'text-amber-400', icon: '👑' },
 };
 
 const buildAchievements = (props) => {
@@ -271,10 +275,10 @@ const AchievementCard = ({ achievement, isNew }) => {
   return (
     <div
       className={`
-        relative overflow-hidden rounded-lg border-2 p-4 transition-all duration-500
+        relative overflow-hidden rounded-lg border p-4 transition-all duration-500
         ${unlocked
-          ? `${tier.border} ${tier.bg} shadow-lg ${tier.glow}`
-          : 'border-gray-700/50 bg-gray-900/40 opacity-60'
+          ? `${tier.border} ${tier.bg} ${tier.glow}`
+          : 'border-gray-800/50 bg-gray-950/40 opacity-50'
         }
         ${unlocked && isNew ? 'achievement-new' : ''}
       `}
@@ -283,50 +287,58 @@ const AchievementCard = ({ achievement, isNew }) => {
       {unlocked && (
         <div className="absolute inset-0 pointer-events-none achievement-shimmer" />
       )}
+      {/* Top decorative edge for unlocked */}
+      {unlocked && (
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"></div>
+      )}
 
       <div className="relative z-10">
         {/* Header row */}
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <h4 className={`font-bold text-sm ${unlocked ? 'text-white' : 'text-gray-500'}`}>
+        <div className="flex items-start justify-between gap-2 mb-1.5">
+          <h4 className={`font-fantasy font-bold text-sm tracking-wide ${unlocked ? 'text-amber-100' : 'text-gray-600'}`}>
             {achievement.name}
           </h4>
           <div className="flex items-center gap-1.5 shrink-0">
-            <span className={`text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${unlocked ? tier.badge : 'bg-gray-700 text-gray-500'}`}>
+            <span className={`text-[10px] font-fantasy font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm border ${
+              unlocked 
+                ? `${tier.badge} border-current/20` 
+                : 'bg-gray-800/60 text-gray-600 border-gray-700/30'
+            }`}>
               {tier.label}
             </span>
           </div>
         </div>
 
         {/* Description */}
-        <p className={`text-xs mb-2 ${unlocked ? 'text-gray-300' : 'text-gray-600'}`}>
-          {achievement.desc}
+        <p className={`text-xs mb-2.5 italic ${unlocked ? 'text-gray-400' : 'text-gray-700'}`}>
+          "{achievement.desc}"
         </p>
 
-        {/* Category tag */}
+        {/* Category tag + Status */}
         <div className="flex items-center justify-between">
-          <span className={`text-[10px] uppercase tracking-wider ${unlocked ? category.color : 'text-gray-600'}`}>
-            {category.label}
+          <span className={`text-[10px] uppercase tracking-widest font-fantasy ${unlocked ? category.color : 'text-gray-700'}`}>
+            {category.icon} {category.label}
           </span>
           
           {/* Status */}
           {unlocked ? (
-            <span className={`text-xs font-bold ${tier.text}`}>
-              UNLOCKED
+            <span className={`text-xs font-fantasy font-bold tracking-wider ${tier.text}`}>
+              ✦ CONQUERED
             </span>
           ) : achievement.progress ? (
             <div className="flex items-center gap-2">
-              <div className="w-16 bg-gray-700 rounded-full h-1.5">
+              <div className="w-16 bg-gray-800/80 rounded-full h-1.5 border border-gray-700/30">
                 <div
-                  className="bg-gray-500 h-1.5 rounded-full transition-all duration-700"
+                  className="bg-gradient-to-r from-amber-700 to-amber-500 h-1.5 rounded-full transition-all duration-700"
                   style={{ width: `${Math.min(100, (achievement.progress.current / achievement.progress.max) * 100)}%` }}
                 />
               </div>
-              <span className="text-[10px] text-gray-500">
+              <span className="text-[10px] text-gray-500 font-fantasy">
                 {achievement.progress.current}/{achievement.progress.max}
               </span>
             </div>
           ) : (
-            <span className="text-xs text-gray-600">LOCKED</span>
+            <span className="text-xs text-gray-700 font-fantasy tracking-wider">🔒 SEALED</span>
           )}
         </div>
       </div>
@@ -376,27 +388,33 @@ const AchievementsPanel = ({
   const totalCount = achievements.length;
 
   const categories = [
-    { key: 'all', label: 'All' },
-    { key: 'study', label: 'Study' },
-    { key: 'combat', label: 'Combat' },
-    { key: 'persistence', label: 'Persistence' },
-    { key: 'mastery', label: 'Mastery' },
+    { key: 'all', label: 'All Trials', icon: '⚜' },
+    { key: 'study', label: 'Study', icon: '📖' },
+    { key: 'combat', label: 'Combat', icon: '⚔' },
+    { key: 'persistence', label: 'Persistence', icon: '🛡' },
+    { key: 'mastery', label: 'Mastery', icon: '👑' },
   ];
 
   return (
-    <div className="bg-gradient-to-b from-purple-950/80 to-gray-950/80 rounded-xl p-6 border-2 border-purple-600/50">
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 border border-amber-800/40 shadow-[0_0_25px_rgba(180,83,9,0.1)]">
+      {/* Decorative edges */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent"></div>
+      <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-amber-600/40 rounded-tl-xl"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-amber-600/40 rounded-tr-xl"></div>
+
       {/* Header */}
-      <div className="text-center mb-4">
-        <h3 className="text-xl font-bold text-purple-200 tracking-wide">Trials Conquered</h3>
-        <div className="flex items-center justify-center gap-2 mt-2">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-purple-600/50" />
-          <span className="text-sm text-purple-400 font-semibold">{unlockedCount} / {totalCount}</span>
-          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-purple-600/50" />
+      <div className="text-center mb-5">
+        <h3 className="text-xl font-fantasy font-bold text-amber-200 tracking-widest uppercase">⚜ Trials Conquered ⚜</h3>
+        <div className="flex items-center justify-center gap-3 mt-3">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-700/50" />
+          <span className="text-sm text-amber-400/80 font-fantasy font-semibold tracking-wide">{unlockedCount} / {totalCount}</span>
+          <div className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-700/50" />
         </div>
         {/* Overall progress bar */}
-        <div className="w-full max-w-xs mx-auto bg-gray-800 rounded-full h-2 mt-3">
+        <div className="w-full max-w-xs mx-auto bg-gray-800/80 rounded-full h-2 mt-3 border border-gray-700/30">
           <div
-            className="h-2 rounded-full bg-gradient-to-r from-purple-600 to-yellow-500 transition-all duration-1000"
+            className="h-2 rounded-full bg-gradient-to-r from-red-700 via-amber-600 to-amber-400 transition-all duration-1000"
             style={{ width: `${(unlockedCount / totalCount) * 100}%` }}
           />
         </div>
@@ -408,13 +426,13 @@ const AchievementsPanel = ({
           <button
             key={cat.key}
             onClick={() => setFilter(cat.key)}
-            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 ${
+            className={`px-3 py-1.5 rounded-md text-xs font-fantasy font-semibold tracking-wide transition-all duration-200 border ${
               filter === cat.key
-                ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-gray-300'
+                ? 'bg-amber-900/50 text-amber-200 border-amber-600/40 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
+                : 'bg-gray-800/40 text-gray-500 border-gray-700/30 hover:bg-gray-800/70 hover:text-gray-400 hover:border-gray-600/40'
             }`}
           >
-            {cat.label}
+            {cat.icon} {cat.label}
           </button>
         ))}
       </div>
