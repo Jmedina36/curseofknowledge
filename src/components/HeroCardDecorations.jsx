@@ -86,14 +86,7 @@ const HeroCardDecorations = ({ colorClass = 'red' }) => {
 
   return (
     <>
-      {/* Aged edge vignette */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[2] rounded-xl"
-        style={{
-          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.25) 100%)',
-        }}
-      />
-
+      {/* Corner rune ornaments only — no overlays */}
 
       {/* Corner rune ornaments */}
       <CornerRune position="top-left" color={color} />
