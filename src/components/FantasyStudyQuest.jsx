@@ -3078,8 +3078,8 @@ setMiniBossCount(0);
       {!hero ? (
         <div className="relative z-10 p-6">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-6xl font-black text-red-400 mb-4">Loading...</h1>
-            <p className="text-gray-400">Preparing your journey...</p>
+            <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-wider font-fantasy-decorative bg-gradient-to-b from-red-300 via-red-500 to-red-800 bg-clip-text text-transparent" style={{filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6))'}}>Loading...</h1>
+            <p className="text-gray-500 font-fantasy italic">Preparing your journey...</p>
           </div>
         </div>
       ) : (
@@ -3286,9 +3286,9 @@ setMiniBossCount(0);
                       <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage per hit</p>
                     </div>
                     
-                    <div className="bg-black/30 rounded-lg p-3 border border-blue-800/20 hover:border-blue-700/30 transition-all">
+                    <div className="bg-black/30 rounded-lg p-3 border border-amber-800/20 hover:border-amber-700/30 transition-all">
                       <div className="flex items-center justify-center mb-1.5">
-                        <Shield size={18} className="text-blue-400/80"/>
+                        <Shield size={18} className="text-amber-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{Math.floor(((getBaseDefense() + armor) / ((getBaseDefense() + armor) + 50)) * 100)}%</p>
                       <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage resist</p>
@@ -3323,7 +3323,7 @@ setMiniBossCount(0);
                   <div className="px-6 pb-3">
                     <button 
                       onClick={() => setShowCustomizeModal(true)}
-                      className="w-full bg-gradient-to-b from-blue-800/40 to-blue-950/40 hover:from-blue-700/50 hover:to-blue-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 border border-blue-700/30 hover:border-blue-600/40 shadow-[0_0_10px_rgba(59,130,246,0.1)]"
+                      className="w-full bg-gradient-to-b from-amber-800/40 to-amber-950/40 hover:from-amber-700/50 hover:to-amber-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-amber-200 border border-amber-700/30 hover:border-amber-600/40 shadow-[0_0_10px_rgba(180,83,9,0.1)]"
                     >
                       ✨ Customize Your Hero
                     </button>
@@ -3585,7 +3585,7 @@ setMiniBossCount(0);
                     
                     {/* Action buttons */}
                     <div className="flex gap-2 justify-center px-6 py-4">
-                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-blue-800/50 to-blue-950/50 px-4 py-2 rounded-lg hover:from-blue-700/60 hover:to-blue-900/60 transition-all font-fantasy tracking-wide text-blue-200 border border-blue-700/30 text-sm">
+                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-amber-800/50 to-amber-950/50 px-4 py-2 rounded-lg hover:from-amber-700/60 hover:to-amber-900/60 transition-all font-fantasy tracking-wide text-amber-200 border border-amber-700/30 text-sm">
                         <Calendar size={16}/>Import from Planner
                       </button>
                       <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-red-800/50 to-red-950/50 px-4 py-2 rounded-lg hover:from-red-700/60 hover:to-red-900/60 transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 text-sm">
@@ -3714,28 +3714,28 @@ setMiniBossCount(0);
           )}
 
            {activeTab === 'planner' && (
-            <div className="bg-black/50 rounded-xl overflow-hidden border border-blue-900/40">
+            <div className="bg-black/50 rounded-xl overflow-hidden border border-amber-900/40">
               {/* Header */}
               <div className="px-6 pt-6 pb-4 text-center">
-                <h2 className="text-2xl font-fantasy-decorative text-blue-400 tracking-wider drop-shadow-[0_0_12px_rgba(59,130,246,0.3)]">Battle Planner</h2>
-                <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
+                <h2 className="text-2xl font-fantasy-decorative text-amber-300 tracking-wider drop-shadow-[0_0_12px_rgba(245,158,11,0.3)]">Battle Planner</h2>
+                <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
               </div>
               
               {/* Divider */}
               <div className="flex items-center gap-3 px-6">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/25 to-transparent"></div>
-                <div className="w-1.5 h-1.5 rotate-45 bg-blue-600/30"></div>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/25 to-transparent"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/25 to-transparent"></div>
+                <div className="w-1.5 h-1.5 rotate-45 bg-amber-600/30"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/25 to-transparent"></div>
               </div>
               
               {/* Sub-toggle: Weekly / Calendar */}
               <div className="flex justify-center px-6 py-4">
-                <div className="inline-flex bg-black/40 rounded-lg border border-blue-900/30 p-1 gap-1">
+                <div className="inline-flex bg-black/40 rounded-lg border border-amber-900/30 p-1 gap-1">
                   <button 
                     onClick={() => setPlannerView('weekly')}
                     className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
                       plannerView === 'weekly' 
-                        ? 'bg-blue-800/30 text-blue-300 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]' 
+                        ? 'bg-amber-800/30 text-amber-300 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]' 
                         : 'text-gray-400 hover:text-gray-300'
                     }`}
                   >
@@ -3745,7 +3745,7 @@ setMiniBossCount(0);
                     onClick={() => setPlannerView('calendar')}
                     className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
                       plannerView === 'calendar' 
-                        ? 'bg-green-800/30 text-green-300 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' 
+                        ? 'bg-emerald-800/30 text-emerald-300 border border-emerald-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' 
                         : 'text-gray-400 hover:text-gray-300'
                     }`}
                   >
@@ -3761,7 +3761,7 @@ setMiniBossCount(0);
                   <div key={day} className="bg-gray-800/40 rounded-lg p-4 border border-gray-600/25 hover:border-blue-800/30 transition-all">
                     <div className="flex justify-between items-center mb-3">
                       <div>
-                        <h3 className="text-lg font-fantasy tracking-wide text-blue-300">{day}</h3>
+                        <h3 className="text-lg font-fantasy tracking-wide text-amber-300">{day}</h3>
                         <p className="text-xs">
   {(() => {
     const today = new Date();
@@ -3774,7 +3774,7 @@ setMiniBossCount(0);
   })()}
 </p>
                       </div>
-                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-blue-200 border border-blue-700/30">
+                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-gradient-to-b from-amber-800/50 to-amber-950/50 hover:from-amber-700/60 hover:to-amber-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-amber-200 border border-amber-700/30">
                         <Plus size={14}/> Add Task
                       </button>
                     </div>
@@ -3892,7 +3892,7 @@ setMiniBossCount(0);
                       const completedTasks = dayTasks.filter(t => t.done).length;
                       const allDone = hasTasks && completedTasks === dayTasks.length;
                       days.push(
-                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-800/50 border border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-gray-700/40 hover:bg-gray-600/40 border border-gray-600/20 hover:border-gray-500/30'}`}>
+                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-amber-800/50 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-gray-700/40 hover:bg-gray-600/40 border border-gray-600/20 hover:border-gray-500/30'}`}>
                           <div className="text-sm font-bold text-white/90">{day}</div>
                           {hasTasks && (<div className="text-[10px] text-white/70 mt-0.5">{completedTasks}/{dayTasks.length}</div>)}
                           {isToday && (<div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-pulse"></div>)}
@@ -3905,7 +3905,7 @@ setMiniBossCount(0);
               </div>
               
               <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs">
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-800/50 border border-blue-500/40 rounded"></div><span className="text-gray-400 font-fantasy">Today</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-800/50 border border-amber-500/40 rounded"></div><span className="text-gray-400 font-fantasy">Today</span></div>
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-400 font-fantasy">In Progress</span></div>
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-400 font-fantasy">Complete</span></div>
                 <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-400 font-fantasy">Empty</span></div>
@@ -4004,7 +4004,7 @@ setMiniBossCount(0);
                     generateQuiz(idx);
                   }}
                   disabled={deck.cards.length < 4}
-                  className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 text-sm border border-blue-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-b from-amber-800/50 to-amber-950/50 hover:from-amber-700/60 hover:to-amber-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-amber-200 text-sm border border-amber-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   Practice Quiz
                 </button>
@@ -4099,11 +4099,11 @@ setMiniBossCount(0);
               </div>
               
               {/* Combat Power */}
-              <div className="bg-gradient-to-br from-blue-950/40 to-purple-950/30 rounded-xl p-5 border border-blue-800/25 stat-card-runes">
+              <div className="bg-gradient-to-br from-red-950/40 to-orange-950/30 rounded-xl p-5 border border-red-800/25 stat-card-runes">
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-blue-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-blue-400 uppercase">Combat Power</h3>
-                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-blue-600/20"></div>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-red-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Combat Power</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-red-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
@@ -4196,7 +4196,7 @@ setMiniBossCount(0);
               </div>
               
               {/* Study Stats */}
-              <div className="bg-gradient-to-br from-cyan-950/40 to-blue-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
+              <div className="bg-gradient-to-br from-cyan-950/40 to-emerald-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-cyan-400 uppercase">Study Stats</h3>
@@ -4208,9 +4208,9 @@ setMiniBossCount(0);
                     <p className="text-2xl font-bold text-cyan-400 font-mono">{studyStats.sessionsToday}</p>
                     <p className="text-[10px] text-gray-400">tasks started</p>
                   </div>
-                  <div className="bg-black/30 rounded-lg p-3 border border-blue-800/15">
+                  <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Deep Work</p>
-                    <p className="text-2xl font-bold text-blue-400 font-mono">{studyStats.deepWorkSessions}</p>
+                    <p className="text-2xl font-bold text-purple-400 font-mono">{studyStats.deepWorkSessions}</p>
                     <p className="text-[10px] text-gray-400">25+ min sessions</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
@@ -4393,15 +4393,15 @@ setMiniBossCount(0);
                   </div>
                   
                   {/* Stamina Potions */}
-                  <div className="bg-gradient-to-r from-blue-950/60 to-black/40 rounded-lg p-4 border border-blue-700/30 hover:border-blue-600/40 transition-all">
+                  <div className="bg-gradient-to-r from-cyan-950/60 to-black/40 rounded-lg p-4 border border-cyan-700/30 hover:border-cyan-600/40 transition-all">
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-fantasy tracking-wide text-blue-200 text-lg">Stamina Potion</p>
+                        <p className="font-fantasy tracking-wide text-cyan-200 text-lg">Stamina Potion</p>
                         <p className="text-sm text-cyan-300/80 mb-1 font-fantasy">Restores 50 SP</p>
                         <p className="text-xs text-gray-400 italic font-fantasy">"Azure draught. Vigor renewed."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-blue-400 font-bold font-mono mb-2">{staminaPots}</p>
+                        <p className="text-3xl text-cyan-400 font-bold font-mono mb-2">{staminaPots}</p>
                         <button 
                           onClick={() => { 
                             if (staminaPots > 0 && stamina < getMaxStamina()) { 
@@ -4411,7 +4411,7 @@ setMiniBossCount(0);
                             } 
                           }} 
                           disabled={staminaPots === 0 || stamina >= getMaxStamina()}
-                          className="bg-gradient-to-b from-blue-700/80 to-blue-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-blue-600/80 hover:to-blue-800/80 transition-all text-sm text-blue-100 font-fantasy tracking-wide border border-blue-600/30 disabled:border-gray-600/20"
+                          className="bg-gradient-to-b from-cyan-700/80 to-cyan-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-cyan-600/80 hover:to-cyan-800/80 transition-all text-sm text-cyan-100 font-fantasy tracking-wide border border-cyan-600/30 disabled:border-gray-600/20"
                         >
                           Use
                         </button>
@@ -4526,9 +4526,9 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('staminaPotion')} 
                     disabled={essence < 20}
-                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 20 ? 'bg-gradient-to-br from-blue-950/60 to-black/40 border-blue-700/30 hover:border-blue-500/50 hover:shadow-[0_0_20px_rgba(59,130,246,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 20 ? 'bg-gradient-to-br from-cyan-950/60 to-black/40 border-cyan-700/30 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
                   >
-                    <p className="font-fantasy tracking-wide text-blue-200 text-lg mb-1">Stamina Potion</p>
+                    <p className="font-fantasy tracking-wide text-cyan-200 text-lg mb-1">Stamina Potion</p>
                     <p className="text-sm text-cyan-300/70 mb-1.5 font-fantasy">Restores 50 SP</p>
                     <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">20 Essence</p>
                     <p className="text-xs text-gray-400 italic font-fantasy">"Azure draught. Vigor renewed."</p>
@@ -4739,34 +4739,36 @@ setMiniBossCount(0);
 )}
 
 {showCardModal && selectedDeck !== null && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowCardModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500" onClick={e => e.stopPropagation()}>
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50" onClick={() => setShowCardModal(false)}>
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-blue-400">Add Card to {flashcardDecks[selectedDeck]?.name}</h3>
-        <button onClick={() => setShowCardModal(false)} className="text-gray-400 hover:text-white">
+        <h3 className="text-xl font-fantasy font-bold text-amber-200 tracking-wide">Add Card to {flashcardDecks[selectedDeck]?.name}</h3>
+        <button onClick={() => setShowCardModal(false)} className="text-gray-500 hover:text-amber-300 transition-colors">
           <X size={24}/>
         </button>
       </div>
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-4"></div>
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Front (Question)</label>
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Front (Question)</label>
         <textarea 
           placeholder="e.g., What is the capital of France?" 
           value={newCard.front} 
           onChange={e => setNewCard({...newCard, front: e.target.value})} 
-          className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none resize-none" 
+          className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg border border-amber-900/40 focus:border-amber-500/60 focus:outline-none focus:shadow-[0_0_10px_rgba(245,158,11,0.1)] resize-none placeholder-gray-600 font-fantasy" 
           rows="3"
           autoFocus 
         />
       </div>
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Back (Answer)</label>
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Back (Answer)</label>
         <textarea 
           placeholder="e.g., Paris" 
           value={newCard.back} 
           onChange={e => setNewCard({...newCard, back: e.target.value})} 
-          className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none resize-none" 
+          className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg border border-amber-900/40 focus:border-amber-500/60 focus:outline-none focus:shadow-[0_0_10px_rgba(245,158,11,0.1)] resize-none placeholder-gray-600 font-fantasy" 
           rows="3"
         />
       </div>
@@ -4786,13 +4788,13 @@ setMiniBossCount(0);
             }
           }}
           disabled={!newCard.front.trim() || !newCard.back.trim()} 
-          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gradient-to-b from-amber-700 to-amber-900 py-2 rounded-lg hover:from-amber-600 hover:to-amber-800 transition-all text-amber-100 font-fantasy font-medium tracking-wide border border-amber-600/30 disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/20"
         >
-          Add Card
+          ⚔ Add Card
         </button>
         <button 
           onClick={() => { setShowCardModal(false); setNewCard({front: '', back: ''}); }} 
-          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
+          className="flex-1 bg-gray-800/80 py-2 rounded-lg hover:bg-gray-700/80 transition-all text-gray-400 font-fantasy font-medium tracking-wide border border-gray-700/40"
         >
           Cancel
         </button>
@@ -4937,12 +4939,12 @@ setMiniBossCount(0);
 
 {showQuizModal && selectedDeck !== null && flashcardDecks[selectedDeck] && (
   <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
-    <div className="bg-gradient-to-b from-blue-900 to-black rounded-xl p-8 max-w-2xl w-full border-4 border-blue-600 shadow-2xl">
+     <div className="bg-gradient-to-b from-gray-900 via-purple-950/30 to-gray-950 rounded-xl p-8 max-w-2xl w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]">
       {!showQuizResults ? (
         <>
           <div className="mb-6 flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold text-blue-400">📝 {flashcardDecks[selectedDeck].name} - Quiz</h2>
+              <h2 className="text-2xl font-fantasy font-bold text-amber-200 tracking-wide">📝 {flashcardDecks[selectedDeck].name} - Quiz</h2>
               <p className="text-gray-400">Question {currentQuizIndex + 1} of {quizQuestions.length} | Score: {quizScore}/{quizQuestions.length}</p>
             </div>
             <button 
@@ -4965,7 +4967,7 @@ setMiniBossCount(0);
             </button>
           </div>
           
-          <div className="bg-gray-800 rounded-xl p-8 mb-6 min-h-[200px] border-2 border-blue-500">
+          <div className="bg-gray-800/80 rounded-xl p-8 mb-6 min-h-[200px] border border-amber-800/40">
             <p className="text-sm text-gray-400 mb-4">QUESTION</p>
             <p className="text-2xl text-white mb-8">{quizQuestions[currentQuizIndex]?.question}</p>
             
@@ -5041,7 +5043,7 @@ setMiniBossCount(0);
                   setSelectedAnswer(null);
                 }
               }}
-              className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
+              className="w-full bg-gradient-to-b from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 py-4 rounded-lg font-fantasy font-bold text-lg transition-all text-amber-100 border border-amber-600/30"
             >
               {currentQuizIndex + 1 === quizQuestions.length ? 'See Results' : 'Next Question →'}
             </button>
@@ -5053,7 +5055,7 @@ setMiniBossCount(0);
             <div className="text-8xl mb-4">
               {quizScore === quizQuestions.length ? '🏆' : quizScore >= quizQuestions.length * 0.7 ? '⭐' : '📖'}
             </div>
-            <h2 className="text-3xl font-bold text-blue-400 mb-2">Quiz Complete!</h2>
+            <h2 className="text-3xl font-fantasy font-bold text-amber-300 mb-2">Quiz Complete!</h2>
             <p className="text-5xl font-bold text-white mb-4">{quizScore} / {quizQuestions.length}</p>
             <p className="text-xl text-gray-300">
               {quizScore === quizQuestions.length && 'Perfect Score! 🎉'}
@@ -5098,10 +5100,10 @@ setMiniBossCount(0);
                 generateQuiz(selectedDeck, true);
               }}
               disabled={wrongCardIndices.length > 0 && !mistakesReviewed}
-              className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${
+              className={`w-full py-4 rounded-lg font-fantasy font-bold text-lg transition-all ${
                 wrongCardIndices.length > 0 && !mistakesReviewed
-                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-500 text-white'
+                  ? 'bg-gray-700/60 text-gray-400 cursor-not-allowed border border-gray-600/30'
+                  : 'bg-gradient-to-b from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-amber-100 border border-amber-600/30'
               }`}
             >
               {wrongCardIndices.length > 0 && !mistakesReviewed ? '🔒 Review Mistakes First' : '🔄 Retake Quiz (50% XP)'}
@@ -5182,8 +5184,8 @@ setMiniBossCount(0);
             onClick={() => setNewTask({...newTask, priority: 'routine'})} 
             className={`p-4 rounded-lg border-2 transition-all ${
               newTask.priority === 'routine' 
-                ? 'bg-blue-900/60 border-blue-500/70 text-blue-200 shadow-lg shadow-blue-500/30' 
-                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-blue-700/50'
+                ? 'bg-amber-900/60 border-amber-500/70 text-amber-200 shadow-lg shadow-amber-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-amber-700/50'
             }`}
           >
             <div className="font-fantasy font-bold mb-1">ROUTINE</div>
@@ -5221,14 +5223,16 @@ setMiniBossCount(0);
 )}
 
 {showImportModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowImportModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500 relative" onClick={e => e.stopPropagation()}>
-      <button onClick={() => setShowImportModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24}/></button>
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50" onClick={() => setShowImportModal(false)}>
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+      <button onClick={() => setShowImportModal(false)} className="absolute top-4 right-4 text-gray-500 hover:text-amber-300 transition-colors"><X size={24}/></button>
       
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-blue-400">IMPORT FROM PLANNER</h3>
-        <p className="text-gray-400 text-sm mt-1 italic">"Draw upon your prepared plans..."</p>
+        <h3 className="text-2xl font-fantasy font-bold text-amber-200 tracking-wider uppercase">Import from Planner</h3>
+        <p className="text-gray-500 text-sm mt-1 italic font-fantasy">"Draw upon your prepared plans..."</p>
       </div>
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-4"></div>
       
       <div className="space-y-2">
         {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, idx) => {
@@ -5244,18 +5248,18 @@ setMiniBossCount(0);
               key={day}
               onClick={() => importFromPlanner(day)}
               disabled={taskCount === 0}
-              className={`w-full p-4 rounded-lg border-2 transition-all text-left ${
+              className={`w-full p-4 rounded-lg border transition-all text-left ${
                 isRealWorldToday
-                  ? 'bg-blue-900 border-blue-500 hover:bg-blue-800'
+                  ? 'bg-amber-900/50 border-amber-600/60 hover:bg-amber-900/70'
                   : taskCount > 0
-                    ? 'bg-gray-800 border-gray-700 hover:border-blue-500 hover:bg-gray-750'
-                    : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'
+                    ? 'bg-gray-800/60 border-gray-700/40 hover:border-amber-700/40 hover:bg-gray-800'
+                    : 'bg-gray-800/40 border-gray-700/30 opacity-50 cursor-not-allowed'
               }`}
             >
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="font-bold text-white">{day}</span>
-                  {isRealWorldToday && <span className="ml-2 text-xs text-blue-400">(Today)</span>}
+                  <span className="font-fantasy font-bold text-amber-100">{day}</span>
+                  {isRealWorldToday && <span className="ml-2 text-xs text-amber-400 font-fantasy">(Today)</span>}
                 </div>
                 <span className={`text-sm ${taskCount > 0 ? 'text-green-400' : 'text-gray-500'}`}>
                   {taskCount} task{taskCount !== 1 ? 's' : ''}
@@ -5268,7 +5272,7 @@ setMiniBossCount(0);
       
       <button 
         onClick={() => setShowImportModal(false)} 
-        className="w-full mt-4 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
+        className="w-full mt-4 bg-gray-800/80 py-2 rounded-lg hover:bg-gray-700/80 transition-all text-gray-400 font-fantasy font-medium tracking-wide border border-gray-700/40"
       >
         Cancel
       </button>
@@ -5278,20 +5282,20 @@ setMiniBossCount(0);
 
          {showPlanModal && selectedDay && (
   <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowPlanModal(false)}>
-    <div className="bg-gradient-to-b from-gray-900 via-blue-950/20 to-gray-950 rounded-xl p-6 max-w-md w-full border border-blue-700/40 shadow-[0_0_40px_rgba(59,130,246,0.15)]" onClick={e => e.stopPropagation()}>
+    <div className="bg-gradient-to-b from-gray-900 via-amber-950/10 to-gray-950 rounded-xl p-6 max-w-md w-full border border-amber-700/40 shadow-[0_0_40px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
       {/* Decorative top edge */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
       
       <div className="flex justify-between items-center mb-2">
-        <h3 className="text-xl font-fantasy-decorative tracking-wider text-blue-400">Plan for {selectedDay}</h3>
-        <button onClick={() => setShowPlanModal(false)} className="text-gray-400 hover:text-blue-300 transition-colors"><X size={24}/></button>
+        <h3 className="text-xl font-fantasy-decorative tracking-wider text-amber-300">Plan for {selectedDay}</h3>
+        <button onClick={() => setShowPlanModal(false)} className="text-gray-500 hover:text-amber-300 transition-colors"><X size={24}/></button>
       </div>
       
       {/* Decorative divider */}
       <div className="flex items-center justify-center gap-2 mb-4">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/30 to-transparent"></div>
-        <div className="w-1.5 h-1.5 rotate-45 bg-blue-500/50"></div>
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/30 to-transparent"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/30 to-transparent"></div>
+        <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/50"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/30 to-transparent"></div>
       </div>
       
       <input 
@@ -5299,7 +5303,7 @@ setMiniBossCount(0);
         placeholder="What do you need to do?" 
         value={newPlanItem.title} 
         onChange={e => setNewPlanItem({...newPlanItem, title: e.target.value})} 
-        className="w-full p-3 bg-gray-800/80 text-white rounded-lg mb-4 border border-blue-800/30 focus:border-blue-500/60 focus:outline-none font-fantasy placeholder:font-sans placeholder:text-gray-500" 
+        className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg mb-4 border border-amber-800/30 focus:border-amber-500/60 focus:outline-none font-fantasy placeholder:font-sans placeholder:text-gray-600" 
         autoFocus 
       />
       
@@ -5325,8 +5329,8 @@ setMiniBossCount(0);
             onClick={() => setNewPlanItem({...newPlanItem, priority: 'routine'})} 
             className={`p-4 rounded-lg border-2 transition-all ${
               newPlanItem.priority === 'routine' 
-                ? 'bg-blue-900/60 border-blue-500/70 text-blue-200 shadow-lg shadow-blue-500/30' 
-                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-blue-700/50'
+                ? 'bg-amber-900/60 border-amber-500/70 text-amber-200 shadow-lg shadow-amber-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-amber-700/50'
             }`}
           >
             <div className="text-2xl mb-1">📋</div>
@@ -5338,7 +5342,7 @@ setMiniBossCount(0);
       
       {/* Bottom divider */}
       <div className="flex items-center justify-center gap-2 mb-4">
-        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/20 to-transparent"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/20 to-transparent"></div>
       </div>
       
       <div className="flex gap-2">
@@ -5369,7 +5373,7 @@ setMiniBossCount(0);
             } 
           }}
           disabled={!newPlanItem.title} 
-          className="flex-1 bg-gradient-to-b from-blue-700/80 to-blue-900/80 py-2 rounded-lg hover:from-blue-600/80 hover:to-blue-800/80 transition-all text-white font-fantasy font-medium tracking-wide border border-blue-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
+          className="flex-1 bg-gradient-to-b from-amber-700/80 to-amber-900/80 py-2 rounded-lg hover:from-amber-600/80 hover:to-amber-800/80 transition-all text-amber-100 font-fantasy font-medium tracking-wide border border-amber-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
         >
           Add Task
         </button>
@@ -5385,7 +5389,7 @@ setMiniBossCount(0);
       </div>
       
       {/* Decorative bottom edge */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"></div>
     </div>
   </div>
 )}
@@ -5446,8 +5450,8 @@ setMiniBossCount(0);
               onClick={() => setNewCalendarTask({...newCalendarTask, priority: 'routine'})} 
               className={`p-3 rounded-lg border-2 transition-all ${
                 newCalendarTask.priority === 'routine' 
-                  ? 'bg-blue-900/60 border-blue-500/70 text-blue-200 shadow-lg shadow-blue-500/30' 
-                  : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-blue-700/50'
+                  ? 'bg-amber-900/60 border-amber-500/70 text-amber-200 shadow-lg shadow-amber-500/30' 
+                  : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-amber-700/50'
               }`}
             >
               <div className="text-xl mb-1">📋</div>
@@ -5735,8 +5739,8 @@ setMiniBossCount(0);
                   
                   {/* Player Dialogue Box */}
                   {showTauntBoxes && (
-                    <div className="bg-black/50 rounded-lg p-3 border border-blue-800/30 relative">
-                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-blue-400 text-[10px] font-fantasy tracking-widest uppercase">You</div>
+                    <div className="bg-black/50 rounded-lg p-3 border border-amber-800/30 relative">
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-amber-400 text-[10px] font-fantasy tracking-widest uppercase">You</div>
                       <p className="text-white/80 text-sm leading-relaxed">"{playerTaunt}"</p>
                     </div>
                   )}
@@ -5784,7 +5788,7 @@ setMiniBossCount(0);
                       </div>
                       
                       {showDodgeButton && (
-                        <button onClick={dodge} className="w-full bg-gradient-to-b from-blue-700/80 to-blue-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-blue-200 hover:from-blue-600/80 hover:to-blue-900/80 transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:scale-105 active:scale-95 animate-pulse border border-cyan-500/40 mt-1">
+                        <button onClick={dodge} className="w-full bg-gradient-to-b from-cyan-700/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-600/80 hover:to-cyan-900/80 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] hover:shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95 animate-pulse border border-cyan-500/40 mt-1">
                           <div>🛡️ Dodge</div>
                           <div className="text-xs text-cyan-300 mt-0.5">Avoid the AOE</div>
                         </button>
@@ -5925,7 +5929,7 @@ setMiniBossCount(0);
         <div className="flex gap-4 justify-center mb-6">
           <button 
             onClick={() => setPomodoroRunning(!pomodoroRunning)}
-            className="bg-blue-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-blue-500 transition-all text-white"
+            className="bg-gradient-to-b from-amber-700 to-amber-900 px-8 py-3 rounded-lg font-fantasy font-bold text-xl hover:from-amber-600 hover:to-amber-800 transition-all text-amber-100 border border-amber-600/30"
           >
             {pomodoroRunning ? 'Pause' : 'Resume'}
           </button>
