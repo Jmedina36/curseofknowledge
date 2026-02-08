@@ -3650,7 +3650,7 @@ setMiniBossCount(0);
                     <button 
   onClick={() => { sfx.playClick(); miniBoss(); }} 
   disabled={!isDayActive || eliteBossDefeatedToday || xp < 200} 
-  className="bg-gradient-to-b from-red-900/70 to-red-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-red-200 hover:from-red-800/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.1)] border border-red-700/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-700/20"
+  className="bg-gradient-to-b from-red-900/70 to-red-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-red-200 hover:from-red-800/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.1)] border border-red-700/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20"
 >
   ⚔️ Face the Darkness
   {!isDayActive ? (
@@ -3669,7 +3669,7 @@ setMiniBossCount(0);
                     <button 
   onClick={() => { sfx.playClick(); finalBoss(); }} 
   disabled={!gauntletUnlocked || tasks.length === 0 || tasks.filter(t => t.done).length < tasks.length} 
-  className="bg-gradient-to-b from-purple-900/70 to-purple-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-purple-200 hover:from-purple-800/80 hover:to-purple-900/80 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)] border border-red-600/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-500 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-700/20"
+  className="bg-gradient-to-b from-purple-900/70 to-purple-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-purple-200 hover:from-purple-800/80 hover:to-purple-900/80 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)] border border-red-600/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20"
 >
   💀 The Gauntlet
   {!gauntletUnlocked && (
@@ -3971,7 +3971,7 @@ setMiniBossCount(0);
                     setShowStudyModal(true);
                   }}
                   disabled={deck.cards.length === 0}
-                  className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200 text-sm border border-purple-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200 text-sm border border-purple-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   Study Deck
                 </button>
@@ -3985,7 +3985,7 @@ setMiniBossCount(0);
                     generateQuiz(idx);
                   }}
                   disabled={deck.cards.length < 4}
-                  className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 text-sm border border-blue-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-500 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 text-sm border border-blue-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed"
                 >
                   Practice Quiz
                 </button>
@@ -4354,7 +4354,7 @@ setMiniBossCount(0);
                         <button 
                           onClick={useHealth} 
                           disabled={healthPots === 0 || hp >= getMaxHp()}
-                          className="bg-red-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-red-700 transition-all text-sm"
+                          className="bg-red-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-red-500 transition-all text-sm text-white font-medium"
                         >
                           Use
                         </button>
@@ -4381,7 +4381,7 @@ setMiniBossCount(0);
                             } 
                           }} 
                           disabled={staminaPots === 0 || stamina >= getMaxStamina()}
-                          className="bg-blue-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-700 transition-all text-sm"
+                          className="bg-blue-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-500 transition-all text-sm text-white font-medium"
                         >
                           Use
                         </button>
@@ -4402,7 +4402,7 @@ setMiniBossCount(0);
                         <button 
                           onClick={useCleanse} 
                           disabled={cleansePots === 0 || curseLevel === 0}
-                          className="bg-purple-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-purple-700 transition-all text-sm"
+                          className="bg-purple-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-purple-500 transition-all text-sm text-white font-medium"
                         >
                           Use
                         </button>
@@ -4425,7 +4425,7 @@ setMiniBossCount(0);
                 
                 <button 
                   onClick={() => setShowInventoryModal(false)} 
-                  className="w-full mt-6 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+                  className="w-full mt-6 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
                 >
                   Close
                 </button>
@@ -4537,7 +4537,7 @@ setMiniBossCount(0);
                 
                 <button 
                   onClick={() => setShowCraftingModal(false)} 
-                  className="w-full mt-6 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+                  className="w-full mt-6 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
                 >
                   Close
                 </button>
@@ -4603,7 +4603,7 @@ setMiniBossCount(0);
               addLog(`✨ Hero customized! ${customName.trim() ? `Name: ${customName.trim()}` : ''} ${customClass ? `Class: ${customClass.name}` : ''}`);
             }
           }}
-          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition-all"
+          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium"
         >
           Confirm
         </button>
@@ -4613,7 +4613,7 @@ setMiniBossCount(0);
             setCustomClass(null);
             setShowCustomizeModal(false);
           }} 
-          className="flex-1 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
         >
           Cancel
         </button>
@@ -4652,13 +4652,13 @@ setMiniBossCount(0);
             }
           }}
           disabled={!newDeck.name.trim()} 
-          className="flex-1 bg-purple-600 py-2 rounded-lg hover:bg-purple-700 transition-all disabled:bg-gray-700 disabled:cursor-not-allowed"
+          className="flex-1 bg-purple-600 py-2 rounded-lg hover:bg-purple-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Create Deck
         </button>
         <button 
           onClick={() => { setShowDeckModal(false); setNewDeck({name: ''}); }} 
-          className="flex-1 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
         >
           Cancel
         </button>
@@ -4715,13 +4715,13 @@ setMiniBossCount(0);
             }
           }}
           disabled={!newCard.front.trim() || !newCard.back.trim()} 
-          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition-all disabled:bg-gray-700 disabled:cursor-not-allowed"
+          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Add Card
         </button>
         <button 
           onClick={() => { setShowCardModal(false); setNewCard({front: '', back: ''}); }} 
-          className="flex-1 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
         >
           Cancel
         </button>
@@ -4767,13 +4767,13 @@ setMiniBossCount(0);
         className="bg-gray-800 rounded-xl p-12 mb-6 min-h-[300px] flex items-center justify-center cursor-pointer hover:bg-gray-750 transition-all border-2 border-purple-500"
       >
         <div className="text-center">
-          <p className="text-sm text-gray-500 mb-4">{isFlipped ? 'ANSWER' : 'QUESTION'}</p>
+          <p className="text-sm text-gray-400 mb-4">{isFlipped ? 'ANSWER' : 'QUESTION'}</p>
           <p className="text-2xl text-white whitespace-pre-wrap">
             {isFlipped 
               ? flashcardDecks[selectedDeck].cards[studyQueue[0]].back 
               : flashcardDecks[selectedDeck].cards[studyQueue[0]].front}
           </p>
-          <p className="text-sm text-gray-500 mt-6 italic">Click to flip</p>
+          <p className="text-sm text-gray-400 mt-6 italic">Click to flip</p>
         </div>
       </div>
       
@@ -4794,7 +4794,7 @@ setMiniBossCount(0);
               setStudyQueue(newQueue);
               setIsFlipped(false);
             }}
-            className="flex-1 bg-red-600 hover:bg-red-700 py-4 rounded-lg font-bold text-lg transition-all"
+            className="flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
           >
             ❌ Review Again
           </button>
@@ -4854,7 +4854,7 @@ setMiniBossCount(0);
                 setIsFlipped(false);
               }
             }}
-            className="flex-1 bg-green-600 hover:bg-green-700 py-4 rounded-lg font-bold text-lg transition-all"
+            className="flex-1 bg-green-600 hover:bg-green-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
           >
             ✓ Got It! (+5 XP)
           </button>
@@ -4895,7 +4895,7 @@ setMiniBossCount(0);
           </div>
           
           <div className="bg-gray-800 rounded-xl p-8 mb-6 min-h-[200px] border-2 border-blue-500">
-            <p className="text-sm text-gray-500 mb-4">QUESTION</p>
+            <p className="text-sm text-gray-400 mb-4">QUESTION</p>
             <p className="text-2xl text-white mb-8">{quizQuestions[currentQuizIndex]?.question}</p>
             
             <div className="space-y-3">
@@ -4906,14 +4906,14 @@ setMiniBossCount(0);
                   disabled={selectedAnswer !== null}
                   className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
                     selectedAnswer === null
-                      ? 'bg-gray-700 border-gray-600 hover:bg-gray-600 hover:border-blue-400'
+                      ? 'bg-gray-600 border-gray-500 hover:bg-gray-500 hover:border-blue-400 text-white'
                       : selectedAnswer === choice
                         ? choice === quizQuestions[currentQuizIndex].correctAnswer
-                          ? 'bg-green-600 border-green-400'
-                          : 'bg-red-600 border-red-400'
+                          ? 'bg-green-600 border-green-400 text-white'
+                          : 'bg-red-600 border-red-400 text-white'
                         : choice === quizQuestions[currentQuizIndex].correctAnswer
-                          ? 'bg-green-600 border-green-400'
-                          : 'bg-gray-700 border-gray-600'
+                          ? 'bg-green-600 border-green-400 text-white'
+                          : 'bg-gray-600 border-gray-500 text-gray-300'
                   } disabled:cursor-not-allowed`}
                 >
                   <span className="font-bold mr-3">{String.fromCharCode(65 + idx)}.</span>
@@ -4970,7 +4970,7 @@ setMiniBossCount(0);
                   setSelectedAnswer(null);
                 }
               }}
-              className="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-lg font-bold text-lg transition-all"
+              className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
             >
               {currentQuizIndex + 1 === quizQuestions.length ? 'See Results' : 'Next Question →'}
             </button>
@@ -5013,7 +5013,7 @@ setMiniBossCount(0);
                   setIsFlipped(false);
                   setShowStudyModal(true);
                 }}
-                className="w-full bg-purple-600 hover:bg-purple-700 py-4 rounded-lg font-bold text-lg transition-all"
+                className="w-full bg-purple-600 hover:bg-purple-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
               >
                 📖 Review Mistakes ({wrongCardIndices.length} card{wrongCardIndices.length !== 1 ? 's' : ''})
               </button>
@@ -5029,8 +5029,8 @@ setMiniBossCount(0);
               disabled={wrongCardIndices.length > 0 && !mistakesReviewed}
               className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${
                 wrongCardIndices.length > 0 && !mistakesReviewed
-                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
+                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-500 text-white'
               }`}
             >
               {wrongCardIndices.length > 0 && !mistakesReviewed ? '🔒 Review Mistakes First' : '🔄 Retake Quiz (50% XP)'}
@@ -5050,7 +5050,7 @@ setMiniBossCount(0);
                 setMistakesReviewed(false);
                 setReviewingMistakes(false);
               }}
-              className="w-full bg-gray-600 hover:bg-gray-700 py-4 rounded-lg font-bold text-lg transition-all"
+              className="w-full bg-gray-600 hover:bg-gray-500 py-4 rounded-lg font-bold text-lg transition-all text-gray-200"
             >
               Close
             </button>
@@ -5117,13 +5117,13 @@ setMiniBossCount(0);
         <button 
           onClick={() => { sfx.playClick(); addTask(); }} 
           disabled={!newTask.title} 
-          className="flex-1 bg-red-600 py-2 rounded-lg hover:bg-red-700 transition-all disabled:bg-gray-700 disabled:cursor-not-allowed"
+          className="flex-1 bg-red-600 py-2 rounded-lg hover:bg-red-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Accept Trial
         </button>
         <button 
           onClick={() => setShowModal(false)} 
-          className="flex-1 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
         >
           Cancel
         </button>
@@ -5180,7 +5180,7 @@ setMiniBossCount(0);
       
       <button 
         onClick={() => setShowImportModal(false)} 
-        className="w-full mt-4 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+        className="w-full mt-4 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
       >
         Cancel
       </button>
@@ -5266,7 +5266,7 @@ setMiniBossCount(0);
             } 
           }}
           disabled={!newPlanItem.title} 
-          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-700 transition-all disabled:bg-gray-700 disabled:cursor-not-allowed"
+          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Add Task
         </button>
@@ -5275,7 +5275,7 @@ setMiniBossCount(0);
             setShowPlanModal(false); 
             setNewPlanItem({ title: '', priority: 'routine' }); 
           }} 
-          className="flex-1 bg-gray-700 py-2 rounded-lg hover:bg-gray-600 transition-all"
+          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
         >
           Cancel
         </button>
@@ -5372,7 +5372,7 @@ setMiniBossCount(0);
             } 
           }} 
           disabled={!newCalendarTask.title.trim()} 
-          className="w-full bg-green-600 py-2 rounded-lg hover:bg-green-700 transition-all disabled:bg-gray-700 disabled:cursor-not-allowed"
+          className="w-full bg-green-600 py-2 rounded-lg hover:bg-green-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           Add Task
         </button>
@@ -5640,7 +5640,7 @@ setMiniBossCount(0);
                         )}
                         
                         {hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (
-                          <button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-gradient-to-b from-cyan-800/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-700/80 hover:to-cyan-900/80 transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] hover:scale-105 active:scale-95 border border-cyan-700/30 disabled:from-gray-800/60 disabled:to-gray-900/60 disabled:text-gray-500 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none disabled:border-gray-700/20">
+                          <button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-gradient-to-b from-cyan-800/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-700/80 hover:to-cyan-900/80 transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] hover:scale-105 active:scale-95 border border-cyan-700/30 disabled:from-gray-800/60 disabled:to-gray-900/60 disabled:text-gray-400 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none disabled:border-gray-600/20">
                             <div>✨ {GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name}</div>
                             <div className="text-xs text-cyan-300 mt-0.5">{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`}</div>
                           </button>
@@ -5653,7 +5653,7 @@ setMiniBossCount(0);
                         )}
                         
                         {canFlee && (
-                          <button onClick={flee} disabled={stamina < 25} className="bg-gradient-to-b from-yellow-800/60 to-yellow-950/60 px-5 py-4 rounded-lg font-fantasy tracking-wide text-yellow-200/80 hover:from-yellow-700/60 hover:to-yellow-900/60 transition-all hover:scale-105 active:scale-95 border border-yellow-700/20 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-600 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">
+                          <button onClick={flee} disabled={stamina < 25} className="bg-gradient-to-b from-yellow-800/60 to-yellow-950/60 px-5 py-4 rounded-lg font-fantasy tracking-wide text-yellow-200/80 hover:from-yellow-700/60 hover:to-yellow-900/60 transition-all hover:scale-105 active:scale-95 border border-yellow-700/20 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">
                             🏃 Flee
                           </button>
                         )}
@@ -5801,7 +5801,7 @@ setMiniBossCount(0);
         <div className="flex gap-4 justify-center mb-6">
           <button 
             onClick={() => setPomodoroRunning(!pomodoroRunning)}
-            className="bg-blue-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-blue-700 transition-all"
+            className="bg-blue-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-blue-500 transition-all text-white"
           >
             {pomodoroRunning ? 'Pause' : 'Resume'}
           </button>
@@ -5814,7 +5814,7 @@ setMiniBossCount(0);
                 setPomodoroRunning(true);
                 addLog('Skipped break - back to work!');
               }}
-              className="bg-yellow-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-700 transition-all"
+              className="bg-yellow-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-500 transition-all text-white"
             >
               Skip Break
             </button>
@@ -5828,7 +5828,7 @@ setMiniBossCount(0);
             setPomodoroRunning(false);
             addLog(`Focus session ended. Completed ${pomodorosCompleted} pomodoro${pomodorosCompleted !== 1 ? 's' : ''}.`);
           }}
-          className="bg-gray-700 px-8 py-3 rounded-lg font-bold hover:bg-gray-600 transition-all"
+          className="bg-gray-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-500 transition-all text-gray-200"
         >
           Finish Task & Return
         </button>
@@ -5839,11 +5839,11 @@ setMiniBossCount(0);
         </div>
         
         <div className="flex justify-center mt-8 pb-6">
-          <button onClick={() => setShowDebug(!showDebug)} className="text-xs px-4 py-2 bg-gray-800 text-gray-400 rounded hover:bg-gray-700 transition-all border border-gray-700">{showDebug ? '▲ Hide' : '▼ Show'} Debug Panel</button>
+          <button onClick={() => setShowDebug(!showDebug)} className="text-xs px-4 py-2 bg-gray-700 text-gray-300 rounded hover:bg-gray-600 transition-all border border-gray-600">{showDebug ? '▲ Hide' : '▼ Show'} Debug Panel</button>
         </div>
         
         <div className="text-center pb-4">
-          <p className="text-xs text-gray-600">v4.2 - Multi-Phase Gauntlet</p>
+          <p className="text-xs text-gray-500">v4.2 - Multi-Phase Gauntlet</p>
         </div>
       </div>
       )}
