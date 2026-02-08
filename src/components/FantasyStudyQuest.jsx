@@ -4090,7 +4090,10 @@ setMiniBossCount(0);
                   <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Health</p>
                     <p className="text-2xl font-bold text-red-400 font-mono">{hp}/{getMaxHp()}</p>
-...
+                    <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-red-900/10">
+                      <div className="bg-gradient-to-r from-red-700 to-red-500 h-1.5 rounded-full transition-all duration-500" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
+                    </div>
+                  </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Stamina</p>
                     <p className="text-2xl font-bold text-cyan-400 font-mono">{stamina}/{getMaxStamina()}</p>
