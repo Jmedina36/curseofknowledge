@@ -95,15 +95,6 @@ const HeroCardDecorations = ({ colorClass = 'red' }) => {
         }}
       />
 
-      {/* Subtle parchment texture overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 rounded-xl opacity-[0.05]"
-        style={{
-          backgroundImage:
-            'repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 6px)',
-          mixBlendMode: 'overlay',
-        }}
-      />
 
       {/* Corner rune ornaments */}
       <CornerRune position="top-left" color={color} />
