@@ -714,26 +714,38 @@ const FantasyStudyQuest = () => {
     return `${year}-${month}-${day}`;
   }, []);
   const getCardStyle = (heroClass, day) => {
+    if (!heroClass || !heroClass.color) {
+      return { border: '3px solid #8B0000', bg: 'from-red-900 to-red-800', glow: 'shadow-xl', emblem: '⚔︎' };
+    }
     const borders = ['3px solid', '3px solid', '3px solid', '4px solid', '4px solid', '5px solid', '5px solid'];
     const borderColors = {
       red: ['#8B0000', '#8B0000', '#B22222', '#DC143C', '#DC143C', '#FF4500', '#FF4500'],
       purple: ['#4B0082', '#4B0082', '#6A0DAD', '#8B008B', '#8B008B', '#9370DB', '#9370DB'],
       green: ['#004d00', '#004d00', '#006400', '#228B22', '#228B22', '#32CD32', '#32CD32'],
+      emerald: ['#004d00', '#004d00', '#006400', '#228B22', '#228B22', '#32CD32', '#32CD32'],
       yellow: ['#B8860B', '#B8860B', '#DAA520', '#FFD700', '#FFD700', '#FFEC8B', '#FFEC8B'],
-      amber: ['#8B4513', '#8B4513', '#A0522D', '#CD853F', '#CD853F', '#DEB887', '#DEB887']
+      amber: ['#8B4513', '#8B4513', '#A0522D', '#CD853F', '#CD853F', '#DEB887', '#DEB887'],
+      teal: ['#004D40', '#004D40', '#00695C', '#00897B', '#00897B', '#26A69A', '#26A69A'],
+      orange: ['#BF360C', '#BF360C', '#D84315', '#F4511E', '#F4511E', '#FF7043', '#FF7043'],
+      cyan: ['#006064', '#006064', '#00838F', '#0097A7', '#0097A7', '#00BCD4', '#00BCD4']
     };
     const toColors = {
       red: ['to-red-800', 'to-red-800', 'to-red-700', 'to-red-600', 'to-red-600', 'to-orange-500', 'to-orange-500'],
       purple: ['to-purple-800', 'to-purple-800', 'to-purple-700', 'to-indigo-600', 'to-indigo-600', 'to-pink-500', 'to-pink-500'],
       green: ['to-green-800', 'to-green-800', 'to-green-700', 'to-emerald-600', 'to-emerald-600', 'to-teal-500', 'to-teal-500'],
+      emerald: ['to-emerald-800', 'to-emerald-800', 'to-emerald-700', 'to-emerald-600', 'to-emerald-600', 'to-teal-500', 'to-teal-500'],
       yellow: ['to-yellow-800', 'to-yellow-800', 'to-yellow-700', 'to-amber-600', 'to-amber-600', 'to-orange-400', 'to-orange-400'],
-      amber: ['to-amber-800', 'to-amber-800', 'to-orange-700', 'to-orange-600', 'to-orange-600', 'to-yellow-500', 'to-yellow-500']
+      amber: ['to-amber-800', 'to-amber-800', 'to-orange-700', 'to-orange-600', 'to-orange-600', 'to-yellow-500', 'to-yellow-500'],
+      teal: ['to-teal-800', 'to-teal-800', 'to-teal-700', 'to-teal-600', 'to-teal-600', 'to-cyan-500', 'to-cyan-500'],
+      orange: ['to-orange-800', 'to-orange-800', 'to-orange-700', 'to-orange-600', 'to-orange-600', 'to-amber-500', 'to-amber-500'],
+      cyan: ['to-cyan-800', 'to-cyan-800', 'to-cyan-700', 'to-cyan-600', 'to-cyan-600', 'to-sky-500', 'to-sky-500']
     };
-    const d = day - 1;
+    const colorKey = borderColors[heroClass.color] ? heroClass.color : 'red';
+    const d = Math.max(0, Math.min(day - 1, 6));
     const pulse = day === 7 ? ' animate-pulse' : '';
     return {
-      border: `${borders[d]} ${borderColors[heroClass.color][d]}`,
-      bg: `${heroClass.gradient[Math.min(d, 3)]} ${toColors[heroClass.color][d]}`,
+      border: `${borders[d]} ${borderColors[colorKey][d]}`,
+      bg: `${heroClass.gradient[Math.min(d, 3)]} ${toColors[colorKey][d]}`,
       glow: `shadow-xl ${heroClass.glow[Math.min(d, 3)]}${pulse}`,
       emblem: heroClass.emblem
     };
