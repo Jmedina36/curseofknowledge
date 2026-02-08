@@ -338,7 +338,7 @@ const AchievementCard = ({ achievement, isNew }) => {
               </span>
             </div>
           ) : (
-            <span className="text-xs text-gray-700 font-fantasy tracking-wider">🔒 SEALED</span>
+            <span className="text-xs text-gray-700 font-fantasy tracking-wider">SEALED</span>
           )}
         </div>
       </div>

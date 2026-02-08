@@ -67,10 +67,10 @@ const GAME_CONSTANTS = {
   BOSS_ATTACK_DELAY: 1000,
   LOG_MAX_ENTRIES: 8,
   SKIP_PENALTIES: [
-    { hp: 20, message: '💀 The curse festers... -20 HP', levelLoss: 0, equipmentDebuff: 0, cursed: false },
-    { hp: 30, message: '💀 The curse tightens its grip... -30 HP, -1 Level, Equipment weakened', levelLoss: 1, equipmentDebuff: 0.25, cursed: false },
-    { hp: 50, message: '💀 YOU ARE CURSED. The abyss consumes you... -50 HP', levelLoss: 0, equipmentDebuff: 0, cursed: true },
-    { hp: 0, message: '☠️ YOU DIED. The curse has claimed your soul.', levelLoss: 0, equipmentDebuff: 0, death: true }
+    { hp: 20, message: 'The curse festers... -20 HP', levelLoss: 0, equipmentDebuff: 0, cursed: false },
+    { hp: 30, message: 'The curse tightens its grip... -30 HP, -1 Level, Equipment weakened', levelLoss: 1, equipmentDebuff: 0.25, cursed: false },
+    { hp: 50, message: 'YOU ARE CURSED. The abyss consumes you... -50 HP', levelLoss: 0, equipmentDebuff: 0, cursed: true },
+    { hp: 0, message: 'YOU DIED. The curse has claimed your soul.', levelLoss: 0, equipmentDebuff: 0, death: true }
   ],
   SKIP_REDEMPTION_DAYS: 3,
   MAX_SKIPS_BEFORE_DEATH: 4,
@@ -745,7 +745,7 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
   useEffect(() => {
     if (xp >= gauntletMilestone && !gauntletUnlocked) {
       setGauntletUnlocked(true);
-      addLog(`⚔️ THE GAUNTLET UNLOCKED! Face the trial when ready...`);
+      addLog(`THE GAUNTLET UNLOCKED! Face the trial when ready...`);
     }
   }, [xp, gauntletMilestone, gauntletUnlocked, addLog]);
   
@@ -794,23 +794,23 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
           // Check curse before advancing
           if (!eliteBossDefeatedToday) {
             // Didn't beat elite boss - apply curse penalty
-            addLog('🔒 ELITE BOSS LOCKED - Midnight passed, opportunity missed');
+            addLog('ELITE BOSS LOCKED — Midnight passed, opportunity missed');
             
             const newCurseLevel = curseLevel + 1;
             setCurseLevel(newCurseLevel);
             
             if (newCurseLevel >= 4) {
               // 4th missed boss = death
-              addLog('☠️ THE CURSE CONSUMES YOU. Four failures... the abyss claims your soul.');
+              addLog('THE CURSE CONSUMES YOU. Four failures... the abyss claims your soul.');
               setTimeout(() => die(), 2000);
               return;
             }
             
             // Apply curse penalties
             const cursePenalties = [
-              { hp: 20, msg: '🌑 CURSED. The curse takes root... -20 HP' },
-              { hp: 40, msg: '🌑🌑 DEEPLY CURSED. The curse tightens its grip... -40 HP' },
-              { hp: 60, msg: '☠️ CONDEMNED. One more failure... and the abyss claims you. -60 HP' }
+              { hp: 20, msg: 'CURSED. The curse takes root... -20 HP' },
+              { hp: 40, msg: 'DEEPLY CURSED. The curse tightens its grip... -40 HP' },
+              { hp: 60, msg: 'CONDEMNED. One more failure... and the abyss claims you. -60 HP' }
             ];
             
             const penalty = cursePenalties[newCurseLevel - 1];
@@ -820,7 +820,7 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
             // Beat yesterday's boss - clear curse if present
             if (curseLevel > 0) {
               setCurseLevel(0);
-              addLog('🌅 THE CURSE BREAKS! Yesterday\'s trial complete.');
+              addLog('THE CURSE BREAKS! Yesterday\'s trial complete.');
             }
           }
           
@@ -848,14 +848,14 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
         );
         
         if (completedCount > 0) {
-          addLog(`✅ Cleared ${completedCount} completed task${completedCount > 1 ? 's' : ''}`);
+          addLog(`Cleared ${completedCount} completed task${completedCount > 1 ? 's' : ''}`);
         }
         if (incompleteCount > 0) {
-          addLog(`⚠️ ${incompleteCount} incomplete task${incompleteCount > 1 ? 's' : ''} marked OVERDUE`);
+          addLog(`${incompleteCount} incomplete task${incompleteCount > 1 ? 's' : ''} marked OVERDUE`);
         }
         
-        addLog('🌅 MIDNIGHT PASSED - Day auto-advanced');
-        addLog(`📅 Now on Day ${nextDay} (Dormant)`);
+        addLog('MIDNIGHT PASSED — Day auto-advanced');
+        addLog(`Now on Day ${nextDay} (Dormant)`);
         
         // Set day to dormant until next engagement
         setIsDayActive(false);
@@ -888,7 +888,7 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
           
           if (Notification.permission === "granted" && activeTask) {
             const task = tasks.find(t => t.id === activeTask);
-            new Notification("⏰ Task Complete!", {
+            new Notification("Task Complete!", {
               body: `${task?.title || 'Task'} - Time to mark it done!`,
               icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><text y='75' font-size='75'>⏰</text></svg>"
             });
@@ -896,8 +896,8 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
           
           if (activeTask) {
             const task = tasks.find(t => t.id === activeTask);
-            addLog(`⏰ Time's up for: ${task?.title || 'task'}!`);
-            addLog(`💔 Ran out of time! Lost 10 HP as penalty.`);
+            addLog(`Time's up for: ${task?.title || 'task'}!`);
+            addLog(`Ran out of time! Lost 10 HP as penalty.`);
           }
         }
       }, 1000);
@@ -916,21 +916,21 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
           
           // Play sound and show notification
           if (Notification.permission === "granted") {
-            new Notification(isBreak ? "Break Over! 🎯" : "Pomodoro Complete! 🍅", {
+            new Notification(isBreak ? "Break Over!" : "Pomodoro Complete!", {
               body: isBreak ? "Time to get back to work!" : "Great work! Take a 5 minute break.",
-              icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><text y='75' font-size='75'>🍅</text></svg>"
+              icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><text y='75' font-size='75'>⏰</text></svg>"
             });
           }
           
           if (!isBreak) {
             // Work session done - start break
             setPomodorosCompleted(p => p + 1);
-            addLog(`🍅 Pomodoro #${pomodorosCompleted + 1} completed!`);
+            addLog(`Pomodoro #${pomodorosCompleted + 1} completed!`);
             setIsBreak(true);
             setPomodoroTimer(5 * 60); // 5 minute break
           } else {
             // Break done - start work session
-            addLog(`✨ Break over! Ready for another pomodoro?`);
+            addLog(`Break over! Ready for another pomodoro?`);
             setIsBreak(false);
             setPomodoroTimer(25 * 60); // 25 minute work session
           }
@@ -962,7 +962,7 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
     
     if (newLevel > level) {
       setLevel(newLevel);
-      addLog(`🎉 LEVEL UP! Now level ${newLevel}`);
+      addLog(`LEVEL UP! Now level ${newLevel}`);
       setHp(h => Math.min(getMaxHp(), h + 20));
     }
   }, [xp, level, addLog, getMaxHp]);
@@ -987,13 +987,13 @@ if (data.lastRealDay) setLastRealDay(data.lastRealDay);
     
     if (penalty.levelLoss > 0) {
       setLevel(l => Math.max(1, l - penalty.levelLoss));
-      addLog(`⬇️ Lost ${penalty.levelLoss} level${penalty.levelLoss > 1 ? 's' : ''}!`);
+      addLog(`Lost ${penalty.levelLoss} level${penalty.levelLoss > 1 ? 's' : ''}!`);
     }
     
     if (penalty.equipmentDebuff > 0) {
       setWeapon(w => Math.floor(w * (1 - penalty.equipmentDebuff)));
       setArmor(a => Math.floor(a * (1 - penalty.equipmentDebuff)));
-      addLog(`⚠️ Equipment weakened by ${penalty.equipmentDebuff * 100}%!`);
+      addLog(`Equipment weakened by ${penalty.equipmentDebuff * 100}%!`);
     }
     
   }, [skipCount, addLog]);
@@ -1037,7 +1037,7 @@ if (tasks.length === 0) {
       
       if (newTasks.length > 0) {
         setTasks(newTasks);
-        addLog(`📋 Loaded ${newTasks.length} tasks from ${plannerDayName}'s plan`);
+        addLog(`Loaded ${newTasks.length} tasks from ${plannerDayName}'s plan`);
       }
     }
     
@@ -1045,15 +1045,15 @@ if (tasks.length === 0) {
     if (currentHour < GAME_CONSTANTS.LATE_START_HOUR) {
       setXp(x => x + GAME_CONSTANTS.EARLY_BIRD_BONUS);
       setStudyStats(prev => ({ ...prev, earlyBirdDays: prev.earlyBirdDays + 1 }));
-      addLog(`🌅 Early Bird! +${GAME_CONSTANTS.EARLY_BIRD_BONUS} XP`);
+      addLog(`Early Bird! +${GAME_CONSTANTS.EARLY_BIRD_BONUS} XP`);
       earlyBirdBonus = true;
     }
     
     if (currentHour >= GAME_CONSTANTS.LATE_START_HOUR && !earlyBirdBonus) {
       setHp(h => Math.max(0, h - GAME_CONSTANTS.LATE_START_PENALTY));
-      addLog(`⚠️ Late start! -${GAME_CONSTANTS.LATE_START_PENALTY} HP`);
+      addLog(`Late start! -${GAME_CONSTANTS.LATE_START_PENALTY} HP`);
     } else if (!earlyBirdBonus) {
-      addLog('✨ Day begins...');
+      addLog('Day begins...');
     }
     
     setHasStarted(true);
@@ -1105,10 +1105,10 @@ if (tasks.length === 0) {
     // Activate day on first task
     if (!isDayActive) {
       setIsDayActive(true);
-      addLog(`⚡ DAY ${currentDay} ACTIVATED - Complete tasks before midnight!`);
+      addLog(`DAY ${currentDay} ACTIVATED — Complete tasks before midnight!`);
     }
     
-    addLog(`📜 New trial: ${newTask.title}`);
+    addLog(`New trial: ${newTask.title}`);
   }
 };
 
@@ -1116,7 +1116,7 @@ if (tasks.length === 0) {
     const plannedTasks = weeklyPlan[dayName] || [];
     
     if (plannedTasks.length === 0) {
-      addLog(`⚠️ No tasks planned for ${dayName}`);
+      addLog(`No tasks planned for ${dayName}`);
       return;
     }
     
@@ -1137,10 +1137,10 @@ if (tasks.length === 0) {
     // Activate day on import
     if (!isDayActive) {
       setIsDayActive(true);
-      addLog(`⚡ DAY ${currentDay} ACTIVATED - Complete tasks before midnight!`);
+      addLog(`DAY ${currentDay} ACTIVATED — Complete tasks before midnight!`);
     }
     
-    addLog(`📋 Imported ${newTasks.length} tasks from ${dayName}'s plan`);
+    addLog(`Imported ${newTasks.length} tasks from ${dayName}'s plan`);
     setShowImportModal(false);
   };
 
@@ -1178,16 +1178,16 @@ if (tasks.length === 0) {
     const craftingRecipes = {
       healthPotion: { cost: 25, name: 'Health Potion', emoji: '💊' },
       staminaPotion: { cost: 20, name: 'Stamina Potion', emoji: '⚡' },
-      cleansePotion: { cost: 50, name: 'Cleanse Potion', emoji: '🧪' },
+      cleansePotion: { cost: 50, name: 'Cleanse Potion', emoji: '✧' },
       weaponOil: { cost: 40, name: 'Weapon Oil', emoji: '⚔️' },
       armorPolish: { cost: 40, name: 'Armor Polish', emoji: '🛡️' },
-      luckyCharm: { cost: 80, name: 'Lucky Charm', emoji: '🍀' }
+      luckyCharm: { cost: 80, name: 'Lucky Charm', emoji: '✦' }
     };
     
     const recipe = craftingRecipes[itemType];
     
     if (essence < recipe.cost) {
-      addLog(`⚠️ Need ${recipe.cost} Essence to craft ${recipe.name} (have ${essence})`);
+      addLog(`Need ${recipe.cost} Essence to craft ${recipe.name} (have ${essence})`);
       return;
     }
     
@@ -1214,7 +1214,7 @@ if (tasks.length === 0) {
         break;
     }
     
-    addLog(`⚒️ Crafted: ${recipe.emoji} ${recipe.name} (-${recipe.cost} Essence)`);
+    addLog(`Crafted: ${recipe.emoji} ${recipe.name} (-${recipe.cost} Essence)`);
   };
   
   const startTask = (id) => {
@@ -1230,7 +1230,7 @@ if (tasks.length === 0) {
       setRunning(true);
       setSessionStartTime(Date.now());
       setTaskPauseCount(0);
-      addLog(`⚔️ Starting: ${task.title}`);
+      addLog(`Starting: ${task.title}`);
     }
   };
   
@@ -1277,7 +1277,7 @@ if (task.overdue) {
       if (newConsecutive >= GAME_CONSTANTS.SKIP_REDEMPTION_DAYS && skipCount > 0) {
         setSkipCount(s => s - 1);
         setConsecutiveDays(0);
-        addLog(`🙏 REDEMPTION! ${GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days of dedication. Skip forgiven.`);
+        addLog(`REDEMPTION! ${GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days of dedication. Skip forgiven.`);
       }
     }
     
@@ -1285,18 +1285,18 @@ if (task.overdue) {
     const roll = Math.random();
     if (roll < GAME_CONSTANTS.LOOT_RATES.HEALTH_POTION) {
       setHealthPots(h => h + 1);
-      addLog('💊 Found Health Potion!');
+      addLog('Found Health Potion!');
     } else if (roll < GAME_CONSTANTS.LOOT_RATES.STAMINA_POTION) {
       setStaminaPots(s => s + 1);
-      addLog('⚡ Found Stamina Potion!');
+      addLog('Found Stamina Potion!');
     } else if (roll < GAME_CONSTANTS.LOOT_RATES.WEAPON) {
       const gain = 1 + Math.floor(currentDay / 2);
       setWeapon(w => w + gain);
-      addLog(`⚔️ Weapon upgraded! +${gain}`);
+      addLog(`Weapon upgraded! +${gain}`);
     } else if (roll < GAME_CONSTANTS.LOOT_RATES.ARMOR) {
       const gain = 1 + Math.floor(currentDay / 2);
       setArmor(a => a + gain);
-      addLog(`🛡️ Armor upgraded! +${gain}`);
+      addLog(`Armor upgraded! +${gain}`);
     }
     
     // Mark task as done
@@ -1327,7 +1327,7 @@ if (task.overdue) {
     
     setStamina(s => Math.min(getMaxStamina(), s + GAME_CONSTANTS.STAMINA_PER_TASK));
     
-    let completionMsg = `✅ Completed: ${task.title} (+${xpGain} XP`;
+    let completionMsg = `Completed: ${task.title} (+${xpGain} XP`;
     if (task.priority === 'important') completionMsg += ' • IMPORTANT';
     if (task.overdue) completionMsg += ' • OVERDUE';
     completionMsg += `)`;
@@ -1342,7 +1342,7 @@ setTimeout(() => {
     // Wave attack: 2-4 enemies
     const numEnemies = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4
     setWaveCount(numEnemies);
-    addLog(`⚠️ WAVE INCOMING! ${numEnemies} enemies detected!`);
+    addLog(`WAVE INCOMING! ${numEnemies} enemies detected!`);
     setTimeout(() => spawnRegularEnemy(true, 1, numEnemies), 1000);
   } else {
     // Regular single enemy
@@ -1398,10 +1398,10 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     if (waveIndex === 1) {
       setWaveEssenceTotal(0); // Reset total at start of wave
     }
-    addLog(`⚠️ WAVE ASSAULT - Enemy ${waveIndex}/${totalWaves}: ${enemyName}`);
+     addLog(`WAVE ASSAULT — Enemy ${waveIndex}/${totalWaves}: ${enemyName}`);
   } else {
     setBattleType('regular');
-    addLog(`⚔️ ${enemyName} appears!`);
+    addLog(`${enemyName} appears!`);
   }
 }, [currentDay, canCustomize, addLog]);
 
@@ -1457,19 +1457,19 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
       setEnemyDialogue(bossDialogue.START);
     }
     
-    addLog(`⚔️ AMBUSH! ${bossNameGenerated} appears!`);
+    addLog(`AMBUSH! ${bossNameGenerated} appears!`);
   };
   
   const useHealth = () => {
   if (curseLevel === 3) {
-    addLog('☠️ CONDEMNED - Cannot use Health Potions!');
+    addLog('CONDEMNED — Cannot use Health Potions!');
     return;
   }
   if (healthPots > 0 && hp < getMaxHp()) {
     setHealthPots(h => h - 1);
     setHp(h => Math.min(getMaxHp(), h + 50));
     sfx.playPotion();
-    addLog('💊 Used Health Potion! +50 HP');
+    addLog('Used Health Potion! +50 HP');
   }
 };
   const useStamina = () => {
@@ -1491,7 +1491,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
         setTimerEndTime(prev => prev ? prev + (timeBonus * 1000) : null);
       }
       
-      addLog(`⚡ Spent ${staminaCost} Stamina! +5 minutes to timer`);
+      addLog(`Spent ${staminaCost} Stamina! +5 minutes to timer`);
     }
   };
   
@@ -1500,7 +1500,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setCleansePots(c => c - 1);
     const removedLevel = curseLevel;
     setCurseLevel(0);
-    addLog(`✨ Used Cleanse Potion! ${removedLevel === 3 ? 'CONDEMNATION' : removedLevel === 2 ? 'DEEP CURSE' : 'CURSE'} removed!`);
+    addLog(`Used Cleanse Potion! ${removedLevel === 3 ? 'CONDEMNATION' : removedLevel === 2 ? 'DEEP CURSE' : 'CURSE'} removed!`);
   }
 };
   
@@ -1508,7 +1508,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     if (xp >= GAME_CONSTANTS.CLEANSE_POTION_COST) {
       setXp(x => x - GAME_CONSTANTS.CLEANSE_POTION_COST);
       setCleansePots(c => c + 1);
-      addLog(`🧪 Crafted Cleanse Potion! -${GAME_CONSTANTS.CLEANSE_POTION_COST} XP`);
+      addLog(`Crafted Cleanse Potion! -${GAME_CONSTANTS.CLEANSE_POTION_COST} XP`);
     }
   };
   
@@ -1516,7 +1516,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     const eliteXpRequired = 200;
     
     if (xp < eliteXpRequired) {
-      addLog(`⚠️ Need ${eliteXpRequired} XP to face the darkness! (${xp}/${eliteXpRequired})`);
+      addLog(`Need ${eliteXpRequired} XP to face the darkness! (${xp}/${eliteXpRequired})`);
       return;
     }
     
@@ -1527,7 +1527,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   
   const finalBoss = () => {
     if (!gauntletUnlocked) {
-      addLog(`⚠️ THE GAUNTLET is locked! Reach ${gauntletMilestone} XP to unlock.`);
+      addLog(`THE GAUNTLET is locked! Reach ${gauntletMilestone} XP to unlock.`);
       return;
     }
     
@@ -1535,12 +1535,12 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     const totalTasks = tasks.length;
     
     if (totalTasks === 0) {
-      addLog('⚠️ No trials accepted! Create some first.');
+      addLog('No trials accepted! Create some first.');
       return;
     }
     
     if (completedTasks < totalTasks) {
-      addLog(`⚠️ Must complete ALL trials! (${completedTasks}/${totalTasks} done)`);
+      addLog(`Must complete ALL trials! (${completedTasks}/${totalTasks} done)`);
       return;
     }
     
@@ -1606,8 +1606,8 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
     setEnemyDialogue(bossDialogue.START);
     
-    addLog(`👹 ${bossNameGenerated.toUpperCase()} - THE GAUNTLET! (Phase 1 of 3)`);
-    addLog(`💀 Defeat this foe 3 times. Each form grows stronger.`);
+    addLog(`${bossNameGenerated.toUpperCase()} — THE GAUNTLET! (Phase 1 of 3)`);
+    addLog(`Defeat this foe 3 times. Each form grows stronger.`);
   };
   
   // Unified Gauntlet phase transition handler (wave-style)
@@ -1625,7 +1625,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setEssence(e => e + phaseEssence);
     const bossFirstName = bossName.split(' ')[0];
     const phaseTitles = { 1: bossName, 2: `${bossFirstName}, The Accursed`, 3: `${bossFirstName}, Devourer of Souls` };
-    addLog(`⚔️ ${phaseTitles[gauntletPhase]} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+    addLog(`${phaseTitles[gauntletPhase]} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
     
     // Show transition screen — do NOT set bossHp yet (button handler does that)
     setPhaseTransitioning(true);
@@ -1637,12 +1637,12 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     
     // Store transition info for display
     setVictoryLoot([
-      `💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
-      `🔮 +${phaseEssence} Essence`,
-      `✨ +${phaseXp} XP`,
-      `❤️ Full HP Restored`,
-      `⚡ Stamina Restored`,
-      `⚠️ Boss HP: ${nextPhaseHp}`,
+      `PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
+      `+${phaseEssence} Essence`,
+      `+${phaseXp} XP`,
+      `Full HP Restored`,
+      `Stamina Restored`,
+      `Boss HP: ${nextPhaseHp}`,
     ]);
     
     sfx.playPhaseTransition(gauntletPhase + 1);
@@ -1903,21 +1903,21 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
       if (hpPercent <= 0.5 && !hasTriggeredLowHpTaunt) {
         setIsTauntAvailable(true);
         setHasTriggeredLowHpTaunt(true);
-        addLog(`💬 [TAUNT AVAILABLE]`);
+        addLog(`[TAUNT AVAILABLE]`);
       }
       // Trigger 2: Deal 30+ damage in one hit (15% chance)
       else if (finalDamage >= 30 && Math.random() < 0.15) {
         setIsTauntAvailable(true);
-        addLog(`💬 [TAUNT AVAILABLE]`);
+        addLog(`[TAUNT AVAILABLE]`);
       }
     }
     
     if (bossDebuffs.marked || bossDebuffs.poisonTurns > 0 || enragedTurns > 0) {
-      addLog(`⚔️ Attack: ${damage} base damage`);
+      addLog(`Attack: ${damage} base damage`);
       bonusMessages.forEach(msg => addLog(msg));
-      addLog(`💥 TOTAL DAMAGE: ${finalDamage}!`);
+      addLog(`TOTAL DAMAGE: ${finalDamage}!`);
     } else {
-      addLog(`⚔️ Dealt ${finalDamage} damage!`);
+      addLog(`Dealt ${finalDamage} damage!`);
     }
     
     setBossFlash(true);
@@ -1963,7 +1963,7 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
     setWaveEssenceTotal(t => t + essenceGain);
   }
   
-  addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+  addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
   
   // Set victory dialogue
   if (battleType === 'elite' || battleType === 'final') {
@@ -1982,14 +1982,14 @@ const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves
   // Elite boss defeated - set daily flag (curse cleared at midnight)
 if (battleType === 'elite') {
   setEliteBossDefeatedToday(true);
-  addLog('✨ Today\'s elite trial complete. Curse will be cleared at midnight.');
+  addLog('Today\'s elite trial complete. Curse will be cleared at midnight.');
 }
   
   // Check if wave continues
   if (battleType === 'wave' && currentWaveEnemy < totalWaveEnemies) {
     // More enemies in wave
     const nextEnemy = currentWaveEnemy + 1;
-    addLog(`⚠️ Next wave enemy incoming...`);
+    addLog(`Next wave enemy incoming...`);
     setTimeout(() => spawnRegularEnemy(true, nextEnemy, totalWaveEnemies), 1500);
     setShowBoss(false);
     setBattling(false);
@@ -2000,7 +2000,7 @@ if (battleType === 'elite') {
   // Wave complete bonus
   if (battleType === 'wave') {
     setXp(x => x + 25);
-    addLog(`🌊 Wave defeated! +25 bonus XP`);
+    addLog(`Wave defeated! +25 bonus XP`);
   }
   
   setBattling(false);
@@ -2014,12 +2014,12 @@ if (battleType === 'elite') {
           const lootRoll = Math.random();
           if (lootRoll < 0.2) {
             setHealthPots(h => h + 1);
-            lootMessages.push('💊 Health Potion');
-            addLog('💊 Looted: Health Potion!');
+            lootMessages.push('Health Potion');
+            addLog('Looted: Health Potion!');
           } else if (lootRoll < 0.55) {
             setStaminaPots(s => s + 1);
-            lootMessages.push('⚡ Stamina Potion');
-            addLog('⚡ Looted: Stamina Potion!');
+            lootMessages.push('Stamina Potion');
+            addLog('Looted: Stamina Potion!');
           }
         } else {
           // Elite bosses: weapon/armor upgrades
@@ -2028,38 +2028,38 @@ if (battleType === 'elite') {
           
           if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.HEALTH_POTION) {
             setHealthPots(h => h + luckMultiplier);
-            lootMessages.push(`💎 Health Potion${luckyCharmActive ? ' x2' : ''}`);
-            addLog(`💎 Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+            lootMessages.push(`Health Potion${luckyCharmActive ? ' x2' : ''}`);
+            addLog(`Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
           } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.STAMINA_POTION) {
             setStaminaPots(s => s + luckMultiplier);
-            lootMessages.push(`💎 Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
-            addLog(`💎 Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+            lootMessages.push(`Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
+            addLog(`Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
           } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.WEAPON) {
             const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
             setWeapon(w => w + gain);
-            lootMessages.push(`⚔️ Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-            addLog(`💎 Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+            lootMessages.push(`Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+            addLog(`Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
           } else {
             const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
             setArmor(a => a + gain);
-            lootMessages.push(`🛡️ Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-            addLog(`💎 Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+            lootMessages.push(`Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+            addLog(`Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
           }
           
           if (luckyCharmActive) {
             setLuckyCharmActive(false);
-            addLog('🍀 Lucky Charm consumed!');
+            addLog('Lucky Charm consumed!');
           }
         }
         
-        lootMessages.push('✨ Fully Healed');
+        lootMessages.push('Fully Healed');
         setHp(getMaxHp());
-        addLog('✨ Fully healed!');
+        addLog('Fully healed!');
       }
       
       // Add essence gain to loot display
       const displayEssence = battleType === 'wave' ? waveEssenceTotal : essenceGain;
-      lootMessages.unshift(`🔮 +${displayEssence} Essence`);
+      lootMessages.unshift(`+${displayEssence} Essence`);
       
        setVictoryLoot(lootMessages);
        sfx.playVictory();
@@ -2120,13 +2120,13 @@ if (enragedTurns > 0) {
   
   // 25% miss chance when enraged (wild swings)
   if (Math.random() < 0.25) {
-    addLog(`💨 Boss's ENRAGED attack missed!`);
+    addLog(`Boss's ENRAGED attack missed!`);
     
     // Decrement enraged turns even on miss
     setEnragedTurns(prev => {
       const newTurns = prev - 1;
       if (newTurns === 0) {
-        addLog(`😤 Enemy is no longer ENRAGED`);
+        addLog(`Enemy is no longer ENRAGED`);
         setPlayerTaunt('');
         setEnemyTauntResponse('');
         setShowTauntBoxes(false);
@@ -2137,7 +2137,7 @@ if (enragedTurns > 0) {
     // Taunt becomes available on enemy miss
     if (!isTauntAvailable) {
       setIsTauntAvailable(true);
-      addLog(`💬 [TAUNT AVAILABLE] - Enemy missed! Opening spotted!`);
+      addLog(`[TAUNT AVAILABLE] — Enemy missed! Opening spotted!`);
     }
     return; // Skip damage entirely
   }
@@ -2151,18 +2151,18 @@ if (enragedTurns > 0) {
       if (aoeWarning && gauntletPhase === 3 && battleType === 'final') {
         if (dodgeReady) {
           // Player dodged successfully
-           addLog(`🌀 You rolled out of the way! AOE DODGED!`);
+           addLog(`You rolled out of the way! AOE DODGED!`);
            sfx.playDodge();
            setDodgeReady(false);
         } else {
           // AOE hits for 35 damage
           const aoeDamage = 35;
-          addLog(`💥 DEVASTATING AOE SLAM! -${aoeDamage} HP`);
+          addLog(`DEVASTATING AOE SLAM! -${aoeDamage} HP`);
           setHp(currentHp => {
             const newHp = Math.max(0, currentHp - aoeDamage);
             if (newHp <= 0) {
               setTimeout(() => {
-                addLog('💀 You have been defeated by the AOE!');
+                addLog('You have been defeated by the AOE!');
                 die();
               }, 500);
             }
@@ -2179,18 +2179,18 @@ if (enragedTurns > 0) {
         const newHp = Math.max(0, currentHp - bossDamage);
         if (newHp <= 0) {
           setTimeout(() => {
-            addLog('💀 You have been defeated!');
+            addLog('You have been defeated!');
             die();
           }, 500);
         }
         return newHp;
       });
-      addLog(`💥 Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
+      addLog(`Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
       
       // Taunt trigger: 25% chance after taking damage
       if (!isTauntAvailable && bossDamage > 0 && Math.random() < 0.25) {
         setIsTauntAvailable(true);
-        addLog(`💬 [TAUNT AVAILABLE] - Enemy left an opening!`);
+        addLog(`[TAUNT AVAILABLE] — Enemy left an opening!`);
       }
       
       // Decrement enraged turns
@@ -2198,7 +2198,7 @@ if (enragedTurns > 0) {
         setEnragedTurns(prev => {
           const newTurns = prev - 1;
           if (newTurns === 0) {
-            addLog(`😤 Enemy is no longer ENRAGED`);
+            addLog(`Enemy is no longer ENRAGED`);
             setPlayerTaunt(''); // Clear taunt dialogue when enraged expires
             setEnemyTauntResponse('');
             setShowTauntBoxes(false);
@@ -2215,10 +2215,10 @@ if (enragedTurns > 0) {
           setBossHp(h => {
             const newHp = Math.max(0, h - poisonDmg);
             if (newHp > 0) {
-              addLog(`☠️ Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
+              addLog(`Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
             } else {
-              addLog(`☠️ Poison deals ${poisonDmg} damage!`);
-              addLog(`💀 Boss succumbed to poison!`);
+              addLog(`Poison deals ${poisonDmg} damage!`);
+              addLog(`Boss succumbed to poison!`);
               
               setTimeout(() => {
                 // GAUNTLET PHASE TRANSITION - poison kill: delegate to unified handler
@@ -2231,7 +2231,7 @@ if (enragedTurns > 0) {
                 const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : 10);
                 setXp(x => x + xpGain);
                 setEssence(e => e + essenceGain);
-                addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+                addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
                 
                 if (battleType === 'elite' || battleType === 'final') {
                   const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
@@ -2251,7 +2251,7 @@ if (enragedTurns > 0) {
                 
                 if (!isFinalBoss) {
                   setHp(getMaxHp());
-                  addLog('✨ Fully healed!');
+                  addLog('Fully healed!');
                 }
                 
                  sfx.playVictory();
@@ -2499,7 +2499,7 @@ if (enragedTurns > 0) {
     
     if (wasPoisoned && bossDebuffs.poisonedVulnerability > 0) {
       const bonusDmg = Math.floor((damage / (1 + bossDebuffs.poisonedVulnerability)) * bossDebuffs.poisonedVulnerability);
-      bonusMessages.push(`☠️ +${bonusDmg} from poison vulnerability`);
+      bonusMessages.push(`+${bonusDmg} from poison vulnerability`);
     }
     
     addLog(damageLog);
@@ -2533,7 +2533,7 @@ if (enragedTurns > 0) {
         setWaveEssenceTotal(t => t + essenceGain);
       }
       
-      addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+      addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
       
       if (battleType === 'elite' || battleType === 'final') {
         const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
@@ -2557,12 +2557,12 @@ if (enragedTurns > 0) {
     const lootRoll = Math.random();
     if (lootRoll < 0.2) {
       setHealthPots(h => h + 1);
-      lootMessages.push('💊 Health Potion');
-      addLog('💊 Looted: Health Potion!');
+      lootMessages.push('Health Potion');
+      addLog('Looted: Health Potion!');
     } else if (lootRoll < 0.55) {
       setStaminaPots(s => s + 1);
-      lootMessages.push('⚡ Stamina Potion');
-      addLog('⚡ Looted: Stamina Potion!');
+      lootMessages.push('Stamina Potion');
+      addLog('Looted: Stamina Potion!');
     }
   } else {
     const lootRoll = Math.random();
@@ -2570,37 +2570,37 @@ if (enragedTurns > 0) {
     
     if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.HEALTH_POTION) {
       setHealthPots(h => h + luckMultiplier);
-      lootMessages.push(`💎 Health Potion${luckyCharmActive ? ' x2' : ''}`);
-      addLog(`💎 Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+      lootMessages.push(`Health Potion${luckyCharmActive ? ' x2' : ''}`);
+      addLog(`Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
     } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.STAMINA_POTION) {
       setStaminaPots(s => s + luckMultiplier);
-      lootMessages.push(`💎 Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
-      addLog(`💎 Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+      lootMessages.push(`Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
+      addLog(`Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
     } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.WEAPON) {
       const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
       setWeapon(w => w + gain);
-      lootMessages.push(`⚔️ Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-      addLog(`💎 Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+      lootMessages.push(`Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+      addLog(`Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
     } else {
       const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
       setArmor(a => a + gain);
-      lootMessages.push(`🛡️ Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-      addLog(`💎 Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+      lootMessages.push(`Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+      addLog(`Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
     }
     
     if (luckyCharmActive) {
       setLuckyCharmActive(false);
-      addLog('🍀 Lucky Charm consumed!');
-    }
-  }
+            addLog('Lucky Charm consumed!');
+          }
+        }
         
-        lootMessages.push('✨ Fully Healed');
+        lootMessages.push('Fully Healed');
         setHp(getMaxHp());
-        addLog('✨ Fully healed!');
+        addLog('Fully healed!');
       }
       
       const displayEssence = battleType === 'wave' ? waveEssenceTotal : essenceGain;
-      lootMessages.unshift(`🔮 +${displayEssence} Essence`);
+      lootMessages.unshift(`+${displayEssence} Essence`);
       
       setVictoryLoot(lootMessages);
        sfx.playVictory();
@@ -2661,13 +2661,13 @@ if (enragedTurns > 0) {
   
   // 25% miss chance when enraged (wild swings)
   if (Math.random() < 0.25) {
-    addLog(`💨 Boss's ENRAGED attack missed!`);
+    addLog(`Boss's ENRAGED attack missed!`);
     
     // Decrement enraged turns even on miss
     setEnragedTurns(prev => {
       const newTurns = prev - 1;
       if (newTurns === 0) {
-        addLog(`😤 Enemy is no longer ENRAGED`);
+        addLog(`Enemy is no longer ENRAGED`);
         setPlayerTaunt('');
         setEnemyTauntResponse('');
         setShowTauntBoxes(false);
@@ -2678,7 +2678,7 @@ if (enragedTurns > 0) {
     // Taunt becomes available on enemy miss
     if (!isTauntAvailable) {
       setIsTauntAvailable(true);
-      addLog(`💬 [TAUNT AVAILABLE] - Enemy missed! Opening spotted!`);
+      addLog(`[TAUNT AVAILABLE] — Enemy missed! Opening spotted!`);
     }
     return; // Skip damage entirely
   }
@@ -2692,18 +2692,18 @@ if (enragedTurns > 0) {
           const newHp = Math.max(0, currentHp - bossDamage);
           if (newHp <= 0) {
             setTimeout(() => {
-              addLog('💀 You have been defeated!');
+              addLog('You have been defeated!');
               die();
             }, 500);
           }
           return newHp;
         });
-        addLog(`💥 Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
+        addLog(`Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
         
         // Taunt trigger: 25% chance after taking damage
         if (!isTauntAvailable && bossDamage > 0 && Math.random() < 0.25) {
           setIsTauntAvailable(true);
-          addLog(`💬 [TAUNT AVAILABLE] - Enemy left an opening!`);
+          addLog(`[TAUNT AVAILABLE] — Enemy left an opening!`);
         }
         
         // Decrement enraged turns
@@ -2711,7 +2711,7 @@ if (enragedTurns > 0) {
           setEnragedTurns(prev => {
             const newTurns = prev - 1;
             if (newTurns === 0) {
-              addLog(`😤 Enemy is no longer ENRAGED`);
+              addLog(`Enemy is no longer ENRAGED`);
               setPlayerTaunt(''); // Clear taunt dialogue when enraged expires
               setEnemyTauntResponse('');
               setShowTauntBoxes(false);
@@ -2728,17 +2728,17 @@ if (enragedTurns > 0) {
             setBossHp(h => {
               const newHp = Math.max(0, h - poisonDmg);
               if (newHp > 0) {
-                addLog(`☠️ Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
+                addLog(`Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
               } else {
-                addLog(`☠️ Poison deals ${poisonDmg} damage!`);
-                addLog(`💀 Boss succumbed to poison!`);
+                addLog(`Poison deals ${poisonDmg} damage!`);
+                addLog(`Boss succumbed to poison!`);
                 
                 setTimeout(() => {
                   const xpGain = isFinalBoss ? GAME_CONSTANTS.XP_REWARDS.finalBoss : GAME_CONSTANTS.XP_REWARDS.miniBoss;
                   const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : 10);
                   setXp(x => x + xpGain);
                   setEssence(e => e + essenceGain);
-                  addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+                  addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
                   
                   // Set victory dialogue
                   if (battleType === 'elite' || battleType === 'final') {
@@ -2759,7 +2759,7 @@ if (enragedTurns > 0) {
                   
                   if (!isFinalBoss) {
                     setHp(getMaxHp());
-                    addLog('✨ Fully healed!');
+                    addLog('Fully healed!');
                   }
                   
                    sfx.playVictory();
@@ -2787,7 +2787,7 @@ if (enragedTurns > 0) {
     
     // Check stamina requirement
     if (stamina < 25) {
-      addLog('⚠️ Not enough stamina to flee! (Need 25 SP)');
+      addLog('Not enough stamina to flee! (Need 25 SP)');
       return;
     }
     
@@ -2808,8 +2808,8 @@ if (enragedTurns > 0) {
     setBattleMode(false); // Clear battle border
     setRecklessStacks(0);
     
-    addLog(`🏃 Fled from ${bossName}! Lost 25 Stamina.`);
-    addLog(`💬 ${bossName}: "${fleeDialogue}"`);
+    addLog(`Fled from ${bossName}! Lost 25 Stamina.`);
+    addLog(`${bossName}: "${fleeDialogue}"`);
   };
   
   const dodge = () => {
@@ -2818,8 +2818,8 @@ if (enragedTurns > 0) {
      setDodgeReady(true);
      sfx.playDodge();
      setShowDodgeButton(false);
-    addLog(`🛡️ You prepare to dodge the incoming AOE!`);
-    addLog(`🌀 Ready to roll...`);
+    addLog(`You prepare to dodge the incoming AOE!`);
+    addLog(`Ready to roll...`);
   };
   
   const die = () => {
@@ -2843,7 +2843,7 @@ if (enragedTurns > 0) {
   skipCount: skipCount
 }]);
     
-    addLog('💀 You have fallen...');
+    addLog('You have fallen...');
     sfx.playDefeat();
     
     const newHero = makeName();
@@ -2895,23 +2895,23 @@ setMiniBossCount(0);
       setGauntletUnlocked(false);
       const gauntletTier = Math.floor(gauntletMilestone / 1000); // How many times defeated
       setGauntletMilestone(m => m + 1000);
-      addLog(`🏆 THE GAUNTLET CONQUERED! Next trial at ${gauntletMilestone + 1000} XP.`);
+      addLog(`THE GAUNTLET CONQUERED! Next trial at ${gauntletMilestone + 1000} XP.`);
       
       // Unique Gauntlet rewards that scale with tier
       const bonusEssence = 50 + gauntletTier * 25;
       setEssence(e => e + bonusEssence);
-      addLog(`🔮 Gauntlet Bounty: +${bonusEssence} Essence!`);
+      addLog(`Gauntlet Bounty: +${bonusEssence} Essence!`);
       
       // Permanent stat boost per Gauntlet clear
       const statBoost = 1 + Math.floor(gauntletTier / 2);
       setWeapon(w => w + statBoost);
       setArmor(a => a + statBoost);
-      addLog(`⚔️ Gauntlet Forging: +${statBoost} Weapon, +${statBoost} Armor (permanent)`);
+      addLog(`Gauntlet Forging: +${statBoost} Weapon, +${statBoost} Armor (permanent)`);
       
       // Bonus health potions for surviving
       const potBonus = Math.min(1 + gauntletTier, 3);
       setHealthPots(h => h + potBonus);
-      addLog(`💊 Victory Spoils: +${potBonus} Health Potion${potBonus > 1 ? 's' : ''}!`);
+      addLog(`Victory Spoils: +${potBonus} Health Potion${potBonus > 1 ? 's' : ''}!`);
       
       // Close battle but keep all progress
       setShowBoss(false);
@@ -2929,7 +2929,7 @@ setMiniBossCount(0);
       if (totalTasks > 0 && completedTasks === totalTasks) {
         setStudyStats(prev => ({ ...prev, perfectDays: prev.perfectDays + 1 }));
         setXp(x => x + GAME_CONSTANTS.PERFECT_DAY_BONUS);
-        addLog(`⭐ PERFECT DAY! +${GAME_CONSTANTS.PERFECT_DAY_BONUS} XP`);
+        addLog(`PERFECT DAY! +${GAME_CONSTANTS.PERFECT_DAY_BONUS} XP`);
       }
       
       // Close battle
@@ -2938,7 +2938,7 @@ setMiniBossCount(0);
       setBattling(false);
       setBattleMode(false);
       
-      addLog(`✨ Elite boss defeated! Day continues until midnight...`);
+      addLog(`Elite boss defeated! Day continues until midnight...`);
     }
   };
   
@@ -3203,7 +3203,7 @@ setMiniBossCount(0);
                           <div className="flex items-center gap-2">
                             <Skull className="text-red-500/80" size={18}/>
                             <span className="font-fantasy text-xs tracking-wider text-red-400 uppercase">
-                              {skipCount === 3 ? '☠️ Final Warning' : 'Curse Progress'}
+                              {skipCount === 3 ? 'Final Warning' : 'Curse Progress'}
                             </span>
                           </div>
                           <span className="text-xl font-bold text-red-400/80 font-mono">{skipCount}/4</span>
@@ -3213,7 +3213,7 @@ setMiniBossCount(0);
                         )}
                         {consecutiveDays > 0 && skipCount > 0 && (
                           <p className="text-xs text-green-400 mt-2 font-fantasy">
-                            🙏 Redemption: {consecutiveDays}/{GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days
+                            Redemption: {consecutiveDays}/{GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days
                           </p>
                         )}
                       </div>
@@ -3227,7 +3227,7 @@ setMiniBossCount(0);
                       }`}>
                         <div className="flex items-center gap-2">
                           <span className="text-xl">
-                            {curseLevel === 3 ? '☠️' : curseLevel === 2 ? '🌑🌑' : '🌑'}
+                            {curseLevel === 3 ? '☠️' : ''}
                           </span>
                           <div>
                             <p className={`font-fantasy text-xs tracking-wider uppercase ${
@@ -3330,7 +3330,7 @@ setMiniBossCount(0);
                       onClick={() => setShowCustomizeModal(true)}
                       className="w-full bg-gradient-to-b from-amber-800/40 to-amber-950/40 hover:from-amber-700/50 hover:to-amber-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-amber-200 border border-amber-700/30 hover:border-amber-600/40 shadow-[0_0_10px_rgba(180,83,9,0.1)]"
                     >
-                      ✨ Customize Your Hero
+                      ✦ Customize Your Hero
                     </button>
                   </div>
                 )}
@@ -3349,13 +3349,13 @@ setMiniBossCount(0);
                       onClick={() => setShowInventoryModal(true)}
                       className="bg-gradient-to-b from-red-800/50 to-red-950/50 hover:from-red-700/60 hover:to-red-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 hover:border-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.08)] flex items-center justify-center gap-2"
                     >
-                      🎒 Inventory
+                      Inventory
                     </button>
                     <button 
                       onClick={() => setShowCraftingModal(true)}
                       className="bg-gradient-to-b from-orange-800/50 to-orange-950/50 hover:from-orange-700/60 hover:to-orange-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-orange-200 border border-orange-700/30 hover:border-orange-600/30 shadow-[0_0_10px_rgba(234,88,12,0.08)] flex items-center justify-center gap-2"
                     >
-                      🏪 Merchant
+                      Merchant
                     </button>
                   </div>
                 </div>
@@ -3630,7 +3630,7 @@ setMiniBossCount(0);
         </p>
         <p className="text-xs mt-1">
           <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500' : 'text-gray-400'}`}>
-            {t.priority === 'important' ? '⭐ Important • 1.25x XP' : 'Routine • 1.0x XP'}
+            {t.priority === 'important' ? '★ Important • 1.25x XP' : 'Routine • 1.0x XP'}
           </span>
           {t.overdue && !t.done && <span className="text-red-400 ml-2">• 50% XP Penalty</span>}
         </p>
@@ -3676,7 +3676,7 @@ setMiniBossCount(0);
   disabled={!isDayActive || eliteBossDefeatedToday || xp < 200} 
   className="bg-gradient-to-b from-red-900/70 to-red-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-red-200 hover:from-red-800/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.1)] border border-red-700/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20"
 >
-  ⚔️ Face the Darkness
+  Face the Darkness
   {!isDayActive ? (
     <div className="text-xs font-normal mt-1 text-gray-400">Day dormant — add tasks to begin</div>
   ) : eliteBossDefeatedToday ? (
@@ -3685,7 +3685,7 @@ setMiniBossCount(0);
     <div className={`text-xs font-normal mt-1 ${xp >= 200 ? 'text-green-400' : 'text-yellow-400'}`}>
       {xp >= 200 ? `Ready • 200 XP` : `${200 - xp} XP needed`}
       {timeUntilMidnight && !eliteBossDefeatedToday && xp >= 200 && (
-        <span className="text-red-400 ml-2">• ⏰ {timeUntilMidnight}</span>
+        <span className="text-red-400 ml-2">• {timeUntilMidnight}</span>
       )}
     </div>
   )}
@@ -3695,7 +3695,7 @@ setMiniBossCount(0);
   disabled={!gauntletUnlocked || tasks.length === 0 || tasks.filter(t => t.done).length < tasks.length} 
   className="bg-gradient-to-b from-purple-900/70 to-purple-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-purple-200 hover:from-purple-800/80 hover:to-purple-900/80 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)] border border-red-600/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20"
 >
-  💀 The Gauntlet
+  The Gauntlet
   {!gauntletUnlocked && (
     <div className="text-xs font-normal mt-1 text-gray-400">{gauntletMilestone - xp} XP needed</div>
   )}
@@ -3807,7 +3807,7 @@ setMiniBossCount(0);
     >
       <div className="flex-1 flex items-start gap-2">
         {item.priority === 'important' && !item.completed && (
-          <span className="text-base">⭐</span>
+          <span className="text-base">★</span>
         )}
         <div>
           <p className={`font-medium text-sm ${item.completed ? 'line-through text-gray-600' : 'text-white/80'}`}>
@@ -3849,7 +3849,7 @@ setMiniBossCount(0);
                 return updated;
               });
               
-              addLog(`🗑️ Deleted "${item.title}" from ${day} plan and future calendar dates`);
+              addLog(`Deleted "${item.title}" from ${day} plan and future calendar dates`);
             }
           }}
           className="text-red-500/50 hover:text-red-400/70 transition-all"
@@ -3971,7 +3971,7 @@ setMiniBossCount(0);
                   onClick={() => {
                     if (window.confirm(`Delete deck "${deck.name}"?`)) {
                       setFlashcardDecks(prev => prev.filter((_, i) => i !== idx));
-                      addLog(`🗑️ Deleted deck: ${deck.name}`);
+                      addLog(`Deleted deck: ${deck.name}`);
                     }
                   }}
                   className="text-red-400 hover:text-red-300 transition-all"
@@ -4291,7 +4291,7 @@ setMiniBossCount(0);
                               <p className="text-sm text-white/80 font-fantasy">{hero.title} {hero.class ? hero.class.name : ''}</p>
                               <p className="text-xs text-white/60 font-mono mt-1">Level {hero.lvl} • {hero.xp} XP</p>
                               {hero.skipCount !== undefined && hero.skipCount === 0 && (
-                                <p className="text-green-400 text-xs font-fantasy mt-1.5">✨ Flawless Run — No skips!</p>
+                                <p className="text-green-400 text-xs font-fantasy mt-1.5">Flawless Run — No skips!</p>
                               )}
                               {hero.skipCount > 0 && (
                                 <p className="text-yellow-400 text-xs mt-1.5 font-fantasy">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>
@@ -4341,8 +4341,8 @@ setMiniBossCount(0);
                             <p className="text-xs text-gray-400 font-fantasy">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p>
                             <p className="text-xs text-red-400 mt-0.5">Fell on {fallen.day ? GAME_CONSTANTS.DAY_NAMES[fallen.day - 1]?.name || `Day ${fallen.day}` : 'Day 1'} • {fallen.xp} XP</p>
                             <p className="text-xs text-gray-400">Trials: {fallen.tasks}/{fallen.total}</p>
-                            {fallen.skipCount > 0 && (<p className="text-red-400 text-[10px] mt-1">💀 Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}
-                            {fallen.cursed && (<p className="text-purple-400 text-[10px]">🌑 Died while cursed</p>)}
+                            {fallen.skipCount > 0 && (<p className="text-red-400 text-[10px] mt-1">Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}
+                            {fallen.cursed && (<p className="text-purple-400 text-[10px]">Died while cursed</p>)}
                           </div>
                         </div>
                       </div>
