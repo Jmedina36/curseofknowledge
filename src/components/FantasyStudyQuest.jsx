@@ -9,6 +9,7 @@ import useGameSFX from '../hooks/useGameSFX';
 import DebugPanel from './DebugPanel';
 import AchievementsPanel from './AchievementsPanel';
 import ClassEmblem from './ClassEmblem';
+import HeroCardDecorations from './HeroCardDecorations';
 
 const GAME_CONSTANTS = {
   LATE_START_PENALTY: 15,
@@ -3113,6 +3114,8 @@ setMiniBossCount(0);
             <p className="text-gray-500 text-sm mb-4 italic font-fantasy tracking-wide">"Study or be consumed by the abyss..."</p>
             
             <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{border: getCardStyle(hero.class, currentDay).border}}>
+              {/* Parchment texture & corner rune ornaments */}
+              <HeroCardDecorations colorClass={hero.class.color} />
               {/* Watermark emblem */}
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-[0.07] pointer-events-none">
                 <ClassEmblem heroClass={hero.class.name} size={280} />
