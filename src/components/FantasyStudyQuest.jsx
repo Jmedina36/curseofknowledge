@@ -3106,18 +3106,18 @@ setMiniBossCount(0);
                   <div className="flex items-center justify-between mb-3">
                     <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{getCardStyle(hero.class, currentDay).emblem}</div>
                     <div className="text-right">
-                      <p className="text-xs text-white/50 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
-                      <p className="text-sm text-white/70">
-                        {timeUntilMidnight && isDayActive && <span className="text-red-400/80">({timeUntilMidnight}) </span>}
-                        {!isDayActive && <span className="text-gray-500">💤 </span>}
-                        Day {currentDay} {!isDayActive && <span className="text-gray-500 text-xs">• Dormant</span>}
+                      <p className="text-xs text-white/70 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
+                      <p className="text-sm text-white/85">
+                        {timeUntilMidnight && isDayActive && <span className="text-red-400">({timeUntilMidnight}) </span>}
+                        {!isDayActive && <span className="text-gray-400">💤 </span>}
+                        Day {currentDay} {!isDayActive && <span className="text-gray-400 text-xs">• Dormant</span>}
                       </p>
                       <p className="text-2xl font-bold text-white font-fantasy tracking-wide">Lvl {level}</p>
                     </div>
                   </div>
                   <div className="text-center">
                     <p className="text-3xl font-bold text-white leading-tight font-fantasy-decorative tracking-wider drop-shadow-[0_0_15px_rgba(255,255,255,0.15)]">{hero.name}</p>
-                    <p className="text-base text-white/70 font-fantasy tracking-wide">{hero.title} {hero.class.name}</p>
+                    <p className="text-base text-white/85 font-fantasy tracking-wide">{hero.title} {hero.class.name}</p>
                   </div>
                 </div>
                 
@@ -3132,8 +3132,8 @@ setMiniBossCount(0);
                 <div className="px-6 py-4">
                   <div className="bg-black/30 rounded-lg p-3 border border-white/10">
                     <div className="flex justify-between text-sm text-white/80 mb-2">
-                      <span className="font-fantasy text-xs tracking-[0.15em] uppercase text-yellow-400/70">Experience</span>
-                      <span className="font-mono text-xs text-white/60">{(() => {
+                      <span className="font-fantasy text-xs tracking-[0.15em] uppercase text-yellow-400">Experience</span>
+                      <span className="font-mono text-xs text-white/80">{(() => {
                         let xpSpent = 0;
                         for (let i = 1; i < level; i++) {
                           xpSpent += Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, i - 1));
@@ -3154,7 +3154,7 @@ setMiniBossCount(0);
                         return (currentLevelXp / xpNeeded) * 100;
                       })()}%`}}></div>
                     </div>
-                    <p className="text-[10px] text-white/30 mt-1.5 text-right font-fantasy">{(() => {
+                    <p className="text-[10px] text-white/50 mt-1.5 text-right font-fantasy">{(() => {
                       let xpSpent = 0;
                       for (let i = 1; i < level; i++) {
                         xpSpent += Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, i - 1));
@@ -3185,10 +3185,10 @@ setMiniBossCount(0);
                           <span className="text-xl font-bold text-red-400/80 font-mono">{skipCount}/4</span>
                         </div>
                         {skipCount === 3 && (
-                          <p className="text-xs text-red-300/60 mt-2 italic font-fantasy">One more skip and you die. No mercy.</p>
+                          <p className="text-xs text-red-300 mt-2 italic font-fantasy">One more skip and you die. No mercy.</p>
                         )}
                         {consecutiveDays > 0 && skipCount > 0 && (
-                          <p className="text-xs text-green-400/70 mt-2 font-fantasy">
+                          <p className="text-xs text-green-400 mt-2 font-fantasy">
                             🙏 Redemption: {consecutiveDays}/{GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days
                           </p>
                         )}
@@ -3207,12 +3207,12 @@ setMiniBossCount(0);
                           </span>
                           <div>
                             <p className={`font-fantasy text-xs tracking-wider uppercase ${
-                              curseLevel === 3 ? 'text-red-300/80' : 'text-purple-300/80'
+                              curseLevel === 3 ? 'text-red-300' : 'text-purple-300'
                             }`}>
                               {curseLevel === 3 ? 'Condemned' : curseLevel === 2 ? 'Deeply Cursed' : 'Cursed'}
                             </p>
                             <p className={`text-[10px] ${
-                              curseLevel === 3 ? 'text-red-400/60' : 'text-purple-400/60'
+                              curseLevel === 3 ? 'text-red-400' : 'text-purple-400'
                             }`}>
                               {curseLevel === 3 ? '90% XP penalty • One failure from death' :
                                curseLevel === 2 ? '75% XP penalty • Enemies hit harder' :
@@ -3228,7 +3228,7 @@ setMiniBossCount(0);
                 {/* Divider */}
                 <div className="flex items-center gap-3 px-6">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                  <span className="text-white/20 text-[10px] font-fantasy tracking-[0.3em] uppercase">Combat Stats</span>
+                  <span className="text-white/40 text-[10px] font-fantasy tracking-[0.3em] uppercase">Combat Stats</span>
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
                 </div>
                 
@@ -3264,7 +3264,7 @@ setMiniBossCount(0);
                         <Sword size={18} className="text-orange-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{getBaseAttack() + weapon + (level - 1) * 2}</p>
-                      <p className="text-[10px] text-white/30 text-center font-fantasy tracking-wide">damage per hit</p>
+                      <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage per hit</p>
                     </div>
                     
                     <div className="bg-black/30 rounded-lg p-3 border border-blue-800/20 hover:border-blue-700/30 transition-all">
@@ -3272,7 +3272,7 @@ setMiniBossCount(0);
                         <Shield size={18} className="text-blue-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{Math.floor(((getBaseDefense() + armor) / ((getBaseDefense() + armor) + 50)) * 100)}%</p>
-                      <p className="text-[10px] text-white/30 text-center font-fantasy tracking-wide">damage resist</p>
+                      <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage resist</p>
                     </div>
                   </div>
                 </div>
@@ -3289,11 +3289,11 @@ setMiniBossCount(0);
                         <div className="flex items-center gap-2">
                           <span className="text-xl">✨</span>
                           <div className="text-left">
-                            <p className="text-sm text-white/80 font-fantasy tracking-wide">Cleanse Potion</p>
-                            <p className="text-[10px] text-purple-400/60">Remove Curse</p>
+                            <p className="text-sm text-white/90 font-fantasy tracking-wide">Cleanse Potion</p>
+                            <p className="text-[10px] text-purple-400">Remove Curse</p>
                           </div>
                         </div>
-                        <span className="text-lg font-bold text-purple-400/70 font-mono">{cleansePots}</span>
+                        <span className="text-lg font-bold text-purple-400 font-mono">{cleansePots}</span>
                       </div>
                     </button>
                   </div>
@@ -3304,7 +3304,7 @@ setMiniBossCount(0);
                   <div className="px-6 pb-3">
                     <button 
                       onClick={() => setShowCustomizeModal(true)}
-                      className="w-full bg-gradient-to-b from-blue-800/40 to-blue-950/40 hover:from-blue-700/50 hover:to-blue-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-blue-200/80 border border-blue-700/30 hover:border-blue-600/40 shadow-[0_0_10px_rgba(59,130,246,0.1)]"
+                      className="w-full bg-gradient-to-b from-blue-800/40 to-blue-950/40 hover:from-blue-700/50 hover:to-blue-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 border border-blue-700/30 hover:border-blue-600/40 shadow-[0_0_10px_rgba(59,130,246,0.1)]"
                     >
                       ✨ Customize Your Hero
                     </button>
@@ -3323,13 +3323,13 @@ setMiniBossCount(0);
                   <div className="grid grid-cols-2 gap-2.5">
                     <button 
                       onClick={() => setShowInventoryModal(true)}
-                      className="bg-gradient-to-b from-red-800/50 to-red-950/50 hover:from-red-700/60 hover:to-red-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-red-200/80 border border-red-700/20 hover:border-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.08)] flex items-center justify-center gap-2"
+                      className="bg-gradient-to-b from-red-800/50 to-red-950/50 hover:from-red-700/60 hover:to-red-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 hover:border-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.08)] flex items-center justify-center gap-2"
                     >
                       🎒 Inventory
                     </button>
                     <button 
                       onClick={() => setShowCraftingModal(true)}
-                      className="bg-gradient-to-b from-orange-800/50 to-orange-950/50 hover:from-orange-700/60 hover:to-orange-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-orange-200/80 border border-orange-700/20 hover:border-orange-600/30 shadow-[0_0_10px_rgba(234,88,12,0.08)] flex items-center justify-center gap-2"
+                      className="bg-gradient-to-b from-orange-800/50 to-orange-950/50 hover:from-orange-700/60 hover:to-orange-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-orange-200 border border-orange-700/30 hover:border-orange-600/30 shadow-[0_0_10px_rgba(234,88,12,0.08)] flex items-center justify-center gap-2"
                     >
                       🏪 Merchant
                     </button>
@@ -3346,7 +3346,7 @@ setMiniBossCount(0);
             {/* Decorative top border */}
             <div className="flex items-center gap-3 mb-3 px-4">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/40 to-transparent"></div>
-              <span className="text-yellow-600/60 text-xs font-fantasy tracking-[0.3em] uppercase">Navigation</span>
+              <span className="text-yellow-500 text-xs font-fantasy tracking-[0.3em] uppercase">Navigation</span>
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/40 to-transparent"></div>
             </div>
             
@@ -3364,7 +3364,7 @@ setMiniBossCount(0);
                   className={`group relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-lg transition-all duration-300 font-fantasy text-sm tracking-wide ${
                     activeTab === t.id 
                       ? 'bg-gradient-to-b from-yellow-500/20 to-yellow-700/10 text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.15)] border border-yellow-500/40' 
-                      : 'bg-black/40 text-yellow-200/50 hover:text-yellow-200/80 hover:bg-black/60 border border-transparent hover:border-yellow-900/30'
+                      : 'bg-black/40 text-yellow-200/70 hover:text-yellow-200 hover:bg-black/60 border border-transparent hover:border-yellow-900/30'
                   }`}
                 >
                   {/* Active glow indicator */}
@@ -3523,21 +3523,21 @@ setMiniBossCount(0);
                         <p className="text-xl md:text-2xl font-semibold text-yellow-400/90 mb-1 font-fantasy">
                           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </p>
-                        <p className="text-sm text-gray-500 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
+                        <p className="text-sm text-gray-400 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
                       </div>
                       
                       {/* Divider */}
                       <div className="flex items-center justify-center gap-3 my-6">
                         <div className="h-px w-16 bg-gradient-to-r from-transparent to-red-600/50" />
-                        <span className="text-red-600/60 text-xs font-fantasy tracking-widest uppercase">Begin Your Trials</span>
+                        <span className="text-red-500 text-xs font-fantasy tracking-widest uppercase">Begin Your Trials</span>
                         <div className="h-px w-16 bg-gradient-to-l from-transparent to-red-600/50" />
                       </div>
                       
-                      <p className="text-sm text-gray-500 italic mb-6 subtitle-fade font-fantasy">
+                      <p className="text-sm text-gray-400 italic mb-6 subtitle-fade font-fantasy">
                         "The abyss awaits those who hesitate..."
                       </p>
                       
-                      <p className="mb-6 text-xs text-gray-500">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
+                      <p className="mb-6 text-xs text-gray-400">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
                       
                       <button 
                         onClick={() => { sfx.playClick(); start(); }} 
@@ -3554,7 +3554,7 @@ setMiniBossCount(0);
                     {/* Header */}
                     <div className="px-6 pt-6 pb-4 text-center">
                       <h2 className="text-2xl font-fantasy-decorative text-red-400 mb-1 tracking-wider drop-shadow-[0_0_12px_rgba(220,38,38,0.3)]">Trials of the Cursed</h2>
-                      <p className="text-sm text-gray-500 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
+                      <p className="text-sm text-gray-400 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
                     </div>
                     
                     {/* Divider */}
@@ -3566,10 +3566,10 @@ setMiniBossCount(0);
                     
                     {/* Action buttons */}
                     <div className="flex gap-2 justify-center px-6 py-4">
-                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-blue-800/50 to-blue-950/50 px-4 py-2 rounded-lg hover:from-blue-700/60 hover:to-blue-900/60 transition-all font-fantasy tracking-wide text-blue-200/80 border border-blue-700/25 text-sm">
+                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-blue-800/50 to-blue-950/50 px-4 py-2 rounded-lg hover:from-blue-700/60 hover:to-blue-900/60 transition-all font-fantasy tracking-wide text-blue-200 border border-blue-700/30 text-sm">
                         <Calendar size={16}/>Import from Planner
                       </button>
-                      <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-red-800/50 to-red-950/50 px-4 py-2 rounded-lg hover:from-red-700/60 hover:to-red-900/60 transition-all font-fantasy tracking-wide text-red-200/80 border border-red-700/25 text-sm">
+                      <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-red-800/50 to-red-950/50 px-4 py-2 rounded-lg hover:from-red-700/60 hover:to-red-900/60 transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 text-sm">
                         <Plus size={16}/>Accept Trial
                       </button>
                     </div>
@@ -3578,7 +3578,7 @@ setMiniBossCount(0);
                     <div className="px-6 pb-6">
                     {tasks.length === 0 ? (
                       <div className="text-center py-8">
-                        <p className="text-gray-600 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
+                        <p className="text-gray-400 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
                       </div>
                     ) : (
                       <div className="space-y-2.5">
@@ -3601,14 +3601,14 @@ setMiniBossCount(0);
         <span className="bg-red-700/60 text-red-200 text-[10px] font-fantasy tracking-wider px-2 py-0.5 rounded uppercase">Overdue</span>
       )}
       <div className="flex-1">
-        <p className={`${t.done ? 'line-through text-gray-600' : t.overdue ? 'text-red-300/80' : 'text-white/90'} font-medium text-base`}>
+        <p className={`${t.done ? 'line-through text-gray-500' : t.overdue ? 'text-red-300' : 'text-white/95'} font-medium text-base`}>
           {t.title}
         </p>
         <p className="text-xs mt-1">
-          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500/60' : 'text-gray-600'}`}>
+          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500' : 'text-gray-400'}`}>
             {t.priority === 'important' ? '⭐ Important • 1.25x XP' : 'Routine • 1.0x XP'}
           </span>
-          {t.overdue && !t.done && <span className="text-red-500/50 ml-2">• 50% XP Penalty</span>}
+          {t.overdue && !t.done && <span className="text-red-400 ml-2">• 50% XP Penalty</span>}
         </p>
       </div>
       
@@ -3624,19 +3624,19 @@ setMiniBossCount(0);
               setPomodoroRunning(true);
               addLog(`Starting focus session: ${t.title}`);
             }} 
-            className="bg-gradient-to-b from-purple-800/60 to-purple-950/60 px-3 py-1.5 rounded-lg hover:from-purple-700/70 hover:to-purple-900/70 transition-all text-purple-200/70 text-sm font-fantasy tracking-wide border border-purple-700/20"
+            className="bg-gradient-to-b from-purple-800/60 to-purple-950/60 px-3 py-1.5 rounded-lg hover:from-purple-700/70 hover:to-purple-900/70 transition-all text-purple-200 text-sm font-fantasy tracking-wide border border-purple-700/30"
           >
             Focus
           </button>
           <button 
             onClick={() => complete(t.id)} 
-            className="bg-gradient-to-b from-green-800/60 to-green-950/60 px-4 py-1.5 rounded-lg hover:from-green-700/70 hover:to-green-900/70 transition-all text-green-200/80 text-sm font-fantasy tracking-wide font-bold border border-green-700/20"
+            className="bg-gradient-to-b from-green-800/60 to-green-950/60 px-4 py-1.5 rounded-lg hover:from-green-700/70 hover:to-green-900/70 transition-all text-green-200 text-sm font-fantasy tracking-wide font-bold border border-green-700/30"
           >
             Complete
           </button>
         </div>
       )}
-      {t.done && (<span className="text-green-500/60 font-fantasy text-sm tracking-wide flex items-center gap-1">✓ Done</span>)}
+      {t.done && (<span className="text-green-400 font-fantasy text-sm tracking-wide flex items-center gap-1">✓ Done</span>)}
     </div>
   </div>
 ))}   
@@ -3654,14 +3654,14 @@ setMiniBossCount(0);
 >
   ⚔️ Face the Darkness
   {!isDayActive ? (
-    <div className="text-xs font-normal mt-1 text-gray-500">Day dormant — add tasks to begin</div>
+    <div className="text-xs font-normal mt-1 text-gray-400">Day dormant — add tasks to begin</div>
   ) : eliteBossDefeatedToday ? (
-    <div className="text-xs font-normal mt-1 text-green-400/60">✓ Today's trial complete</div>
+    <div className="text-xs font-normal mt-1 text-green-400">✓ Today's trial complete</div>
   ) : (
-    <div className={`text-xs font-normal mt-1 ${xp >= 200 ? 'text-green-400/60' : 'text-yellow-400/60'}`}>
+    <div className={`text-xs font-normal mt-1 ${xp >= 200 ? 'text-green-400' : 'text-yellow-400'}`}>
       {xp >= 200 ? `Ready • 200 XP` : `${200 - xp} XP needed`}
       {timeUntilMidnight && !eliteBossDefeatedToday && xp >= 200 && (
-        <span className="text-red-400/60 ml-2">• ⏰ {timeUntilMidnight}</span>
+        <span className="text-red-400 ml-2">• ⏰ {timeUntilMidnight}</span>
       )}
     </div>
   )}
@@ -3673,7 +3673,7 @@ setMiniBossCount(0);
 >
   💀 The Gauntlet
   {!gauntletUnlocked && (
-    <div className="text-xs font-normal mt-1 text-gray-500">{gauntletMilestone - xp} XP needed</div>
+    <div className="text-xs font-normal mt-1 text-gray-400">{gauntletMilestone - xp} XP needed</div>
   )}
 </button>
                   </div>
@@ -3683,10 +3683,10 @@ setMiniBossCount(0);
                     <div className="px-5 py-3">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
-                        <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400/60 uppercase">Chronicle of Events</h3>
+                        <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Chronicle of Events</h3>
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
                       </div>
-                      {log.length === 0 ? (<p className="text-sm text-gray-700 italic font-fantasy">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-400/70">{l}</p>))}</div>)}
+                      {log.length === 0 ? (<p className="text-sm text-gray-500 italic font-fantasy">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-300/80">{l}</p>))}</div>)}
                     </div>
                   </div>
                 </>
@@ -3699,7 +3699,7 @@ setMiniBossCount(0);
               {/* Header */}
               <div className="px-6 pt-6 pb-4 text-center">
                 <h2 className="text-2xl font-fantasy-decorative text-blue-400 tracking-wider drop-shadow-[0_0_12px_rgba(59,130,246,0.3)]">Battle Planner</h2>
-                <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
+                <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
               </div>
               
               {/* Divider */}
@@ -3717,7 +3717,7 @@ setMiniBossCount(0);
                     className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
                       plannerView === 'weekly' 
                         ? 'bg-blue-800/30 text-blue-300 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]' 
-                        : 'text-gray-500 hover:text-gray-400'
+                        : 'text-gray-400 hover:text-gray-300'
                     }`}
                   >
                     Weekly Plan
@@ -3727,7 +3727,7 @@ setMiniBossCount(0);
                     className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
                       plannerView === 'calendar' 
                         ? 'bg-green-800/30 text-green-300 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' 
-                        : 'text-gray-500 hover:text-gray-400'
+                        : 'text-gray-400 hover:text-gray-300'
                     }`}
                   >
                     Calendar
@@ -3902,7 +3902,7 @@ setMiniBossCount(0);
     {/* Header */}
     <div className="px-6 pt-6 pb-4 text-center">
       <h2 className="text-2xl font-fantasy-decorative text-purple-400 tracking-wider drop-shadow-[0_0_12px_rgba(168,85,247,0.3)]">Knowledge Forge</h2>
-      <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
+      <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
     </div>
     
     {/* Divider */}
@@ -3915,12 +3915,12 @@ setMiniBossCount(0);
     <div className="px-6 py-4">
       <div className="flex justify-between items-center mb-5">
         <div>
-          <p className="text-sm text-gray-400 font-fantasy tracking-wide">Your Decks: <span className="font-bold text-purple-400/80">{flashcardDecks.length}</span></p>
-          <p className="text-xs text-gray-600">Study to earn XP and loot!</p>
+          <p className="text-sm text-gray-300 font-fantasy tracking-wide">Your Decks: <span className="font-bold text-purple-400">{flashcardDecks.length}</span></p>
+          <p className="text-xs text-gray-400">Study to earn XP and loot!</p>
         </div>
         <button 
           onClick={() => setShowDeckModal(true)}
-          className="bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-fantasy tracking-wide text-purple-200/70 border border-purple-700/20 text-sm"
+          className="bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-fantasy tracking-wide text-purple-200 border border-purple-700/30 text-sm"
         >
           <Plus size={16}/> New Deck
         </button>
@@ -3928,8 +3928,8 @@ setMiniBossCount(0);
     
       {flashcardDecks.length === 0 ? (
         <div className="text-center py-12 bg-black/30 rounded-lg border border-purple-900/20">
-          <p className="text-gray-500 mb-2 font-fantasy">The forge stands empty...</p>
-          <p className="text-xs text-gray-600 font-fantasy">Create your first deck to begin forging knowledge</p>
+          <p className="text-gray-400 mb-2 font-fantasy">The forge stands empty...</p>
+          <p className="text-xs text-gray-500 font-fantasy">Create your first deck to begin forging knowledge</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -3938,7 +3938,7 @@ setMiniBossCount(0);
               <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
                   <h3 className="text-lg font-fantasy tracking-wide text-purple-300">{deck.name}</h3>
-                  <p className="text-xs text-gray-500 font-fantasy">
+                  <p className="text-xs text-gray-400 font-fantasy">
                     {deck.cards.length} card{deck.cards.length !== 1 ? 's' : ''} • 
                     {deck.cards.filter(c => c.mastered).length} mastered
                   </p>
@@ -3950,7 +3950,7 @@ setMiniBossCount(0);
                       addLog(`🗑️ Deleted deck: ${deck.name}`);
                     }
                   }}
-                  className="text-red-500/40 hover:text-red-400/60 transition-all"
+                  className="text-red-400 hover:text-red-300 transition-all"
                 >
                   <X size={16}/>
                 </button>
@@ -3971,7 +3971,7 @@ setMiniBossCount(0);
                     setShowStudyModal(true);
                   }}
                   disabled={deck.cards.length === 0}
-                  className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200/70 text-sm border border-purple-700/15 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-600 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200 text-sm border border-purple-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-500 disabled:cursor-not-allowed"
                 >
                   Study Deck
                 </button>
@@ -3985,7 +3985,7 @@ setMiniBossCount(0);
                     generateQuiz(idx);
                   }}
                   disabled={deck.cards.length < 4}
-                  className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200/70 text-sm border border-blue-700/15 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-600 disabled:cursor-not-allowed"
+                  className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 text-sm border border-blue-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-500 disabled:cursor-not-allowed"
                 >
                   Practice Quiz
                 </button>
@@ -3994,7 +3994,7 @@ setMiniBossCount(0);
                     setSelectedDeck(idx);
                     setShowCardModal(true);
                   }}
-                  className="bg-gradient-to-b from-green-800/50 to-green-950/50 hover:from-green-700/60 hover:to-green-900/60 px-4 py-2 rounded-lg transition-all font-fantasy tracking-wide text-green-200/70 text-sm border border-green-700/15"
+                  className="bg-gradient-to-b from-green-800/50 to-green-950/50 hover:from-green-700/60 hover:to-green-900/60 px-4 py-2 rounded-lg transition-all font-fantasy tracking-wide text-green-200 text-sm border border-green-700/25"
                 >
                   Add Card
                 </button>
@@ -4002,12 +4002,12 @@ setMiniBossCount(0);
               
               {deck.cards.length > 0 && (
                 <div className="mt-3 pt-3 border-t border-purple-900/15">
-                  <p className="text-[10px] text-gray-600 mb-2 font-fantasy tracking-wide uppercase">Cards in this deck:</p>
+                  <p className="text-[10px] text-gray-400 mb-2 font-fantasy tracking-wide uppercase">Cards in this deck:</p>
                   <div className="space-y-1 max-h-32 overflow-y-auto">
                     {deck.cards.map((card, cardIdx) => (
                       <div key={cardIdx} className="flex justify-between items-center text-sm bg-black/30 rounded-lg p-2 border border-purple-900/10">
-                        <span className="text-gray-400/70 flex-1 truncate text-xs">
-                          {card.mastered && <span className="text-green-500/60">✓ </span>}{card.front}
+                        <span className="text-gray-300 flex-1 truncate text-xs">
+                          {card.mastered && <span className="text-green-400">✓ </span>}{card.front}
                         </span>
                         <button
                           onClick={() => {
@@ -4015,7 +4015,7 @@ setMiniBossCount(0);
                               i === idx ? {...d, cards: d.cards.filter((_, ci) => ci !== cardIdx)} : d
                             ));
                           }}
-                          className="text-red-500/30 hover:text-red-400/50 ml-2 transition-all"
+                          className="text-red-400 hover:text-red-300 ml-2 transition-all"
                         >
                           <X size={12}/>
                         </button>
@@ -4037,7 +4037,7 @@ setMiniBossCount(0);
               {/* Header */}
               <div className="px-6 pt-6 pb-4 text-center">
                 <h2 className="text-2xl font-fantasy-decorative text-yellow-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">Chronicles of the Cursed</h2>
-                <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Your struggle against the eternal darkness..."</p>
+                <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Your struggle against the eternal darkness..."</p>
               </div>
               
               {/* Divider */}
@@ -4052,29 +4052,29 @@ setMiniBossCount(0);
               <div className="bg-gradient-to-br from-red-950/50 to-black/30 rounded-xl p-5 border border-red-800/25 stat-card-texture">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-red-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400/60 uppercase">Current Cycle</h3>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Current Cycle</h3>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent to-red-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Day</p>
-                    <p className="text-2xl font-bold text-red-400/80 font-mono">{currentDay}/7</p>
-                    <p className="text-[10px] text-gray-600">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Day</p>
+                    <p className="text-2xl font-bold text-red-400 font-mono">{currentDay}/7</p>
+                    <p className="text-[10px] text-gray-400">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name}</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Curse Level</p>
-                    <p className="text-2xl font-bold text-purple-400/80 font-mono">{curseLevel}</p>
-                    <p className="text-[10px] text-gray-600">{curseLevel === 0 ? 'Pure' : curseLevel === 1 ? 'Cursed' : curseLevel === 2 ? 'Deep Curse' : 'Condemned'}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Curse Level</p>
+                    <p className="text-2xl font-bold text-purple-400 font-mono">{curseLevel}</p>
+                    <p className="text-[10px] text-gray-400">{curseLevel === 0 ? 'Pure' : curseLevel === 1 ? 'Cursed' : curseLevel === 2 ? 'Deep Curse' : 'Condemned'}</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Skip Count</p>
-                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">{skipCount}</p>
-                    <p className="text-[10px] text-gray-600">{skipCount >= 3 ? 'DANGER' : 'of 4 max'}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Skip Count</p>
+                    <p className="text-2xl font-bold text-yellow-400 font-mono">{skipCount}</p>
+                    <p className="text-[10px] text-gray-400">{skipCount >= 3 ? 'DANGER' : 'of 4 max'}</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Trials Today</p>
-                    <p className="text-2xl font-bold text-cyan-400/80 font-mono">{tasks.filter(t => t.done).length}/{tasks.length}</p>
-                    <p className="text-[10px] text-gray-600">{tasks.length > 0 ? `${Math.floor((tasks.filter(t => t.done).length / tasks.length) * 100)}%` : 'None'}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Trials Today</p>
+                    <p className="text-2xl font-bold text-cyan-400 font-mono">{tasks.filter(t => t.done).length}/{tasks.length}</p>
+                    <p className="text-[10px] text-gray-400">{tasks.length > 0 ? `${Math.floor((tasks.filter(t => t.done).length / tasks.length) * 100)}%` : 'None'}</p>
                   </div>
                 </div>
               </div>
@@ -4083,33 +4083,30 @@ setMiniBossCount(0);
               <div className="bg-gradient-to-br from-blue-950/40 to-purple-950/30 rounded-xl p-5 border border-blue-800/25 stat-card-runes">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-blue-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-blue-400/60 uppercase">Combat Power</h3>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-blue-400 uppercase">Combat Power</h3>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent to-blue-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Health</p>
-                    <p className="text-2xl font-bold text-red-400/80 font-mono">{hp}/{getMaxHp()}</p>
-                    <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-red-900/10">
-                      <div className="bg-gradient-to-r from-red-700 to-red-500 h-1.5 rounded-full transition-all duration-500" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
-                    </div>
-                  </div>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Health</p>
+                    <p className="text-2xl font-bold text-red-400 font-mono">{hp}/{getMaxHp()}</p>
+...
                   <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Stamina</p>
-                    <p className="text-2xl font-bold text-cyan-400/80 font-mono">{stamina}/{getMaxStamina()}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Stamina</p>
+                    <p className="text-2xl font-bold text-cyan-400 font-mono">{stamina}/{getMaxStamina()}</p>
                     <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-cyan-900/10">
                       <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-1.5 rounded-full transition-all duration-500" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                     </div>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-orange-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Attack</p>
-                    <p className="text-2xl font-bold text-orange-400/80 font-mono">{GAME_CONSTANTS.BASE_ATTACK + (level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY) + weapon}</p>
-                    <p className="text-[10px] text-gray-600">Base: {GAME_CONSTANTS.BASE_ATTACK} + Wep: {weapon}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Attack</p>
+                    <p className="text-2xl font-bold text-orange-400 font-mono">{GAME_CONSTANTS.BASE_ATTACK + (level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY) + weapon}</p>
+                    <p className="text-[10px] text-gray-400">Base: {GAME_CONSTANTS.BASE_ATTACK} + Wep: {weapon}</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Defense</p>
-                    <p className="text-2xl font-bold text-green-400/80 font-mono">{getBaseDefense() + armor}</p>
-                    <p className="text-[10px] text-gray-600">Base: {GAME_CONSTANTS.BASE_DEFENSE} + Arm: {armor}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Defense</p>
+                    <p className="text-2xl font-bold text-green-400 font-mono">{getBaseDefense() + armor}</p>
+                    <p className="text-[10px] text-gray-400">Base: {GAME_CONSTANTS.BASE_DEFENSE} + Arm: {armor}</p>
                   </div>
                 </div>
               </div>
@@ -4118,27 +4115,27 @@ setMiniBossCount(0);
               <div className="bg-gradient-to-br from-yellow-950/40 to-orange-950/30 rounded-xl p-5 border border-yellow-800/25 stat-card-weave">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-yellow-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-yellow-400/60 uppercase">Progression</h3>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-yellow-400 uppercase">Progression</h3>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent to-yellow-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Level</p>
-                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">{level}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Level</p>
+                    <p className="text-2xl font-bold text-yellow-400 font-mono">{level}</p>
                     <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-yellow-900/10">
                       <div className="bg-gradient-to-r from-yellow-700 to-yellow-400 h-1.5 rounded-full transition-all duration-500" style={{width: `${(xp % GAME_CONSTANTS.XP_PER_LEVEL) / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`}}></div>
                     </div>
-                    <p className="text-[10px] text-gray-600 mt-1">{xp % GAME_CONSTANTS.XP_PER_LEVEL}/{GAME_CONSTANTS.XP_PER_LEVEL} XP</p>
+                    <p className="text-[10px] text-gray-400 mt-1">{xp % GAME_CONSTANTS.XP_PER_LEVEL}/{GAME_CONSTANTS.XP_PER_LEVEL} XP</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Total XP</p>
-                    <p className="text-2xl font-bold text-purple-400/80 font-mono">{xp}</p>
-                    <p className="text-[10px] text-gray-600">earned across all time</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Total XP</p>
+                    <p className="text-2xl font-bold text-purple-400 font-mono">{xp}</p>
+                    <p className="text-[10px] text-gray-400">earned across all time</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Essence</p>
-                    <p className="text-2xl font-bold text-purple-400/80 font-mono">{essence}</p>
-                    <p className="text-[10px] text-gray-600">souls collected</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Essence</p>
+                    <p className="text-2xl font-bold text-purple-400 font-mono">{essence}</p>
+                    <p className="text-[10px] text-gray-400">souls collected</p>
                   </div>
                 </div>
               </div>
@@ -4147,31 +4144,31 @@ setMiniBossCount(0);
               <div className="bg-gradient-to-br from-green-950/40 to-teal-950/30 rounded-xl p-5 border border-green-800/25 stat-card-texture">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-green-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-green-400/60 uppercase">Legacy</h3>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-green-400 uppercase">Legacy</h3>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent to-green-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Liberated</p>
-                    <p className="text-2xl font-bold text-green-400/80 font-mono">{heroes.length}</p>
-                    <p className="text-[10px] text-gray-600">broke the curse</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Liberated</p>
+                    <p className="text-2xl font-bold text-green-400 font-mono">{heroes.length}</p>
+                    <p className="text-[10px] text-gray-400">broke the curse</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Consumed</p>
-                    <p className="text-2xl font-bold text-red-400/80 font-mono">{graveyard.length}</p>
-                    <p className="text-[10px] text-gray-600">claimed by darkness</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Consumed</p>
+                    <p className="text-2xl font-bold text-red-400 font-mono">{graveyard.length}</p>
+                    <p className="text-[10px] text-gray-400">claimed by darkness</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Survival Rate</p>
-                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Survival Rate</p>
+                    <p className="text-2xl font-bold text-yellow-400 font-mono">
                       {heroes.length + graveyard.length > 0 ? Math.floor((heroes.length / (heroes.length + graveyard.length)) * 100) : 0}%
                     </p>
-                    <p className="text-[10px] text-gray-600">{heroes.length + graveyard.length} total cycles</p>
+                    <p className="text-[10px] text-gray-400">{heroes.length + graveyard.length} total cycles</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-orange-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Current Streak</p>
-                    <p className="text-2xl font-bold text-orange-400/80 font-mono">{consecutiveDays}</p>
-                    <p className="text-[10px] text-gray-600">days without skip</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Current Streak</p>
+                    <p className="text-2xl font-bold text-orange-400 font-mono">{consecutiveDays}</p>
+                    <p className="text-[10px] text-gray-400">days without skip</p>
                   </div>
                 </div>
               </div>
@@ -4180,35 +4177,35 @@ setMiniBossCount(0);
               <div className="bg-gradient-to-br from-cyan-950/40 to-blue-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-cyan-400/60 uppercase">Study Stats</h3>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-cyan-400 uppercase">Study Stats</h3>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent to-cyan-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Sessions Today</p>
-                    <p className="text-2xl font-bold text-cyan-400/80 font-mono">{studyStats.sessionsToday}</p>
-                    <p className="text-[10px] text-gray-600">tasks started</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Sessions Today</p>
+                    <p className="text-2xl font-bold text-cyan-400 font-mono">{studyStats.sessionsToday}</p>
+                    <p className="text-[10px] text-gray-400">tasks started</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-blue-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Deep Work</p>
-                    <p className="text-2xl font-bold text-blue-400/80 font-mono">{studyStats.deepWorkSessions}</p>
-                    <p className="text-[10px] text-gray-600">25+ min sessions</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Deep Work</p>
+                    <p className="text-2xl font-bold text-blue-400 font-mono">{studyStats.deepWorkSessions}</p>
+                    <p className="text-[10px] text-gray-400">25+ min sessions</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Early Bird Days</p>
-                    <p className="text-2xl font-bold text-yellow-400/80 font-mono">{studyStats.earlyBirdDays}</p>
-                    <p className="text-[10px] text-gray-600">started early</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Early Bird Days</p>
+                    <p className="text-2xl font-bold text-yellow-400 font-mono">{studyStats.earlyBirdDays}</p>
+                    <p className="text-[10px] text-gray-400">started early</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
-                    <p className="text-[10px] text-gray-600 uppercase tracking-wider font-fantasy">Perfect Days</p>
-                    <p className="text-2xl font-bold text-green-400/80 font-mono">{studyStats.perfectDays}</p>
-                    <p className="text-[10px] text-gray-600">all tasks done</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Perfect Days</p>
+                    <p className="text-2xl font-bold text-green-400 font-mono">{studyStats.perfectDays}</p>
+                    <p className="text-[10px] text-gray-400">all tasks done</p>
                   </div>
                 </div>
                 {studyStats.longestStreak > 0 && (
                   <div className="mt-3 text-center">
-                    <span className="text-[10px] text-gray-500 font-fantasy tracking-wide">Longest Streak: </span>
-                    <span className="text-sm font-bold text-orange-400/70 font-mono">{studyStats.longestStreak} days</span>
+                    <span className="text-[10px] text-gray-400 font-fantasy tracking-wide">Longest Streak: </span>
+                    <span className="text-sm font-bold text-orange-400 font-mono">{studyStats.longestStreak} days</span>
                   </div>
                 )}
               </div>
@@ -4237,7 +4234,7 @@ setMiniBossCount(0);
               <div className="bg-black/50 rounded-xl overflow-hidden border border-yellow-900/40">
                 <div className="px-6 pt-6 pb-4 text-center">
                   <h2 className="text-2xl font-fantasy-decorative text-yellow-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">The Liberated</h2>
-                  <p className="text-green-500/60 text-sm italic font-fantasy mt-1">"Those who broke free from the curse..."</p>
+                  <p className="text-green-400 text-sm italic font-fantasy mt-1">"Those who broke free from the curse..."</p>
                 </div>
                 
                 <div className="flex items-center gap-3 px-6">
@@ -4250,8 +4247,8 @@ setMiniBossCount(0);
                 {heroes.length === 0 ? (
                   <div className="text-center py-12">
                     <Trophy size={56} className="mx-auto mb-4 text-gray-800"/>
-                    <p className="text-gray-600 font-fantasy">None have escaped the curse... yet.</p>
-                    <p className="text-xs text-gray-700 mt-2 font-fantasy">Survive all 7 days to break free!</p>
+                    <p className="text-gray-400 font-fantasy">None have escaped the curse... yet.</p>
+                    <p className="text-xs text-gray-500 mt-2 font-fantasy">Survive all 7 days to break free!</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -4264,17 +4261,17 @@ setMiniBossCount(0);
                             <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{hero.class ? hero.class.emblem : '✨'}</div>
                             <div className="flex-1">
                               <h3 className="text-xl font-fantasy-decorative text-yellow-300/90 tracking-wider">{hero.name}</h3>
-                              <p className="text-sm text-white/60 font-fantasy">{hero.title} {hero.class ? hero.class.name : ''}</p>
-                              <p className="text-xs text-white/40 font-mono mt-1">Level {hero.lvl} • {hero.xp} XP</p>
+                              <p className="text-sm text-white/80 font-fantasy">{hero.title} {hero.class ? hero.class.name : ''}</p>
+                              <p className="text-xs text-white/60 font-mono mt-1">Level {hero.lvl} • {hero.xp} XP</p>
                               {hero.skipCount !== undefined && hero.skipCount === 0 && (
-                                <p className="text-green-400/70 text-xs font-fantasy mt-1.5">✨ Flawless Run — No skips!</p>
+                                <p className="text-green-400 text-xs font-fantasy mt-1.5">✨ Flawless Run — No skips!</p>
                               )}
                               {hero.skipCount > 0 && (
-                                <p className="text-yellow-400/50 text-xs mt-1.5 font-fantasy">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>
+                                <p className="text-yellow-400 text-xs mt-1.5 font-fantasy">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>
                               )}
                               <div className="flex items-center gap-2 mt-2">
                                 <div className="h-px flex-1 bg-gradient-to-r from-yellow-600/20 to-transparent"></div>
-                                <p className="text-yellow-400/60 text-[10px] font-fantasy tracking-[0.2em] uppercase">Curse Broken</p>
+                                <p className="text-yellow-400 text-[10px] font-fantasy tracking-[0.2em] uppercase">Curse Broken</p>
                                 <div className="h-px flex-1 bg-gradient-to-l from-yellow-600/20 to-transparent"></div>
                               </div>
                             </div>
@@ -4291,7 +4288,7 @@ setMiniBossCount(0);
               <div className="bg-black/50 rounded-xl overflow-hidden border border-red-900/30">
                 <div className="px-6 pt-6 pb-4 text-center">
                   <h2 className="text-2xl font-fantasy-decorative text-gray-500 tracking-wider">The Consumed</h2>
-                  <p className="text-red-500/50 text-sm italic font-fantasy mt-1">"Those who fell to the curse..."</p>
+                  <p className="text-red-400 text-sm italic font-fantasy mt-1">"Those who fell to the curse..."</p>
                 </div>
                 
                 <div className="flex items-center gap-3 px-6">
@@ -4304,7 +4301,7 @@ setMiniBossCount(0);
                 {graveyard.length === 0 ? (
                   <div className="text-center py-12">
                     <Skull size={56} className="mx-auto mb-4 text-gray-800"/>
-                    <p className="text-gray-700 font-fantasy">No fallen heroes... yet.</p>
+                    <p className="text-gray-500 font-fantasy">No fallen heroes... yet.</p>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
@@ -4313,12 +4310,12 @@ setMiniBossCount(0);
                         <div className="flex items-center gap-4">
                           <div className="text-3xl opacity-40">{fallen.class ? fallen.class.emblem : '☠️'}</div>
                           <div className="flex-1">
-                            <h3 className="text-base font-fantasy tracking-wide text-red-400/70">{fallen.name}</h3>
-                            <p className="text-xs text-gray-600 font-fantasy">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p>
-                            <p className="text-xs text-red-500/50 mt-0.5">Fell on {fallen.day ? GAME_CONSTANTS.DAY_NAMES[fallen.day - 1]?.name || `Day ${fallen.day}` : 'Day 1'} • {fallen.xp} XP</p>
-                            <p className="text-xs text-gray-600">Trials: {fallen.tasks}/{fallen.total}</p>
-                            {fallen.skipCount > 0 && (<p className="text-red-500/40 text-[10px] mt-1">💀 Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}
-                            {fallen.cursed && (<p className="text-purple-500/40 text-[10px]">🌑 Died while cursed</p>)}
+                            <h3 className="text-base font-fantasy tracking-wide text-red-400">{fallen.name}</h3>
+                            <p className="text-xs text-gray-400 font-fantasy">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p>
+                            <p className="text-xs text-red-400 mt-0.5">Fell on {fallen.day ? GAME_CONSTANTS.DAY_NAMES[fallen.day - 1]?.name || `Day ${fallen.day}` : 'Day 1'} • {fallen.xp} XP</p>
+                            <p className="text-xs text-gray-400">Trials: {fallen.tasks}/{fallen.total}</p>
+                            {fallen.skipCount > 0 && (<p className="text-red-400 text-[10px] mt-1">💀 Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}
+                            {fallen.cursed && (<p className="text-purple-400 text-[10px]">🌑 Died while cursed</p>)}
                           </div>
                         </div>
                       </div>
@@ -5553,7 +5550,7 @@ setMiniBossCount(0);
                       >
                         {targetingAdds ? '🎯 Targeting Adds — click to switch to boss' : '⚔️ Targeting Boss — click to switch to adds'}
                       </button>
-                      <p className="text-xs text-purple-400/50 mt-2 text-center italic">
+                      <p className="text-xs text-purple-400 mt-2 text-center italic">
                         {gauntletPhase === 3 ? 'Each add heals boss for 8 HP per turn. Max 3 adds.' : 'Kill it before Phase 3!'}
                       </p>
                     </div>
@@ -5574,20 +5571,20 @@ setMiniBossCount(0);
                   {/* Enemy Dialogue Box */}
                   {showTauntBoxes ? (
                     <div className="bg-black/50 rounded-lg p-3 border border-red-800/30 relative">
-                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-red-500/60 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
-                      <p className="text-gray-300/80 text-sm italic leading-relaxed">{enemyTauntResponse ? `"${enemyTauntResponse}"` : '...'}</p>
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-red-400 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
+                      <p className="text-gray-300 text-sm italic leading-relaxed">{enemyTauntResponse ? `"${enemyTauntResponse}"` : '...'}</p>
                     </div>
                   ) : enemyDialogue ? (
                     <div className="bg-black/50 rounded-lg p-3 border border-gray-800/30 relative">
-                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-gray-500/60 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
-                      <p className="text-gray-400 text-center italic text-sm leading-relaxed">"{enemyDialogue}"</p>
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-gray-400 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
+                      <p className="text-gray-300 text-center italic text-sm leading-relaxed">"{enemyDialogue}"</p>
                     </div>
                   ) : null}
 
                   {/* Divider between enemy and player */}
                   <div className="flex items-center gap-3">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/40 to-transparent"></div>
-                    <span className="text-gray-600 text-xs font-fantasy tracking-widest">VS</span>
+                    <span className="text-gray-400 text-xs font-fantasy tracking-widest">VS</span>
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-700/40 to-transparent"></div>
                   </div>
                   
@@ -5595,7 +5592,7 @@ setMiniBossCount(0);
                   <div className="bg-black/40 rounded-lg p-4 border border-green-900/30">
                     <div className="flex justify-between mb-2">
                       <span className="text-green-400 font-fantasy text-sm tracking-wide">{hero.name}</span>
-                      <span className="text-green-400/70 text-xs font-mono">HP: {hp}/{getMaxHp()} | SP: {stamina}/{getMaxStamina()}</span>
+                      <span className="text-green-400 text-xs font-mono">HP: {hp}/{getMaxHp()} | SP: {stamina}/{getMaxStamina()}</span>
                     </div>
                     <div className="bg-black/60 rounded-full h-5 overflow-hidden mb-2 border border-green-900/20">
                       <div className={`h-5 rounded-full transition-all duration-500 ${playerFlash ? 'hp-pulse' : ''} ${
@@ -5612,7 +5609,7 @@ setMiniBossCount(0);
                   {/* Player Dialogue Box */}
                   {showTauntBoxes && (
                     <div className="bg-black/50 rounded-lg p-3 border border-blue-800/30 relative">
-                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-blue-500/60 text-[10px] font-fantasy tracking-widest uppercase">You</div>
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-blue-400 text-[10px] font-fantasy tracking-widest uppercase">You</div>
                       <p className="text-white/80 text-sm leading-relaxed">"{playerTaunt}"</p>
                     </div>
                   )}
@@ -5623,7 +5620,7 @@ setMiniBossCount(0);
                       {/* Action divider */}
                       <div className="flex items-center gap-3">
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
-                        <span className="text-yellow-600/50 text-[10px] font-fantasy tracking-[0.3em] uppercase">Actions</span>
+                        <span className="text-yellow-500 text-[10px] font-fantasy tracking-[0.3em] uppercase">Actions</span>
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
                       </div>
                       
@@ -5635,14 +5632,14 @@ setMiniBossCount(0);
                         {isTauntAvailable && (
                           <button onClick={taunt} className="flex-1 bg-gradient-to-b from-orange-800/80 to-orange-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-orange-200 hover:from-orange-700/80 hover:to-orange-900/80 transition-all shadow-[0_0_15px_rgba(234,88,12,0.15)] hover:shadow-[0_0_25px_rgba(234,88,12,0.3)] hover:scale-105 active:scale-95 border border-orange-600/40 animate-pulse">
                             <div>🔥 Taunt</div>
-                            <div className="text-xs text-orange-300/60 mt-0.5">Enrage Enemy</div>
+                            <div className="text-xs text-orange-300 mt-0.5">Enrage Enemy</div>
                           </button>
                         )}
                         
                         {hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (
                           <button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-gradient-to-b from-cyan-800/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-700/80 hover:to-cyan-900/80 transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] hover:scale-105 active:scale-95 border border-cyan-700/30 disabled:from-gray-800/60 disabled:to-gray-900/60 disabled:text-gray-500 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none disabled:border-gray-700/20">
                             <div>✨ {GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name}</div>
-                            <div className="text-xs text-cyan-300/60 mt-0.5">{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`}</div>
+                            <div className="text-xs text-cyan-300 mt-0.5">{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`}</div>
                           </button>
                         )}
                         
@@ -5662,12 +5659,12 @@ setMiniBossCount(0);
                       {showDodgeButton && (
                         <button onClick={dodge} className="w-full bg-gradient-to-b from-blue-700/80 to-blue-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-blue-200 hover:from-blue-600/80 hover:to-blue-900/80 transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:scale-105 active:scale-95 animate-pulse border border-cyan-500/40 mt-1">
                           <div>🛡️ Dodge</div>
-                          <div className="text-xs text-cyan-300/60 mt-0.5">Avoid the AOE</div>
+                          <div className="text-xs text-cyan-300 mt-0.5">Avoid the AOE</div>
                         </button>
                       )}
                       
                       {canFlee && (
-                        <p className="text-xs text-gray-600 text-center italic font-fantasy">Fleeing costs 25 Stamina but lets you escape</p>
+                        <p className="text-xs text-gray-400 text-center italic font-fantasy">Fleeing costs 25 Stamina but lets you escape</p>
                       )}
                       
                       {showDebug && (
