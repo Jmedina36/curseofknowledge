@@ -4333,7 +4333,7 @@ setMiniBossCount(0);
           {showInventoryModal && (
             <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowInventoryModal(false)}>
               <div className="bg-gray-900 rounded-xl p-6 max-w-lg w-full border-2 border-red-500 relative" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setShowInventoryModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24}/></button>
+                <button onClick={() => setShowInventoryModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white"><X size={24}/></button>
                 
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-bold text-red-400">SUPPLIES</h2>
@@ -4436,7 +4436,7 @@ setMiniBossCount(0);
           {showCraftingModal && (
             <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50 overflow-y-auto" onClick={() => setShowCraftingModal(false)}>
               <div className="bg-gray-900 rounded-xl p-6 max-w-2xl w-full border-2 border-orange-500 my-8 relative" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setShowCraftingModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24}/></button>
+                <button onClick={() => setShowCraftingModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white"><X size={24}/></button>
                 
                 <div className="text-center mb-6">
                   <h2 className="text-2xl font-bold text-orange-400">
@@ -4456,7 +4456,7 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('healthPotion')} 
                     disabled={essence < 25}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 25 ? 'bg-red-900 bg-opacity-50 border-red-700 hover:bg-red-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 25 ? 'bg-red-900 bg-opacity-50 border-red-700 hover:bg-red-800 hover:border-red-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
                   >
                     <div className="mb-2">
                       <p className="font-bold text-white text-lg mb-2">Health Potion</p>
@@ -4469,7 +4469,7 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('staminaPotion')} 
                     disabled={essence < 20}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 20 ? 'bg-blue-900 bg-opacity-50 border-blue-700 hover:bg-blue-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 20 ? 'bg-blue-900 bg-opacity-50 border-blue-700 hover:bg-blue-800 hover:border-blue-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
                   >
                     <div className="mb-2">
                       <p className="font-bold text-white text-lg mb-2">Stamina Potion</p>
@@ -4482,7 +4482,7 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('cleansePotion')} 
                     disabled={essence < 50}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 50 ? 'bg-purple-900 bg-opacity-50 border-purple-700 hover:bg-purple-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 50 ? 'bg-purple-900 bg-opacity-50 border-purple-700 hover:bg-purple-800 hover:border-purple-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
                   >
                     <div className="mb-2">
                       <p className="font-bold text-white text-lg mb-2">Cleanse Potion</p>
@@ -4495,7 +4495,7 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('weaponOil')} 
                     disabled={essence < 40 || weaponOilActive}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !weaponOilActive ? 'bg-orange-900 bg-opacity-50 border-orange-700 hover:bg-orange-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !weaponOilActive ? 'bg-orange-900 bg-opacity-50 border-orange-700 hover:bg-orange-800 hover:border-orange-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
                   >
                     <div className="mb-2">
                       <p className="font-bold text-white text-lg mb-2">Weapon Oil</p>
@@ -4509,7 +4509,7 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('armorPolish')} 
                     disabled={essence < 40 || armorPolishActive}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !armorPolishActive ? 'bg-cyan-900 bg-opacity-50 border-cyan-700 hover:bg-cyan-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !armorPolishActive ? 'bg-cyan-900 bg-opacity-50 border-cyan-700 hover:bg-cyan-800 hover:border-cyan-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
                   >
                     <div className="mb-2">
                       <p className="font-bold text-white text-lg mb-2">Armor Polish</p>
@@ -4523,7 +4523,7 @@ setMiniBossCount(0);
                   <button 
                     onClick={() => craftItem('luckyCharm')} 
                     disabled={essence < 80 || luckyCharmActive}
-                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 80 && !luckyCharmActive ? 'bg-green-900 bg-opacity-50 border-green-700 hover:bg-green-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}
+                    className={`p-4 rounded-lg border-2 transition-all ${essence >= 80 && !luckyCharmActive ? 'bg-green-900 bg-opacity-50 border-green-700 hover:bg-green-800 hover:border-green-600' : 'bg-gray-700 border-gray-600 opacity-60 cursor-not-allowed'}`}
                   >
                     <div className="mb-2">
                       <p className="font-bold text-white text-lg mb-2">Lucky Charm</p>
