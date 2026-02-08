@@ -95,12 +95,13 @@ const HeroCardDecorations = ({ colorClass = 'red' }) => {
         }}
       />
 
-      {/* Cinematic scanline texture overlay */}
+      {/* Subtle parchment texture overlay */}
       <div
-        className="pointer-events-none absolute inset-0 z-0 rounded-xl opacity-[0.07] mix-blend-overlay"
+        className="pointer-events-none absolute inset-0 z-0 rounded-xl opacity-[0.05]"
         style={{
           backgroundImage:
-            'repeating-linear-gradient(0deg, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 6px)',
+            'repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 6px)',
+          mixBlendMode: 'overlay',
         }}
       />
 
