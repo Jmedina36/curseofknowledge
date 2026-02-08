@@ -5102,13 +5102,22 @@ setMiniBossCount(0);
 )}
 
          {showModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-red-500 relative" onClick={e => e.stopPropagation()}>
-      <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24}/></button>
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowModal(false)}>
+    <div className="bg-gradient-to-b from-gray-900 via-red-950/30 to-gray-950 rounded-xl p-6 max-w-md w-full border border-red-700/40 relative shadow-[0_0_40px_rgba(220,38,38,0.15)]" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent"></div>
+      
+      <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-red-300 transition-colors"><X size={24}/></button>
       
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-red-400">ACCEPT NEW TRIAL</h3>
-        <p className="text-gray-400 text-sm mt-1 italic">"The darkness demands sacrifice..."</p>
+        <h3 className="text-2xl font-fantasy-decorative tracking-wider text-red-400">ACCEPT NEW TRIAL</h3>
+        {/* Decorative divider */}
+        <div className="flex items-center justify-center gap-2 my-3">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent"></div>
+          <div className="w-1.5 h-1.5 rotate-45 bg-red-500/50"></div>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent"></div>
+        </div>
+        <p className="text-gray-400 text-sm font-fantasy italic">"The darkness demands sacrifice..."</p>
       </div>
       
       <input 
@@ -5116,23 +5125,23 @@ setMiniBossCount(0);
         placeholder="Name your trial" 
         value={newTask.title} 
         onChange={e => setNewTask({...newTask, title: e.target.value})} 
-        className="w-full p-3 bg-gray-800 text-white rounded-lg mb-4 border border-gray-700 focus:border-red-500 focus:outline-none" 
+        className="w-full p-3 bg-gray-800/80 text-white rounded-lg mb-4 border border-red-800/30 focus:border-red-500/60 focus:outline-none font-fantasy placeholder:font-sans placeholder:text-gray-500" 
         autoFocus 
       />
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Trial Difficulty</label>
+        <label className="block text-sm text-gray-400 mb-2 font-fantasy tracking-wide">Trial Difficulty</label>
         <div className="grid grid-cols-2 gap-3">
           <button 
             type="button" 
             onClick={() => setNewTask({...newTask, priority: 'important'})} 
             className={`p-4 rounded-lg border-2 transition-all ${
               newTask.priority === 'important' 
-                ? 'bg-yellow-900 border-yellow-500 text-yellow-200 shadow-lg shadow-yellow-500/50' 
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-yellow-700'
+                ? 'bg-yellow-900/60 border-yellow-500/70 text-yellow-200 shadow-lg shadow-yellow-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-yellow-700/50'
             }`}
           >
-            <div className="font-bold mb-1">IMPORTANT</div>
+            <div className="font-fantasy font-bold mb-1">IMPORTANT</div>
             <div className="text-xs">1.25x XP</div>
             <div className="text-xs text-gray-500 mt-1 italic">Greater reward</div>
           </button>
@@ -5142,32 +5151,40 @@ setMiniBossCount(0);
             onClick={() => setNewTask({...newTask, priority: 'routine'})} 
             className={`p-4 rounded-lg border-2 transition-all ${
               newTask.priority === 'routine' 
-                ? 'bg-blue-900 border-blue-500 text-blue-200 shadow-lg shadow-blue-500/50' 
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-blue-700'
+                ? 'bg-blue-900/60 border-blue-500/70 text-blue-200 shadow-lg shadow-blue-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-blue-700/50'
             }`}
           >
-            <div className="font-bold mb-1">ROUTINE</div>
+            <div className="font-fantasy font-bold mb-1">ROUTINE</div>
             <div className="text-xs">1.0x XP</div>
             <div className="text-xs text-gray-500 mt-1 italic">Standard trial</div>
           </button>
         </div>
       </div>
       
+      {/* Bottom divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent"></div>
+      </div>
+      
       <div className="flex gap-2">
         <button 
           onClick={() => { sfx.playClick(); addTask(); }} 
           disabled={!newTask.title} 
-          className="flex-1 bg-red-600 py-2 rounded-lg hover:bg-red-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gradient-to-b from-red-700/80 to-red-900/80 py-2 rounded-lg hover:from-red-600/80 hover:to-red-800/80 transition-all text-white font-fantasy font-medium tracking-wide border border-red-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
         >
           Accept Trial
         </button>
         <button 
           onClick={() => setShowModal(false)} 
-          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
+          className="flex-1 bg-gray-700/60 py-2 rounded-lg hover:bg-gray-600/60 transition-all text-gray-300 font-fantasy font-medium tracking-wide border border-gray-600/30"
         >
           Cancel
         </button>
       </div>
+      
+      {/* Decorative bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
     </div>
   </div>
 )}
@@ -5229,11 +5246,21 @@ setMiniBossCount(0);
 )}
 
          {showPlanModal && selectedDay && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowPlanModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-blue-400">Plan for {selectedDay}</h3>
-        <button onClick={() => setShowPlanModal(false)} className="text-gray-400 hover:text-white"><X size={24}/></button>
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowPlanModal(false)}>
+    <div className="bg-gradient-to-b from-gray-900 via-blue-950/20 to-gray-950 rounded-xl p-6 max-w-md w-full border border-blue-700/40 shadow-[0_0_40px_rgba(59,130,246,0.15)]" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+      
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-xl font-fantasy-decorative tracking-wider text-blue-400">Plan for {selectedDay}</h3>
+        <button onClick={() => setShowPlanModal(false)} className="text-gray-400 hover:text-blue-300 transition-colors"><X size={24}/></button>
+      </div>
+      
+      {/* Decorative divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/30 to-transparent"></div>
+        <div className="w-1.5 h-1.5 rotate-45 bg-blue-500/50"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/30 to-transparent"></div>
       </div>
       
       <input 
@@ -5241,24 +5268,24 @@ setMiniBossCount(0);
         placeholder="What do you need to do?" 
         value={newPlanItem.title} 
         onChange={e => setNewPlanItem({...newPlanItem, title: e.target.value})} 
-        className="w-full p-3 bg-gray-800 text-white rounded-lg mb-4 border border-gray-700 focus:border-blue-500 focus:outline-none" 
+        className="w-full p-3 bg-gray-800/80 text-white rounded-lg mb-4 border border-blue-800/30 focus:border-blue-500/60 focus:outline-none font-fantasy placeholder:font-sans placeholder:text-gray-500" 
         autoFocus 
       />
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Priority Level</label>
+        <label className="block text-sm text-gray-400 mb-2 font-fantasy tracking-wide">Priority Level</label>
         <div className="grid grid-cols-2 gap-3">
           <button 
             type="button" 
             onClick={() => setNewPlanItem({...newPlanItem, priority: 'important'})} 
             className={`p-4 rounded-lg border-2 transition-all ${
               newPlanItem.priority === 'important' 
-                ? 'bg-yellow-900 border-yellow-500 text-yellow-200 shadow-lg shadow-yellow-500/50' 
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-yellow-700'
+                ? 'bg-yellow-900/60 border-yellow-500/70 text-yellow-200 shadow-lg shadow-yellow-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-yellow-700/50'
             }`}
           >
             <div className="text-2xl mb-1">⭐</div>
-            <div className="font-bold">IMPORTANT</div>
+            <div className="font-fantasy font-bold">IMPORTANT</div>
             <div className="text-xs mt-1">1.25x XP</div>
           </button>
           
@@ -5267,15 +5294,20 @@ setMiniBossCount(0);
             onClick={() => setNewPlanItem({...newPlanItem, priority: 'routine'})} 
             className={`p-4 rounded-lg border-2 transition-all ${
               newPlanItem.priority === 'routine' 
-                ? 'bg-blue-900 border-blue-500 text-blue-200 shadow-lg shadow-blue-500/50' 
-                : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-blue-700'
+                ? 'bg-blue-900/60 border-blue-500/70 text-blue-200 shadow-lg shadow-blue-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-blue-700/50'
             }`}
           >
             <div className="text-2xl mb-1">📋</div>
-            <div className="font-bold">ROUTINE</div>
+            <div className="font-fantasy font-bold">ROUTINE</div>
             <div className="text-xs mt-1">1.0x XP</div>
           </button>
         </div>
+      </div>
+      
+      {/* Bottom divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/20 to-transparent"></div>
       </div>
       
       <div className="flex gap-2">
@@ -5306,7 +5338,7 @@ setMiniBossCount(0);
             } 
           }}
           disabled={!newPlanItem.title} 
-          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="flex-1 bg-gradient-to-b from-blue-700/80 to-blue-900/80 py-2 rounded-lg hover:from-blue-600/80 hover:to-blue-800/80 transition-all text-white font-fantasy font-medium tracking-wide border border-blue-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
         >
           Add Task
         </button>
@@ -5315,28 +5347,41 @@ setMiniBossCount(0);
             setShowPlanModal(false); 
             setNewPlanItem({ title: '', priority: 'routine' }); 
           }} 
-          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
+          className="flex-1 bg-gray-700/60 py-2 rounded-lg hover:bg-gray-600/60 transition-all text-gray-300 font-fantasy font-medium tracking-wide border border-gray-600/30"
         >
           Cancel
         </button>
       </div>
+      
+      {/* Decorative bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent"></div>
     </div>
   </div>
 )}
           {showCalendarModal && selectedDate && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowCalendarModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-green-500" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-green-400">
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowCalendarModal(false)}>
+    <div className="bg-gradient-to-b from-gray-900 via-emerald-950/20 to-gray-950 rounded-xl p-6 max-w-md w-full border border-emerald-700/40 shadow-[0_0_40px_rgba(16,185,129,0.15)] relative" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
+      
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-lg font-fantasy-decorative tracking-wider text-emerald-400">
   {(() => {
     const [year, month, day] = selectedDate.split('-').map(Number);
     const date = new Date(year, month - 1, day);
     return date.toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   })()}
 </h3>
-        <button onClick={() => setShowCalendarModal(false)} className="text-gray-400 hover:text-white">
+        <button onClick={() => setShowCalendarModal(false)} className="text-gray-400 hover:text-emerald-300 transition-colors">
           <X size={24}/>
         </button>
+      </div>
+      
+      {/* Decorative divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-600/30 to-transparent"></div>
+        <div className="w-1.5 h-1.5 rotate-45 bg-emerald-500/50"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-600/30 to-transparent"></div>
       </div>
       
       <div className="mb-4">
@@ -5345,24 +5390,24 @@ setMiniBossCount(0);
           placeholder="Add new task..." 
           value={newCalendarTask.title} 
           onChange={e => setNewCalendarTask({...newCalendarTask, title: e.target.value})} 
-          className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-green-500 focus:outline-none mb-3" 
+          className="w-full p-3 bg-gray-800/80 text-white rounded-lg border border-emerald-800/30 focus:border-emerald-500/60 focus:outline-none mb-3 font-fantasy placeholder:font-sans placeholder:text-gray-500" 
           autoFocus 
         />
         
         <div className="mb-3">
-          <label className="block text-sm text-gray-400 mb-2">Priority Level</label>
+          <label className="block text-sm text-gray-400 mb-2 font-fantasy tracking-wide">Priority Level</label>
           <div className="grid grid-cols-2 gap-2">
             <button 
               type="button" 
               onClick={() => setNewCalendarTask({...newCalendarTask, priority: 'important'})} 
               className={`p-3 rounded-lg border-2 transition-all ${
                 newCalendarTask.priority === 'important' 
-                  ? 'bg-yellow-900 border-yellow-500 text-yellow-200' 
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-yellow-700'
+                  ? 'bg-yellow-900/60 border-yellow-500/70 text-yellow-200 shadow-lg shadow-yellow-500/30' 
+                  : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-yellow-700/50'
               }`}
             >
               <div className="text-xl mb-1">⭐</div>
-              <div className="font-bold text-sm">IMPORTANT</div>
+              <div className="font-fantasy font-bold text-sm">IMPORTANT</div>
             </button>
             
             <button 
@@ -5370,12 +5415,12 @@ setMiniBossCount(0);
               onClick={() => setNewCalendarTask({...newCalendarTask, priority: 'routine'})} 
               className={`p-3 rounded-lg border-2 transition-all ${
                 newCalendarTask.priority === 'routine' 
-                  ? 'bg-blue-900 border-blue-500 text-blue-200' 
-                  : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-blue-700'
+                  ? 'bg-blue-900/60 border-blue-500/70 text-blue-200 shadow-lg shadow-blue-500/30' 
+                  : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-blue-700/50'
               }`}
             >
               <div className="text-xl mb-1">📋</div>
-              <div className="font-bold text-sm">ROUTINE</div>
+              <div className="font-fantasy font-bold text-sm">ROUTINE</div>
             </button>
           </div>
         </div>
@@ -5412,15 +5457,20 @@ setMiniBossCount(0);
             } 
           }} 
           disabled={!newCalendarTask.title.trim()} 
-          className="w-full bg-green-600 py-2 rounded-lg hover:bg-green-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-b from-emerald-700/80 to-emerald-900/80 py-2 rounded-lg hover:from-emerald-600/80 hover:to-emerald-800/80 transition-all text-white font-fantasy font-medium tracking-wide border border-emerald-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
         >
           Add Task
         </button>
       </div>
       
+      {/* Task list divider */}
+      <div className="flex items-center justify-center gap-2 mb-3">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-600/20 to-transparent"></div>
+      </div>
+      
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {(!calendarTasks[selectedDate] || calendarTasks[selectedDate].length === 0) ? (
-          <p className="text-gray-500 text-center py-4 italic">No tasks for this day</p>
+          <p className="text-gray-500 text-center py-4 italic font-fantasy">No tasks for this day</p>
         ) : (
           [...calendarTasks[selectedDate]].sort((a, b) => {
             if (a.priority === 'important' && b.priority !== 'important') return -1;
@@ -5433,8 +5483,8 @@ setMiniBossCount(0);
                 key={originalIdx} 
                 className={`rounded-lg p-3 flex items-center gap-3 ${
                   task.priority === 'important' && !task.done
-                    ? 'bg-gradient-to-r from-yellow-900/30 to-gray-800 border border-yellow-500'
-                    : 'bg-gray-800'
+                    ? 'bg-gradient-to-r from-yellow-900/30 to-gray-800/80 border border-yellow-500/50'
+                    : 'bg-gray-800/60 border border-gray-700/30'
                 }`}
               >
                 {task.priority === 'important' && !task.done && (
@@ -5453,7 +5503,7 @@ setMiniBossCount(0);
                   }} 
                   className="w-5 h-5 cursor-pointer" 
                 />
-                <span className={`flex-1 ${task.done ? 'line-through text-gray-500' : 'text-white'}`}>
+                <span className={`flex-1 font-fantasy ${task.done ? 'line-through text-gray-500' : 'text-white'}`}>
                   {task.title}
                 </span>
                 <button 
@@ -5472,6 +5522,9 @@ setMiniBossCount(0);
           })
         )}
       </div>
+      
+      {/* Decorative bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
     </div>
   </div>
 )}
