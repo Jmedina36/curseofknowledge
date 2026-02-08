@@ -6,44 +6,44 @@ const ACHIEVEMENT_TIERS = {
     border: 'border-gray-600/60',
     bg: 'bg-gray-900/50',
     glow: '',
-    text: 'text-gray-300',
-    badge: 'bg-gray-700/80 text-gray-300',
-    accent: 'text-gray-400',
+    text: 'text-gray-100',
+    badge: 'bg-gray-700/80 text-gray-100',
+    accent: 'text-gray-200',
   },
   rare: {
     label: 'Rare',
     border: 'border-blue-700/60',
     bg: 'bg-blue-950/40',
     glow: 'shadow-[0_0_12px_rgba(59,130,246,0.15)]',
-    text: 'text-blue-300',
-    badge: 'bg-blue-900/80 text-blue-200',
-    accent: 'text-blue-400',
+    text: 'text-blue-200',
+    badge: 'bg-blue-900/80 text-blue-100',
+    accent: 'text-blue-300',
   },
   epic: {
     label: 'Epic',
     border: 'border-purple-600/60',
     bg: 'bg-purple-950/40',
     glow: 'shadow-[0_0_15px_rgba(168,85,247,0.2)]',
-    text: 'text-purple-300',
-    badge: 'bg-purple-900/80 text-purple-200',
-    accent: 'text-purple-400',
+    text: 'text-purple-200',
+    badge: 'bg-purple-900/80 text-purple-100',
+    accent: 'text-purple-300',
   },
   legendary: {
     label: 'Legendary',
     border: 'border-amber-500/60',
     bg: 'bg-amber-950/30',
     glow: 'shadow-[0_0_20px_rgba(245,158,11,0.25)]',
-    text: 'text-amber-300',
-    badge: 'bg-amber-900/80 text-amber-200',
-    accent: 'text-amber-400',
+    text: 'text-amber-200',
+    badge: 'bg-amber-900/80 text-amber-100',
+    accent: 'text-amber-300',
   },
 };
 
 const CATEGORIES = {
-  study: { label: 'Study', color: 'text-cyan-400', icon: '📖' },
-  combat: { label: 'Combat', color: 'text-red-400', icon: '⚔' },
-  persistence: { label: 'Persistence', color: 'text-green-400', icon: '🛡' },
-  mastery: { label: 'Mastery', color: 'text-amber-400', icon: '👑' },
+  study: { label: 'Study', color: 'text-cyan-300', icon: '📖' },
+  combat: { label: 'Combat', color: 'text-red-300', icon: '⚔' },
+  persistence: { label: 'Persistence', color: 'text-green-300', icon: '🛡' },
+  mastery: { label: 'Mastery', color: 'text-amber-300', icon: '👑' },
 };
 
 const buildAchievements = (props) => {
@@ -278,7 +278,7 @@ const AchievementCard = ({ achievement, isNew }) => {
         relative overflow-hidden rounded-lg border p-4 transition-all duration-500
         ${unlocked
           ? `${tier.border} ${tier.bg} ${tier.glow}`
-          : 'border-gray-800/50 bg-gray-950/40 opacity-50'
+          : 'border-gray-700/50 bg-gray-950/40 opacity-60'
         }
         ${unlocked && isNew ? 'achievement-new' : ''}
       `}
@@ -295,14 +295,14 @@ const AchievementCard = ({ achievement, isNew }) => {
       <div className="relative z-10">
         {/* Header row */}
         <div className="flex items-start justify-between gap-2 mb-1.5">
-          <h4 className={`font-fantasy font-bold text-sm tracking-wide ${unlocked ? 'text-amber-100' : 'text-gray-600'}`}>
+          <h4 className={`font-fantasy font-bold text-sm tracking-wide ${unlocked ? 'text-amber-100' : 'text-gray-400'}`}>
             {achievement.name}
           </h4>
           <div className="flex items-center gap-1.5 shrink-0">
             <span className={`text-[10px] font-fantasy font-semibold uppercase tracking-wider px-2 py-0.5 rounded-sm border ${
               unlocked 
                 ? `${tier.badge} border-current/20` 
-                : 'bg-gray-800/60 text-gray-600 border-gray-700/30'
+                : 'bg-gray-800/60 text-gray-400 border-gray-600/30'
             }`}>
               {tier.label}
             </span>
@@ -310,13 +310,13 @@ const AchievementCard = ({ achievement, isNew }) => {
         </div>
 
         {/* Description */}
-        <p className={`text-xs mb-2.5 italic ${unlocked ? 'text-gray-400' : 'text-gray-700'}`}>
+        <p className={`text-xs mb-2.5 italic ${unlocked ? 'text-gray-200' : 'text-gray-500'}`}>
           "{achievement.desc}"
         </p>
 
         {/* Category tag + Status */}
         <div className="flex items-center justify-between">
-          <span className={`text-[10px] uppercase tracking-widest font-fantasy ${unlocked ? category.color : 'text-gray-700'}`}>
+          <span className={`text-[10px] uppercase tracking-widest font-fantasy ${unlocked ? category.color : 'text-gray-500'}`}>
             {category.icon} {category.label}
           </span>
           
@@ -333,12 +333,12 @@ const AchievementCard = ({ achievement, isNew }) => {
                   style={{ width: `${Math.min(100, (achievement.progress.current / achievement.progress.max) * 100)}%` }}
                 />
               </div>
-              <span className="text-[10px] text-gray-500 font-fantasy">
+              <span className="text-[10px] text-gray-300 font-fantasy">
                 {achievement.progress.current}/{achievement.progress.max}
               </span>
             </div>
           ) : (
-            <span className="text-xs text-gray-700 font-fantasy tracking-wider">SEALED</span>
+            <span className="text-xs text-gray-500 font-fantasy tracking-wider">SEALED</span>
           )}
         </div>
       </div>
@@ -429,7 +429,7 @@ const AchievementsPanel = ({
             className={`px-3 py-1.5 rounded-md text-xs font-fantasy font-semibold tracking-wide transition-all duration-200 border ${
               filter === cat.key
                 ? 'bg-amber-900/50 text-amber-200 border-amber-600/40 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
-                : 'bg-gray-800/40 text-gray-500 border-gray-700/30 hover:bg-gray-800/70 hover:text-gray-400 hover:border-gray-600/40'
+                : 'bg-gray-800/40 text-gray-300 border-gray-700/30 hover:bg-gray-800/70 hover:text-gray-200 hover:border-gray-600/40'
             }`}
           >
             {cat.icon} {cat.label}
