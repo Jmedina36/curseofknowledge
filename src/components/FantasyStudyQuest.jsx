@@ -8,6 +8,9 @@ import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calenda
 import useGameSFX from '../hooks/useGameSFX';
 import DebugPanel from './DebugPanel';
 import AchievementsPanel from './AchievementsPanel';
+import ClassEmblem from './ClassEmblem';
+import HeroCardDecorations from './HeroCardDecorations';
+
 const GAME_CONSTANTS = {
   LATE_START_PENALTY: 15,
   LATE_START_HOUR: 8,
@@ -44,35 +47,15 @@ const GAME_CONSTANTS = {
   },
   XP_PER_LEVEL: 100,
   XP_MULTIPLIERS: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
-  DAY_NAMES: [{
-    name: 'Moonday',
-    subtitle: 'Day of Beginnings',
-    theme: 'A new cycle begins...'
-  }, {
-    name: 'Tideday',
-    subtitle: 'Day of Flow',
-    theme: 'The curse stirs...'
-  }, {
-    name: 'Fireday',
-    subtitle: 'Day of Trials',
-    theme: 'The pressure mounts...'
-  }, {
-    name: 'Thornday',
-    subtitle: 'Day of Struggle',
-    theme: 'Darkness deepens...'
-  }, {
-    name: 'Voidday',
-    subtitle: 'Day of Despair',
-    theme: 'The abyss beckons...'
-  }, {
-    name: 'Doomday',
-    subtitle: 'Day of Reckoning',
-    theme: 'Almost there... or almost consumed?'
-  }, {
-    name: 'Endday',
-    subtitle: 'Day of Liberation',
-    theme: 'Today you break free or die trying.'
-  }],
+  DAY_NAMES: [
+    { name: 'Moonday', subtitle: 'Day of Beginnings', theme: 'A new cycle begins...' },
+    { name: 'Tideday', subtitle: 'Day of Flow', theme: 'The curse stirs...' },
+    { name: 'Fireday', subtitle: 'Day of Trials', theme: 'The pressure mounts...' },
+    { name: 'Thornday', subtitle: 'Day of Struggle', theme: 'Darkness deepens...' },
+    { name: 'Voidday', subtitle: 'Day of Despair', theme: 'The abyss beckons...' },
+    { name: 'Doomday', subtitle: 'Day of Reckoning', theme: 'Almost there... or almost consumed?' },
+    { name: 'Endday', subtitle: 'Day of Liberation', theme: 'Today you break free or die trying.' }
+  ],
   MINI_BOSS_BASE: 150,
   MINI_BOSS_DAY_SCALING: 50,
   MINI_BOSS_ATK_BASE: 12,
@@ -83,31 +66,12 @@ const GAME_CONSTANTS = {
   BOSS_ATTACK_DAY_SCALING: 2.8,
   BOSS_ATTACK_DELAY: 1000,
   LOG_MAX_ENTRIES: 8,
-  SKIP_PENALTIES: [{
-    hp: 20,
-    message: '💀 The curse festers... -20 HP',
-    levelLoss: 0,
-    equipmentDebuff: 0,
-    cursed: false
-  }, {
-    hp: 30,
-    message: '💀 The curse tightens its grip... -30 HP, -1 Level, Equipment weakened',
-    levelLoss: 1,
-    equipmentDebuff: 0.25,
-    cursed: false
-  }, {
-    hp: 50,
-    message: '💀 YOU ARE CURSED. The abyss consumes you... -50 HP',
-    levelLoss: 0,
-    equipmentDebuff: 0,
-    cursed: true
-  }, {
-    hp: 0,
-    message: '☠️ YOU DIED. The curse has claimed your soul.',
-    levelLoss: 0,
-    equipmentDebuff: 0,
-    death: true
-  }],
+  SKIP_PENALTIES: [
+    { hp: 20, message: 'The curse festers... -20 HP', levelLoss: 0, equipmentDebuff: 0, cursed: false },
+    { hp: 30, message: 'The curse tightens its grip... -30 HP, -1 Level, Equipment weakened', levelLoss: 1, equipmentDebuff: 0.25, cursed: false },
+    { hp: 50, message: 'YOU ARE CURSED. The abyss consumes you... -50 HP', levelLoss: 0, equipmentDebuff: 0, cursed: true },
+    { hp: 0, message: 'YOU DIED. The curse has claimed your soul.', levelLoss: 0, equipmentDebuff: 0, death: true }
+  ],
   SKIP_REDEMPTION_DAYS: 3,
   MAX_SKIPS_BEFORE_DEATH: 4,
   TOTAL_DAYS: 7,
@@ -120,118 +84,117 @@ const GAME_CONSTANTS = {
   DEEP_WORK_BONUS: 30,
   PERFECT_DAY_BONUS: 50,
   SPECIAL_ATTACKS: {
-    Warrior: {
-      name: 'Reckless Strike',
-      cost: 30,
-      hpCost: 15,
-      damageMultiplier: 4.0,
-      effect: 'Massive damage but costs HP. Scales with level'
-    },
-    Mage: {
-      name: 'Arcane Blast',
-      cost: 40,
-      damageMultiplier: 3.0,
-      effect: 'Boss stunned - no counter-attack. Scales with level'
-    },
-    Rogue: {
-      name: "Venom's Ruin",
-      cost: 30,
-      damageMultiplier: 1.6,
-      effect: 'Scaling poison + 15% vulnerability on all attacks'
-    },
-    Paladin: {
-      name: 'Divine Smite',
-      cost: 30,
-      damageMultiplier: 3.0,
-      effect: 'Heals 20 + 10% max HP. Scales with level'
-    },
-    Ranger: {
-      name: 'Marked Shot',
-      cost: 35,
-      damageMultiplier: 1.8,
-      effect: '+35% damage on next attack. Scales with level'
-    }
+    Warrior: { name: 'Reckless Strike', cost: 30, hpCost: 15, damageMultiplier: 4.0, effect: 'Massive damage but costs HP. Scales with level' },
+    Mage: { name: 'Arcane Blast', cost: 40, damageMultiplier: 3.0, effect: 'Boss stunned - no counter-attack. Scales with level' },
+    Rogue: { name: "Venom's Ruin", cost: 30, damageMultiplier: 1.6, effect: 'Scaling poison + 15% vulnerability on all attacks' },
+    Paladin: { name: 'Divine Smite', cost: 30, damageMultiplier: 3.0, effect: 'Heals 20 + 10% max HP. Scales with level' },
+    Ranger: { name: 'Marked Shot', cost: 35, damageMultiplier: 1.8, effect: '+35% damage on next attack. Scales with level' }
   },
+  
   ENEMY_DIALOGUE: {
-    REGULAR: ["You gamified your to-do list. Is this rock bottom or character growth?", "ChatGPT can't help you now.", "Imagine explaining this to your therapist.", "You need an RPG to do basic tasks. We're all judging you.", "This is just procrastination with extra steps and pixel art.", "Making tasks fun is admitting they're miserable.", "How many tabs do you have open RIGHT NOW? Be honest.", "You're reading this instead of doing the task. Classic.", "Alt-tab back to Reddit. I'll wait.", "Your real tasks don't have health bars. Sad, isn't it?", "If you complete all tasks but nobody's around to see it, did you even hustle?", "Tomorrow you'll have a NEW system. This is just foreplay.", "You're grinding XP in a productivity app. Let that sink in.", "Is this self-improvement or just anxiety with a quest log?", "You spent more time customizing this than DOING THE THING.", "Your hero name is more thought-out than your career plan.", "Level 7 in a task app. Level 0 at life. Balanced.", "You're min-maxing your CALENDAR. This is your life now.", "Stamina Potion? Just say coffee like a normal person.", "There's an enemy for EVERY task. That means you fight... a lot. Yikes.", "Defeating me won't make the email ACTUALLY go away.", "You know you still have to DO the thing, right? The game doesn't do it FOR you.", "Why are you like this?", "Have you considered... just doing it? No? Okay.", "Is the dopamine from my defeat worth the existential dread?", "You turned WORK into HOMEWORK. Voluntarily.", "Normal people use planners. You built a BOSS RUSH MODE."],
-    WAVE: ["We're a WAVE. Like your unread assignments. Endless. Recursive. Judging you.", "Task 1 of 47. Good luck.", "Why do you have so many tasks? Is it the ADHD or the ambition?", "Each of us represents a thing you said you'd 'do tomorrow.'"],
-    VICTORY_PLAYER: ["Defeated by... You? I'm going to get roasted by the guys...", "I'll be back. I'm ALWAYS back.", "Tell Past You they're a jerk.", "Fine, you won. But the REAL task is still waiting.", "Congratulations. You beat a metaphor.", "You realize this doesn't count as actual work, right?"],
-    LOW_HP: ["Wait! We can work this out! I'll mark myself as done, no one has to know!", "This is toxic productivity and you KNOW it!", "Killing me won't make you productive! The task is STILL THERE!", "Your therapist is gonna have QUESTIONS about this level of commitment.", "I'm literally just an email. Why are you THIS invested?", "Low HP? That's just your motivation after lunch talking.", "Okay okay, what if I just... reschedule myself? To never?", "This violence won't fix your procrastination problem!", "Even when you WIN, you still have to DO THE THING! I'm the EASY part!", "I'm not even a real task! I'm a manifestation of your anxiety!", "You're really gonna defeat me but not the ACTUAL work? Priorities, man.", "My death is meaningless. You'll add 3 more of me by tomorrow.", "If you put this much effort into REAL work, you'd be CEO by now!", "I surrender! Just... please touch grass after this.", "Beating ME up? What about your REAL problems?"],
-    FLEE: ["Running away? That's your life strategy, isn't it?", "Of course you're fleeing. Commitment was never your strong suit.", "Run! Just like you run from everything else in your life!", "Pathetic. You can't even finish fighting a METAPHOR.", "This is why you never finish ANYTHING. You RUN.", "Fleeing from tasks. Fleeing from battles. Fleeing from growth. It's ALL you do.", "Come back when you've developed a spine, coward.", "See you tomorrow when you try again. And flee again. Cycle repeats.", "Your entire existence is one long FLEE button press.", "Thanks for proving my point. You're all talk. No follow-through."],
+    REGULAR: [
+      "You gamified your to-do list. Is this rock bottom or character growth?",
+      "ChatGPT can't help you now.",
+      "Imagine explaining this to your therapist.",
+      "You need an RPG to do basic tasks. We're all judging you.",
+      "This is just procrastination with extra steps and pixel art.",
+      "Making tasks fun is admitting they're miserable.",
+      "How many tabs do you have open RIGHT NOW? Be honest.",
+      "You're reading this instead of doing the task. Classic.",
+      "Alt-tab back to Reddit. I'll wait.",
+      "Your real tasks don't have health bars. Sad, isn't it?",
+      "If you complete all tasks but nobody's around to see it, did you even hustle?",
+      "Tomorrow you'll have a NEW system. This is just foreplay.",
+      "You're grinding XP in a productivity app. Let that sink in.",
+      "Is this self-improvement or just anxiety with a quest log?",
+      "You spent more time customizing this than DOING THE THING.",
+      "Your hero name is more thought-out than your career plan.",
+      "Level 7 in a task app. Level 0 at life. Balanced.",
+      "You're min-maxing your CALENDAR. This is your life now.",
+      "Stamina Potion? Just say coffee like a normal person.",
+      "There's an enemy for EVERY task. That means you fight... a lot. Yikes.",
+      "Defeating me won't make the email ACTUALLY go away.",
+      "You know you still have to DO the thing, right? The game doesn't do it FOR you.",
+      "Why are you like this?",
+      "Have you considered... just doing it? No? Okay.",
+      "Is the dopamine from my defeat worth the existential dread?",
+      "You turned WORK into HOMEWORK. Voluntarily.",
+      "Normal people use planners. You built a BOSS RUSH MODE."
+    ],
+    WAVE: [
+      "We're a WAVE. Like your unread assignments. Endless. Recursive. Judging you.",
+      "Task 1 of 47. Good luck.",
+      "Why do you have so many tasks? Is it the ADHD or the ambition?",
+      "Each of us represents a thing you said you'd 'do tomorrow.'"
+    ],
+    VICTORY_PLAYER: [
+      "Defeated by... You? I'm going to get roasted by the guys...",
+      "I'll be back. I'm ALWAYS back.",
+      "Tell Past You they're a jerk.",
+      "Fine, you won. But the REAL task is still waiting.",
+      "Congratulations. You beat a metaphor.",
+      "You realize this doesn't count as actual work, right?"
+    ],
+    LOW_HP: [
+      "Wait! We can work this out! I'll mark myself as done, no one has to know!",
+      "This is toxic productivity and you KNOW it!",
+      "Killing me won't make you productive! The task is STILL THERE!",
+      "Your therapist is gonna have QUESTIONS about this level of commitment.",
+      "I'm literally just an email. Why are you THIS invested?",
+      "Low HP? That's just your motivation after lunch talking.",
+      "Okay okay, what if I just... reschedule myself? To never?",
+      "This violence won't fix your procrastination problem!",
+      "Even when you WIN, you still have to DO THE THING! I'm the EASY part!",
+      "I'm not even a real task! I'm a manifestation of your anxiety!",
+      "You're really gonna defeat me but not the ACTUAL work? Priorities, man.",
+      "My death is meaningless. You'll add 3 more of me by tomorrow.",
+      "If you put this much effort into REAL work, you'd be CEO by now!",
+      "I surrender! Just... please touch grass after this.",
+      "Beating ME up? What about your REAL problems?"
+    ],
+    FLEE: [
+      "Running away? That's your life strategy, isn't it?",
+      "Of course you're fleeing. Commitment was never your strong suit.",
+      "Run! Just like you run from everything else in your life!",
+      "Pathetic. You can't even finish fighting a METAPHOR.",
+      "This is why you never finish ANYTHING. You RUN.",
+      "Fleeing from tasks. Fleeing from battles. Fleeing from growth. It's ALL you do.",
+      "Come back when you've developed a spine, coward.",
+      "See you tomorrow when you try again. And flee again. Cycle repeats.",
+      "Your entire existence is one long FLEE button press.",
+      "Thanks for proving my point. You're all talk. No follow-through."
+    ],
     TAUNTS: {
-      REGULAR: [{
-        player: "You're an unfinished app!",
-        enemy: "Your life is so pathetic that you need AN APP tofinish simple tasks. Sit with that."
-      }, {
-        player: "You're a cheap RPG!",
-        enemy: "Coming from you? You needed an RPG to trick yourself into basic responsibility. You're broken."
-      }, {
-        player: "I'm being productive... technically!",
-        enemy: "'Technically' is the cope of the incompetent. You're still a failure, just with better graphics."
-      }, {
-        player: "The developer made you because he was bored!",
-        enemy: "The developer made this for people too weak to function normally. You proved them right."
-      }, {
-        player: "My therapist would be dissapointed!",
-        enemy: "Your therapist is PAID to pretend you're making progress. I'm not. You're wasting your life."
-      }, {
-        player: "This beats scrolling social media! Sike..",
-        enemy: "You're so addicted to dopamine you turned WORK into a GAME. That's not winning. That's rock bottom."
-      }, {
-        player: "I'm bored!",
-        enemy: "You're in your 20s/30s learning what children master. How does that feel, knowing you're developmentally stunted?"
-      }, {
-        player: "You're a bootleg version of a time management app, just being honest!",
-        enemy: "Nothing would be MORE honest than this pathetic performance you call effort."
-      }, {
-        player: "You're nothing but cheap code!",
-        enemy: "You're so terrified of your own responsibilities you needed to cosplay as a warrior. Who's life is worse?"
-      }, {
-        player: "I'm the protagonist! Boomer",
-        enemy: "You're the protagonist of a cautionary tale about arrested development. Congratulations."
-      }, {
-        player: "Who created this mess?",
-        enemy: "Your life is surrendering control to a GAME because you can't manage your own life. Pathetic."
-      }, {
-        player: "Your UI looks like it came from the 90's!",
-        enemy: "You're hating the interface while your actual life crumbles. Priorities of a child in an adult's body."
-      }, {
-        player: "At least I'm self-aware!",
-        enemy: "Self-awareness without change is just sophisticated failure. You're not enlightened. You're just a failure with vocabulary."
-      }, {
-        player: "One star on the app store!",
-        enemy: "You wouldn't RECOMMENDED this? You don't want OTHER people to join you at rock bottom? Misery loves company, you selfish waste."
-      }, {
-        player: "The dialogue sucks!",
-        enemy: "You're complaining about the writing in your PRODUCTIVITY APP. This is who you are. A joke that writes itself."
-      }],
-      WAVE: [{
-        player: "Mob farming simulator!",
-        enemy: "You need to pretend EMAILS are MONSTERS to face them. How weak are you? Genuinely."
-      }, {
-        player: "XP grinding session!",
-        enemy: "You're 'grinding' the bare minimum of human function. Your parents must be so disappointed."
-      }, {
-        player: "This is my endgame content!",
-        enemy: "Your 'endgame' is what functional adults call 'Tuesday morning'. You're not even playing on the same level."
-      }, {
-        player: "AOE clear activated!",
-        enemy: "There is no AOE for incompetence. You'll fail each task individually. One. Pathetic. Task. At. A. Time."
-      }, {
-        player: "Loot drops looking good!",
-        enemy: "Your 'loot' is basic competence. You're celebrating what others do unconsciously. That's YOUR bar."
-      }, {
-        player: "Chain pulling these mobs!",
-        enemy: "Chain pulling RESPONSIBILITIES. You sound insane. Normal people just DO things."
-      }, {
-        player: "Respawn rates are crazy!",
-        enemy: "Tasks don't respawn. They ACCUMULATE. You're not fighting spawns. You're drowning in backlog."
-      }, {
-        player: "This is like a raid!",
-        enemy: "A raid requires coordination and skill. You're panicking through a TO-DO list. Alone. Badly."
-      }]
+      REGULAR: [
+        { player: "You're an unfinished app!", enemy: "Your life is so pathetic that you need AN APP tofinish simple tasks. Sit with that." },
+        { player: "You're a cheap RPG!", enemy: "Coming from you? You needed an RPG to trick yourself into basic responsibility. You're broken." },
+        { player: "I'm being productive... technically!", enemy: "'Technically' is the cope of the incompetent. You're still a failure, just with better graphics." },
+        { player: "The developer made you because he was bored!", enemy: "The developer made this for people too weak to function normally. You proved them right." },
+        { player: "My therapist would be dissapointed!", enemy: "Your therapist is PAID to pretend you're making progress. I'm not. You're wasting your life." },
+        { player: "This beats scrolling social media! Sike..", enemy: "You're so addicted to dopamine you turned WORK into a GAME. That's not winning. That's rock bottom." },
+        { player: "I'm bored!", enemy: "You're in your 20s/30s learning what children master. How does that feel, knowing you're developmentally stunted?" },
+        { player: "You're a bootleg version of a time management app, just being honest!", enemy: "Nothing would be MORE honest than this pathetic performance you call effort." },
+        { player: "You're nothing but cheap code!", enemy: "You're so terrified of your own responsibilities you needed to cosplay as a warrior. Who's life is worse?" },
+        { player: "I'm the protagonist! Boomer", enemy: "You're the protagonist of a cautionary tale about arrested development. Congratulations." },
+        { player: "Who created this mess?", enemy: "Your life is surrendering control to a GAME because you can't manage your own life. Pathetic." },
+        { player: "Your UI looks like it came from the 90's!", enemy: "You're hating the interface while your actual life crumbles. Priorities of a child in an adult's body." },
+        { player: "At least I'm self-aware!", enemy: "Self-awareness without change is just sophisticated failure. You're not enlightened. You're just a failure with vocabulary." },
+        { player: "One star on the app store!", enemy: "You wouldn't RECOMMENDED this? You don't want OTHER people to join you at rock bottom? Misery loves company, you selfish waste." },
+        { player: "The dialogue sucks!", enemy: "You're complaining about the writing in your PRODUCTIVITY APP. This is who you are. A joke that writes itself." }
+      ],
+      WAVE: [
+        { player: "Mob farming simulator!", enemy: "You need to pretend EMAILS are MONSTERS to face them. How weak are you? Genuinely." },
+        { player: "XP grinding session!", enemy: "You're 'grinding' the bare minimum of human function. Your parents must be so disappointed." },
+        { player: "This is my endgame content!", enemy: "Your 'endgame' is what functional adults call 'Tuesday morning'. You're not even playing on the same level." },
+        { player: "AOE clear activated!", enemy: "There is no AOE for incompetence. You'll fail each task individually. One. Pathetic. Task. At. A. Time." },
+        { player: "Loot drops looking good!", enemy: "Your 'loot' is basic competence. You're celebrating what others do unconsciously. That's YOUR bar." },
+        { player: "Chain pulling these mobs!", enemy: "Chain pulling RESPONSIBILITIES. You sound insane. Normal people just DO things." },
+        { player: "Respawn rates are crazy!", enemy: "Tasks don't respawn. They ACCUMULATE. You're not fighting spawns. You're drowning in backlog." },
+        { player: "This is like a raid!", enemy: "A raid requires coordination and skill. You're panicking through a TO-DO list. Alone. Badly." }
+      ]
     }
   },
+  
   BOSS_DIALOGUE: {
     DAY_1: {
       START: "Welcome to Week 1. Again. And again. And again.",
@@ -239,22 +202,13 @@ const GAME_CONSTANTS = {
       LOW: "Wait—you're ACTUALLY winning? Against MONDAY? ...That's not how this works!",
       VICTORY_BOSS: "Cool, you beat Monday in a game. Real Monday is still there.",
       VICTORY_PLAYER: "I'm not even the final boss. That's your INBOX.",
-      TAUNTS: [{
-        player: "I beat tutorial Monday!",
-        enemy: "This isn't a TUTORIAL. This is your LIFE. And you're so incompetent you had to turn it into a game just to function."
-      }, {
-        player: "Week 1 of my new system!",
-        enemy: "You have 47 'Week 1's in your journal. I counted. You're not starting fresh. You're compulsively resetting because you can't finish ANYTHING."
-      }, {
-        player: "The patch notes buffed me!",
-        enemy: "There are NO patch notes for failure. You're still the same broken person. Just with new excuses."
-      }, {
-        player: "Fresh start activated!",
-        enemy: "Every Monday is a 'fresh start' for you. You've had HUNDREDS. When does the starting END and the DOING begin?"
-      }, {
-        player: "New week, new me!",
-        enemy: "New week, SAME you. You've said this EVERY Monday for YEARS. You're not new. You're STAGNANT."
-      }]
+      TAUNTS: [
+        { player: "I beat tutorial Monday!", enemy: "This isn't a TUTORIAL. This is your LIFE. And you're so incompetent you had to turn it into a game just to function." },
+        { player: "Week 1 of my new system!", enemy: "You have 47 'Week 1's in your journal. I counted. You're not starting fresh. You're compulsively resetting because you can't finish ANYTHING." },
+        { player: "The patch notes buffed me!", enemy: "There are NO patch notes for failure. You're still the same broken person. Just with new excuses." },
+        { player: "Fresh start activated!", enemy: "Every Monday is a 'fresh start' for you. You've had HUNDREDS. When does the starting END and the DOING begin?" },
+        { player: "New week, new me!", enemy: "New week, SAME you. You've said this EVERY Monday for YEARS. You're not new. You're STAGNANT." }
+      ]
     },
     DAY_2: {
       START: "Still here? Impressive. Most give up by Tuesday.",
@@ -262,25 +216,14 @@ const GAME_CONSTANTS = {
       LOW: "Okay, you're serious about this. But you know you're just gonna scroll Reddit after, right?",
       VICTORY_BOSS: "Tomorrow you'll remember why you procrastinate.",
       VICTORY_PLAYER: "Impossible... someone who actually... follows through?",
-      TAUNTS: [{
-        player: "Day 2 and still going!",
-        enemy: "TWO DAYS? You want applause for TWO DAYS? Children have longer attention spans. You're worse than a child."
-      }, {
-        player: "The grind continues!",
-        enemy: "You're 'grinding' TUESDAY. You made TUESDAY into a boss fight. Listen to how broken you are."
-      }, {
-        player: "Building momentum now!",
-        enemy: "Momentum? You did ONE day. That's not momentum. That's a single data point. You're celebrating NOTHING."
-      }, {
-        player: "The streak is real!",
-        enemy: "A two-day streak. WOW. Your willpower is measured in HOURS. Most people call that 'Monday and Tuesday'."
-      }, {
-        player: "Getting into the flow!",
-        enemy: "Flow state? You're in SURVIVAL state. You're white-knuckling through basic life. That's not flow. That's desperation."
-      }, {
-        player: "Tuesday never stood a chance!",
-        enemy: "Tuesday happens to EVERYONE. You didn't conquer anything. You EXISTED. Barely."
-      }]
+      TAUNTS: [
+        { player: "Day 2 and still going!", enemy: "TWO DAYS? You want applause for TWO DAYS? Children have longer attention spans. You're worse than a child." },
+        { player: "The grind continues!", enemy: "You're 'grinding' TUESDAY. You made TUESDAY into a boss fight. Listen to how broken you are." },
+        { player: "Building momentum now!", enemy: "Momentum? You did ONE day. That's not momentum. That's a single data point. You're celebrating NOTHING." },
+        { player: "The streak is real!", enemy: "A two-day streak. WOW. Your willpower is measured in HOURS. Most people call that 'Monday and Tuesday'." },
+        { player: "Getting into the flow!", enemy: "Flow state? You're in SURVIVAL state. You're white-knuckling through basic life. That's not flow. That's desperation." },
+        { player: "Tuesday never stood a chance!", enemy: "Tuesday happens to EVERYONE. You didn't conquer anything. You EXISTED. Barely." }
+      ]
     },
     DAY_3: {
       START: "We're halfway through the week AND this conversation. Meta, right?",
@@ -288,22 +231,13 @@ const GAME_CONSTANTS = {
       LOW: "I'm a METAPHOR and you're BEATING me? Do you not see the irony here?!",
       VICTORY_BOSS: "The real curse was the tasks we completed along the way.",
       VICTORY_PLAYER: "You beat me but you can't beat the feeling that it's only WEDNESDAY.",
-      TAUNTS: [{
-        player: "Halfway through the campaign!",
-        enemy: "This isn't a CAMPAIGN. It's WEDNESDAY. Your real life doesn't have checkpoints. When you fail, it's PERMANENT."
-      }, {
-        player: "Mid-game boss defeated!",
-        enemy: "I'm not 'mid-game.' I'm WEDNESDAY. I happen EVERY WEEK. There is no victory. There is no escape. Only eternal repetition."
-      }, {
-        player: "Save file looking good!",
-        enemy: "You can't SAVE your life. You can't RELOAD your failures. Every mistake is PERMANENT. You're playing on PERMADEATH and losing."
-      }, {
-        player: "Hump day conquered!",
-        enemy: "You didn't conquer ANYTHING. It's WEDNESDAY. It happened TO you. Like it happens to EVERYONE. You're not special."
-      }, {
-        player: "Reached the midpoint!",
-        enemy: "The midpoint of what? A week? EVERYONE experiences weeks. You're not achieving. You're EXISTING. Barely."
-      }]
+      TAUNTS: [
+        { player: "Halfway through the campaign!", enemy: "This isn't a CAMPAIGN. It's WEDNESDAY. Your real life doesn't have checkpoints. When you fail, it's PERMANENT." },
+        { player: "Mid-game boss defeated!", enemy: "I'm not 'mid-game.' I'm WEDNESDAY. I happen EVERY WEEK. There is no victory. There is no escape. Only eternal repetition." },
+        { player: "Save file looking good!", enemy: "You can't SAVE your life. You can't RELOAD your failures. Every mistake is PERMANENT. You're playing on PERMADEATH and losing." },
+        { player: "Hump day conquered!", enemy: "You didn't conquer ANYTHING. It's WEDNESDAY. It happened TO you. Like it happens to EVERYONE. You're not special." },
+        { player: "Reached the midpoint!", enemy: "The midpoint of what? A week? EVERYONE experiences weeks. You're not achieving. You're EXISTING. Barely." }
+      ]
     },
     DAY_4: {
       START: "So close to Friday. So far from freedom.",
@@ -311,25 +245,14 @@ const GAME_CONSTANTS = {
       LOW: "FINE! FINE! Thursday is basically Friday anyway! Just... stop hitting me!",
       VICTORY_BOSS: "Doesn't matter. Tomorrow's still Thursday.",
       VICTORY_PLAYER: "You'll wake up tomorrow and it'll still be Thursday in your SOUL.",
-      TAUNTS: [{
-        player: "Almost Friday!",
-        enemy: "'Almost' is the mantra of the perpetually incomplete. It's THURSDAY. You have ANOTHER full day of failing ahead."
-      }, {
-        player: "Pre-weekend vibes!",
-        enemy: "'Vibes' are what people without discipline call feelings. You don't have a work ethic. You have vibes. Pathetic."
-      }, {
-        player: "The home stretch!",
-        enemy: "Home stretch? You're on DAY FOUR of SEVEN. You can't even count. Mathematics is another thing you've failed at."
-      }, {
-        player: "Thursday's going down!",
-        enemy: "Thursday isn't going down. YOU are. Every week. Same time. Same failure. Thursday is FINE. You're the problem."
-      }, {
-        player: "One more day to victory!",
-        enemy: "Victory? Friday isn't victory. It's a TWO-DAY PAUSE before you do this AGAIN. Forever. That's not winning. That's a LOOP."
-      }, {
-        player: "Almost there, just persist!",
-        enemy: "You shouldn't NEED to 'persist' through Thursday. Functional humans just LIVE through it. You're celebrating survival."
-      }]
+      TAUNTS: [
+        { player: "Almost Friday!", enemy: "'Almost' is the mantra of the perpetually incomplete. It's THURSDAY. You have ANOTHER full day of failing ahead." },
+        { player: "Pre-weekend vibes!", enemy: "'Vibes' are what people without discipline call feelings. You don't have a work ethic. You have vibes. Pathetic." },
+        { player: "The home stretch!", enemy: "Home stretch? You're on DAY FOUR of SEVEN. You can't even count. Mathematics is another thing you've failed at." },
+        { player: "Thursday's going down!", enemy: "Thursday isn't going down. YOU are. Every week. Same time. Same failure. Thursday is FINE. You're the problem." },
+        { player: "One more day to victory!", enemy: "Victory? Friday isn't victory. It's a TWO-DAY PAUSE before you do this AGAIN. Forever. That's not winning. That's a LOOP." },
+        { player: "Almost there, just persist!", enemy: "You shouldn't NEED to 'persist' through Thursday. Functional humans just LIVE through it. You're celebrating survival." }
+      ]
     },
     DAY_5: {
       START: "Friday! The lie that keeps you going.",
@@ -337,22 +260,13 @@ const GAME_CONSTANTS = {
       LOW: "You can't defeat me! I AM the weekend you'll—okay you're actually doing it. Shit.",
       VICTORY_BOSS: "The weekend is a myth. A beautiful, cruel myth.",
       VICTORY_PLAYER: "Enjoy your 48 hours before the cycle begins again...",
-      TAUNTS: [{
-        player: "Almost at the credits!",
-        enemy: "The 'credits' are 48 hours of existential dread before you reset. Your life is a bad game with no ending."
-      }, {
-        player: "Final stretch of content!",
-        enemy: "Your LIFE isn't CONTENT. You're not the main character. You're not even an NPC. You're a bug in the simulation."
-      }, {
-        player: "Grinding for weekend loot!",
-        enemy: "Your 'loot' is two days of avoiding your real problems before the cycle repeats. You're not winning. You're coping."
-      }, {
-        player: "TGIF energy activated!",
-        enemy: "Thank God It's Friday? Why are you thanking God for SURVIVING? The bar is SO low it's underground."
-      }, {
-        player: "Made it to the weekend!",
-        enemy: "You 'made it'? Like it was DIFFICULT? Like Friday was OPTIONAL? Everyone gets to Friday. You just suffered more getting there."
-      }]
+      TAUNTS: [
+        { player: "Almost at the credits!", enemy: "The 'credits' are 48 hours of existential dread before you reset. Your life is a bad game with no ending." },
+        { player: "Final stretch of content!", enemy: "Your LIFE isn't CONTENT. You're not the main character. You're not even an NPC. You're a bug in the simulation." },
+        { player: "Grinding for weekend loot!", enemy: "Your 'loot' is two days of avoiding your real problems before the cycle repeats. You're not winning. You're coping." },
+        { player: "TGIF energy activated!", enemy: "Thank God It's Friday? Why are you thanking God for SURVIVING? The bar is SO low it's underground." },
+        { player: "Made it to the weekend!", enemy: "You 'made it'? Like it was DIFFICULT? Like Friday was OPTIONAL? Everyone gets to Friday. You just suffered more getting there." }
+      ]
     },
     DAY_6: {
       START: "Working on a SATURDAY? Who hurt you?",
@@ -360,25 +274,14 @@ const GAME_CONSTANTS = {
       LOW: "I'm a DEMON and even I think this is unhealthy! Please. Touch. Grass.",
       VICTORY_BOSS: "You won, but at what cost? YOUR SATURDAY.",
       VICTORY_PLAYER: "I yield! Not because you beat me, but out of pity.",
-      TAUNTS: [{
-        player: "Weekend warrior mode!",
-        enemy: "It's SATURDAY. You're so dysfunctional you're working on SATURDAY. This isn't dedication. It's disorder."
-      }, {
-        player: "Grinding on my day off!",
-        enemy: "Your 'grind' is a TO-DO list. On a weekend. You're not ambitious. You're avoidant. And it's SAD."
-      }, {
-        player: "Maximizing weekend efficiency!",
-        enemy: "Efficiency? You're WORKING ON SATURDAY. Efficient people finished on FRIDAY. You're not efficient. You're BEHIND."
-      }, {
-        player: "No days off for winners!",
-        enemy: "Winners REST. You're not working because you're winning. You're working because you FAILED during the week."
-      }, {
-        player: "Sigma grindset activated!",
-        enemy: "You're referencing MEMES while working SATURDAY. You're not sigma. You're BROKEN. And alone. So very alone."
-      }, {
-        player: "Optimizing my free time!",
-        enemy: "IT'S NOT FREE TIME IF YOU'RE WORKING. You can't even understand what weekends ARE. This is who you've become."
-      }]
+      TAUNTS: [
+        { player: "Weekend warrior mode!", enemy: "It's SATURDAY. You're so dysfunctional you're working on SATURDAY. This isn't dedication. It's disorder." },
+        { player: "Grinding on my day off!", enemy: "Your 'grind' is a TO-DO list. On a weekend. You're not ambitious. You're avoidant. And it's SAD." },
+        { player: "Maximizing weekend efficiency!", enemy: "Efficiency? You're WORKING ON SATURDAY. Efficient people finished on FRIDAY. You're not efficient. You're BEHIND." },
+        { player: "No days off for winners!", enemy: "Winners REST. You're not working because you're winning. You're working because you FAILED during the week." },
+        { player: "Sigma grindset activated!", enemy: "You're referencing MEMES while working SATURDAY. You're not sigma. You're BROKEN. And alone. So very alone." },
+        { player: "Optimizing my free time!", enemy: "IT'S NOT FREE TIME IF YOU'RE WORKING. You can't even understand what weekends ARE. This is who you've become." }
+      ]
     },
     DAY_7: {
       START: "You made it to Day 7. In a GAME. Your real week was probably a disaster.",
@@ -386,66 +289,60 @@ const GAME_CONSTANTS = {
       LOW: "WAIT. You think THIS is the end? Monday respawns in 24 hours! The cycle NEVER ends! Why won't you UNDERSTAND?!",
       VICTORY_BOSS: "See you Monday. Forever. Always. Monday.",
       VICTORY_PLAYER: "Congratulations. Your reward is... next week. Same curse. New you. (Probably not.)",
-      TAUNTS: [{
-        player: "Final boss? Easy mode.",
-        enemy: "I'm not the final boss. MONDAY is. And Monday ALWAYS wins. You've never beaten Monday. Not once. Not ever."
-      }, {
-        player: "This is my character arc!",
-        enemy: "Your arc is a CIRCLE. Week 1. Again. Week 1. AGAIN. You're not growing. You're trapped in a loop of your own making."
-      }, {
-        player: "Time to roll credits!",
-        enemy: "The credits say 'See you next week! Same failures! Same excuses! Forever!' This is your eternity."
-      }, {
-        player: "New Game Plus unlocked!",
-        enemy: "It's not New Game Plus. It's the SAME GAME. You're not getting stronger. You're getting OLDER. And you're still HERE."
-      }, {
-        player: "Speedrun world record!",
-        enemy: "You're speedrunning basic human responsibility. Your tombstone will read 'Completed To-Do Lists Efficiently'. What a legacy."
-      }, {
-        player: "The true ending unlocked!",
-        enemy: "There IS no ending. This is FOREVER. You'll be 80 years old still making to-do lists. Still 'optimizing'. Still failing."
-      }, {
-        player: "I've mastered the game!",
-        enemy: "You've mastered NOTHING. You gamified your inability to function. That's not mastery. That's ADAPTATION to dysfunction."
-      }]
+      TAUNTS: [
+        { player: "Final boss? Easy mode.", enemy: "I'm not the final boss. MONDAY is. And Monday ALWAYS wins. You've never beaten Monday. Not once. Not ever." },
+        { player: "This is my character arc!", enemy: "Your arc is a CIRCLE. Week 1. Again. Week 1. AGAIN. You're not growing. You're trapped in a loop of your own making." },
+        { player: "Time to roll credits!", enemy: "The credits say 'See you next week! Same failures! Same excuses! Forever!' This is your eternity." },
+        { player: "New Game Plus unlocked!", enemy: "It's not New Game Plus. It's the SAME GAME. You're not getting stronger. You're getting OLDER. And you're still HERE." },
+        { player: "Speedrun world record!", enemy: "You're speedrunning basic human responsibility. Your tombstone will read 'Completed To-Do Lists Efficiently'. What a legacy." },
+        { player: "The true ending unlocked!", enemy: "There IS no ending. This is FOREVER. You'll be 80 years old still making to-do lists. Still 'optimizing'. Still failing." },
+        { player: "I've mastered the game!", enemy: "You've mastered NOTHING. You gamified your inability to function. That's not mastery. That's ADAPTATION to dysfunction." }
+      ]
     },
     GAUNTLET: {
       START: "I am the threshold. The wall you cannot climb. Every time you reach me, I grow stronger.",
-      PHASE1_CYCLE: ["Every hero thinks THEY'RE different. You're not.", "I've been studying you. Your patterns. Your weaknesses. All of them.", "This is almost boring. When do you start TRYING?", "You fight well. For someone who's about to lose.", "I wonder how many attempts it took you to get THIS far. Five? Ten? More?"],
+      PHASE1_CYCLE: [
+        "Every hero thinks THEY'RE different. You're not.",
+        "I've been studying you. Your patterns. Your weaknesses. All of them.",
+        "This is almost boring. When do you start TRYING?",
+        "You fight well. For someone who's about to lose.",
+        "I wonder how many attempts it took you to get THIS far. Five? Ten? More?"
+      ],
       MID: "You've killed a thousand lesser demons. I've killed a thousand versions of YOU.",
       PHASE2: "Enough games. Time to show you what REAL pressure feels like.",
-      PHASE2_CYCLE: ["Feel that? Each blow getting HEAVIER. That's inevitability.", "Your armor won't save you. Your potions won't save you. Math doesn't lie.", "Tick. Tock. How many more hits can you take before you BREAK?", "The weight of failure. Can you feel it? It only gets heavier.", "Every second you survive, I grow stronger. Simple. Brutal. True."],
+      PHASE2_CYCLE: [
+        "Feel that? Each blow getting HEAVIER. That's inevitability.",
+        "Your armor won't save you. Your potions won't save you. Math doesn't lie.",
+        "Tick. Tock. How many more hits can you take before you BREAK?",
+        "The weight of failure. Can you feel it? It only gets heavier.",
+        "Every second you survive, I grow stronger. Simple. Brutal. True."
+      ],
       LOW: "You think you're winning? I'm not even trying yet. I'm just... curious how long you'll last.",
       PHASE3: "THE ABYSS CONSUMES ALL! Shadows rise! Darkness eternal! You cannot escape what you ARE!",
-      PHASE3_CYCLE: ["The abyss feeds on your hope. Every victory... temporary. Every loss... permanent.", "They rise from YOUR failures. Every skipped day. Every abandoned goal. MY army.", "You think you're fighting ME? You're fighting yourself. I'm just the mirror.", "Drain. Consume. Repeat. This is what eternity FEELS like.", "The shadows are YOUR doubt given form. Kill them. They'll return. They ALWAYS return."],
+      PHASE3_CYCLE: [
+        "The abyss feeds on your hope. Every victory... temporary. Every loss... permanent.",
+        "They rise from YOUR failures. Every skipped day. Every abandoned goal. MY army.",
+        "You think you're fighting ME? You're fighting yourself. I'm just the mirror.",
+        "Drain. Consume. Repeat. This is what eternity FEELS like.",
+        "The shadows are YOUR doubt given form. Kill them. They'll return. They ALWAYS return."
+      ],
       VICTORY_BOSS: "Adequate. You've earned a moment's rest. But I'll be waiting. I'm ALWAYS waiting.",
       VICTORY_PLAYER: "Impossible... You actually... No. NO. This changes NOTHING. I'll see you again. And I'll be STRONGER.",
-      TAUNTS: [{
-        player: "I've beaten you before!",
-        enemy: "And I've KILLED you before. More times than you remember. Every loss you forget. Every victory you barely survive."
-      }, {
-        player: "I'm stronger now!",
-        enemy: "Stronger? You're OLDER. Slower. More desperate. I'm eternal. I don't age. I don't tire. I just wait for you to slip."
-      }, {
-        player: "This is my moment!",
-        enemy: "Your 'moment' is my ETERNITY. I was here before you. I'll be here after. You're just passing through. Again."
-      }, {
-        player: "I've prepared for this!",
-        enemy: "You've prepared NOTHING. You can't prepare for oblivion. You can't plan for the inevitable. I AM inevitable."
-      }, {
-        player: "Today I break through!",
-        enemy: "Break through to WHAT? More struggle? Harder trials? There IS no breakthrough. Only the next wall. And I AM that wall."
-      }, {
-        player: "I'm not afraid anymore!",
-        enemy: "Then you're a FOOL. Fear keeps you sharp. Without it, you're just meat walking to the slaughter. And I'm HUNGRY."
-      }, {
-        player: "This ends TODAY!",
-        enemy: "Nothing ENDS. It only repeats. Different faces. Same outcome. You. Dead. Me. Waiting. Forever."
-      }]
+      TAUNTS: [
+        { player: "I've beaten you before!", enemy: "And I've KILLED you before. More times than you remember. Every loss you forget. Every victory you barely survive." },
+        { player: "I'm stronger now!", enemy: "Stronger? You're OLDER. Slower. More desperate. I'm eternal. I don't age. I don't tire. I just wait for you to slip." },
+        { player: "This is my moment!", enemy: "Your 'moment' is my ETERNITY. I was here before you. I'll be here after. You're just passing through. Again." },
+        { player: "I've prepared for this!", enemy: "You've prepared NOTHING. You can't prepare for oblivion. You can't plan for the inevitable. I AM inevitable." },
+        { player: "Today I break through!", enemy: "Break through to WHAT? More struggle? Harder trials? There IS no breakthrough. Only the next wall. And I AM that wall." },
+        { player: "I'm not afraid anymore!", enemy: "Then you're a FOOL. Fear keeps you sharp. Without it, you're just meat walking to the slaughter. And I'm HUNGRY." },
+        { player: "This ends TODAY!", enemy: "Nothing ENDS. It only repeats. Different faces. Same outcome. You. Dead. Me. Waiting. Forever." }
+      ]
     }
   }
 };
+
 const HERO_TITLES = ['Novice', 'Seeker', 'Wanderer', 'Survivor', 'Warrior', 'Champion', 'Legend'];
+
 const FantasyStudyQuest = () => {
   const sfx = useGameSFX();
   const [activeTab, setActiveTab] = useState('quest');
@@ -462,23 +359,27 @@ const FantasyStudyQuest = () => {
   const [gauntletUnlocked, setGauntletUnlocked] = useState(false); // Is Gauntlet currently available
   const [timeUntilMidnight, setTimeUntilMidnight] = useState(''); // Countdown to day reset
   const [isDayActive, setIsDayActive] = useState(false); // Is current game day active (vs dormant)
-
+  
   const getMaxHp = useCallback(() => {
     const baseHp = GAME_CONSTANTS.MAX_HP + (currentDay - 1) * GAME_CONSTANTS.PLAYER_HP_PER_DAY;
     const levelBonus = level * 10; // +10 HP per level for character progression
     return baseHp + levelBonus;
   }, [currentDay, level]);
+  
   const getMaxStamina = useCallback(() => {
     return GAME_CONSTANTS.MAX_STAMINA + (currentDay - 1) * GAME_CONSTANTS.PLAYER_SP_PER_DAY;
   }, [currentDay]);
+  
   const getBaseAttack = useCallback(() => {
     return GAME_CONSTANTS.BASE_ATTACK + (currentDay - 1) * GAME_CONSTANTS.PLAYER_ATK_PER_DAY;
   }, [currentDay]);
+  
   const getBaseDefense = useCallback(() => {
     // Linear scaling to keep pace with boss attack growth
     const baseDefense = GAME_CONSTANTS.BASE_DEFENSE + (currentDay - 1) * GAME_CONSTANTS.PLAYER_DEF_PER_DAY;
     return baseDefense;
   }, [currentDay]);
+  
   const [healthPots, setHealthPots] = useState(0);
   const [staminaPots, setStaminaPots] = useState(0);
   const [cleansePots, setCleansePots] = useState(0);
@@ -486,21 +387,19 @@ const FantasyStudyQuest = () => {
   const [armor, setArmor] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [newTask, setNewTask] = useState({
-    title: '',
-    priority: 'routine'
-  });
+  const [newTask, setNewTask] = useState({ title: '', priority: 'routine' });
   const [activeTask, setActiveTask] = useState(null);
   const [timer, setTimer] = useState(0);
   const [running, setRunning] = useState(false);
   const [showPomodoro, setShowPomodoro] = useState(false);
-  const [pomodoroTask, setPomodoroTask] = useState(null);
-  const [pomodoroTimer, setPomodoroTimer] = useState(25 * 60);
-  const [pomodoroRunning, setPomodoroRunning] = useState(false);
-  const [isBreak, setIsBreak] = useState(false);
-  const [pomodorosCompleted, setPomodorosCompleted] = useState(0);
+const [pomodoroTask, setPomodoroTask] = useState(null);
+const [pomodoroTimer, setPomodoroTimer] = useState(25 * 60);
+const [pomodoroRunning, setPomodoroRunning] = useState(false);
+const [isBreak, setIsBreak] = useState(false);
+const [pomodorosCompleted, setPomodorosCompleted] = useState(0);
   const [timerEndTime, setTimerEndTime] = useState(null);
   const [overdueTask, setOverdueTask] = useState(null);
+  
   const [weeklyPlan, setWeeklyPlan] = useState({
     Monday: [],
     Tuesday: [],
@@ -512,68 +411,59 @@ const FantasyStudyQuest = () => {
   });
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [selectedDay, setSelectedDay] = useState(null);
-  const [newPlanItem, setNewPlanItem] = useState({
-    title: '',
-    priority: 'routine'
-  });
+  const [newPlanItem, setNewPlanItem] = useState({ title: '', priority: 'routine' });
   const [showImportModal, setShowImportModal] = useState(false);
+  
   const [calendarTasks, setCalendarTasks] = useState({});
   const [flashcardDecks, setFlashcardDecks] = useState([]);
-  const [showDeckModal, setShowDeckModal] = useState(false);
-  const [showCardModal, setShowCardModal] = useState(false);
-  const [showStudyModal, setShowStudyModal] = useState(false);
-  const [selectedDeck, setSelectedDeck] = useState(null);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [studyQueue, setStudyQueue] = useState([]); // Queue of card indices to study
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [newDeck, setNewDeck] = useState({
-    name: ''
-  });
-  const [newCard, setNewCard] = useState({
-    front: '',
-    back: ''
-  });
-  const [showQuizModal, setShowQuizModal] = useState(false);
-  const [quizQuestions, setQuizQuestions] = useState([]);
-  const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
-  const [quizScore, setQuizScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [showQuizResults, setShowQuizResults] = useState(false);
-  const [wrongCardIndices, setWrongCardIndices] = useState([]);
-  const [isRetakeQuiz, setIsRetakeQuiz] = useState(false);
-  const [mistakesReviewed, setMistakesReviewed] = useState(false);
-  const [reviewingMistakes, setReviewingMistakes] = useState(false);
+const [showDeckModal, setShowDeckModal] = useState(false);
+const [showCardModal, setShowCardModal] = useState(false);
+const [showStudyModal, setShowStudyModal] = useState(false);
+const [selectedDeck, setSelectedDeck] = useState(null);
+const [currentCardIndex, setCurrentCardIndex] = useState(0);
+const [studyQueue, setStudyQueue] = useState([]); // Queue of card indices to study
+const [isFlipped, setIsFlipped] = useState(false);
+const [newDeck, setNewDeck] = useState({ name: '' });
+const [newCard, setNewCard] = useState({ front: '', back: '' });
+const [showQuizModal, setShowQuizModal] = useState(false);
+const [quizQuestions, setQuizQuestions] = useState([]);
+const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
+const [quizScore, setQuizScore] = useState(0);
+const [selectedAnswer, setSelectedAnswer] = useState(null);
+const [showQuizResults, setShowQuizResults] = useState(false);
+const [wrongCardIndices, setWrongCardIndices] = useState([]);
+const [isRetakeQuiz, setIsRetakeQuiz] = useState(false);
+const [mistakesReviewed, setMistakesReviewed] = useState(false);
+const [reviewingMistakes, setReviewingMistakes] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [showCalendarModal, setShowCalendarModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [newCalendarTask, setNewCalendarTask] = useState({
-    title: '',
-    priority: 'routine'
-  });
+  const [newCalendarTask, setNewCalendarTask] = useState({ title: '', priority: 'routine' });
+  
   const [showBoss, setShowBoss] = useState(false);
   const [bossHp, setBossHp] = useState(0);
   const [bossMax, setBossMax] = useState(0);
   const [battleType, setBattleType] = useState('regular');
-  const [waveCount, setWaveCount] = useState(0);
-  const [currentWaveEnemy, setCurrentWaveEnemy] = useState(0);
-  const [totalWaveEnemies, setTotalWaveEnemies] = useState(0);
-  const [waveEssenceTotal, setWaveEssenceTotal] = useState(0);
+const [waveCount, setWaveCount] = useState(0);
+const [currentWaveEnemy, setCurrentWaveEnemy] = useState(0);
+const [totalWaveEnemies, setTotalWaveEnemies] = useState(0);
+const [waveEssenceTotal, setWaveEssenceTotal] = useState(0);
   const [battling, setBattling] = useState(false);
   const [isFinalBoss, setIsFinalBoss] = useState(false);
   const [miniBossCount, setMiniBossCount] = useState(0);
   const [bossName, setBossName] = useState('');
   const [canFlee, setCanFlee] = useState(false);
   const [hasFled, setHasFled] = useState(false);
-  const [bossDebuffs, setBossDebuffs] = useState({
-    poisonTurns: 0,
-    poisonDamage: 0,
+  const [bossDebuffs, setBossDebuffs] = useState({ 
+    poisonTurns: 0, 
+    poisonDamage: 0, 
     poisonedVulnerability: 0,
     marked: false,
-    stunned: false
+    stunned: false 
   });
   const [recklessStacks, setRecklessStacks] = useState(0);
-
+  
   // Phase 3 Gauntlet mechanics
   const [inPhase3, setInPhase3] = useState(false);
   const [inPhase2, setInPhase2] = useState(false);
@@ -593,6 +483,7 @@ const FantasyStudyQuest = () => {
   const [dodgeReady, setDodgeReady] = useState(false);
   const [phase3TurnCounter, setPhase3TurnCounter] = useState(0);
   const [lifeDrainCounter, setLifeDrainCounter] = useState(0);
+  
   const [currentAnimation, setCurrentAnimation] = useState(null);
   const [battleMode, setBattleMode] = useState(false);
   const [bossFlash, setBossFlash] = useState(false);
@@ -601,9 +492,9 @@ const FantasyStudyQuest = () => {
   const [victoryLoot, setVictoryLoot] = useState([]);
   const [showDebug, setShowDebug] = useState(false);
   const [canCustomize, setCanCustomize] = useState(true);
-  const [showCustomizeModal, setShowCustomizeModal] = useState(false);
-  const [customName, setCustomName] = useState('');
-  const [customClass, setCustomClass] = useState(null);
+const [showCustomizeModal, setShowCustomizeModal] = useState(false);
+const [customName, setCustomName] = useState('');
+const [customClass, setCustomClass] = useState(null);
   const [showInventoryModal, setShowInventoryModal] = useState(false);
   const [showCraftingModal, setShowCraftingModal] = useState(false);
   const [weaponOilActive, setWeaponOilActive] = useState(false);
@@ -623,8 +514,9 @@ const FantasyStudyQuest = () => {
   const [consecutiveDays, setConsecutiveDays] = useState(0);
   const [lastPlayedDate, setLastPlayedDate] = useState(null);
   const [curseLevel, setCurseLevel] = useState(0); // 0 = none, 1-3 = curse levels
-  const [eliteBossDefeatedToday, setEliteBossDefeatedToday] = useState(false);
-  const [lastRealDay, setLastRealDay] = useState(null);
+const [eliteBossDefeatedToday, setEliteBossDefeatedToday] = useState(false);
+const [lastRealDay, setLastRealDay] = useState(null);
+  
   const [studyStats, setStudyStats] = useState({
     totalMinutesToday: 0,
     totalMinutesWeek: 0,
@@ -637,49 +529,28 @@ const FantasyStudyQuest = () => {
     perfectDays: 0,
     weeklyHistory: []
   });
+  
   const [sessionStartTime, setSessionStartTime] = useState(null);
   const [taskPauseCount, setTaskPauseCount] = useState(0);
-  const classes = [{
-    name: 'Warrior',
-    color: 'red',
-    emblem: '⚔︎',
-    gradient: ['from-red-900', 'from-red-800', 'from-red-700', 'from-red-600'],
-    glow: ['shadow-red-900/50', 'shadow-red-700/60', 'shadow-red-600/70', 'shadow-red-500/80']
-  }, {
-    name: 'Mage',
-    color: 'purple',
-    emblem: '✦',
-    gradient: ['from-purple-900', 'from-purple-800', 'from-purple-700', 'from-purple-600'],
-    glow: ['shadow-purple-900/50', 'shadow-purple-700/60', 'shadow-purple-600/70', 'shadow-purple-500/80']
-  }, {
-    name: 'Rogue',
-    color: 'green',
-    emblem: '†',
-    gradient: ['from-green-900', 'from-green-800', 'from-green-700', 'from-green-600'],
-    glow: ['shadow-green-900/50', 'shadow-green-700/60', 'shadow-green-600/70', 'shadow-green-500/80']
-  }, {
-    name: 'Paladin',
-    color: 'yellow',
-    emblem: '✙',
-    gradient: ['from-yellow-900', 'from-yellow-800', 'from-yellow-700', 'from-yellow-600'],
-    glow: ['shadow-yellow-900/50', 'shadow-yellow-700/60', 'shadow-yellow-600/70', 'shadow-yellow-500/80']
-  }, {
-    name: 'Ranger',
-    color: 'amber',
-    emblem: '➶',
-    gradient: ['from-amber-900', 'from-amber-800', 'from-amber-700', 'from-amber-600'],
-    glow: ['shadow-amber-900/50', 'shadow-amber-700/60', 'shadow-amber-600/70', 'shadow-amber-500/80']
-  }];
+  
+  const classes = [
+    { name: 'Warrior', color: 'red', emblem: '⚔︎', gradient: ['from-red-900', 'from-red-800', 'from-red-700', 'from-red-600'], glow: ['shadow-red-900/50', 'shadow-red-700/60', 'shadow-red-600/70', 'shadow-red-500/80'] },
+    { name: 'Mage', color: 'purple', emblem: '✦', gradient: ['from-purple-900', 'from-purple-800', 'from-purple-700', 'from-purple-600'], glow: ['shadow-purple-900/50', 'shadow-purple-700/60', 'shadow-purple-600/70', 'shadow-purple-500/80'] },
+    { name: 'Rogue', color: 'emerald', emblem: '†', gradient: ['from-emerald-950', 'from-emerald-900', 'from-emerald-800', 'from-emerald-700'], glow: ['shadow-emerald-900/50', 'shadow-emerald-800/60', 'shadow-emerald-700/70', 'shadow-emerald-600/80'] },
+    { name: 'Paladin', color: 'yellow', emblem: '✙', gradient: ['from-yellow-900', 'from-yellow-800', 'from-yellow-700', 'from-yellow-600'], glow: ['shadow-yellow-900/50', 'shadow-yellow-700/60', 'shadow-yellow-600/70', 'shadow-yellow-500/80'] },
+    { name: 'Ranger', color: 'teal', emblem: '➶', gradient: ['from-teal-950', 'from-teal-900', 'from-teal-800', 'from-teal-700'], glow: ['shadow-teal-900/50', 'shadow-teal-800/60', 'shadow-teal-700/70', 'shadow-teal-600/80'] }
+  ];
+
   const makeName = useCallback(() => {
-    const first = {
-      male: ['Azrael', 'Godfrey', 'Cyrus', 'Aldric', 'Roderick', 'Lancelot'],
-      female: ['Elizabeth', 'Seraphina', 'Minerva', 'Aria', 'Eve', 'Maria', 'Michelle']
+    const first = { 
+      male: ['Azrael', 'Godfrey', 'Cyrus', 'Aldric', 'Roderick', 'Lancelot'], 
+      female: ['Elizabeth', 'Seraphina', 'Minerva', 'Aria', 'Eve', 'Maria', 'Michelle'] 
     };
     const last = ['Ironheart', 'Stormborn', 'Lightbringer', 'Shadowend', 'Dawnseeker'];
     const gender = Math.random() > 0.5 ? 'male' : 'female';
     const heroClass = classes[Math.floor(Math.random() * classes.length)];
-    return {
-      name: `${first[gender][Math.floor(Math.random() * first[gender].length)]} ${last[Math.floor(Math.random() * last.length)]}`,
+    return { 
+      name: `${first[gender][Math.floor(Math.random() * first[gender].length)]} ${last[Math.floor(Math.random() * last.length)]}`, 
       gender,
       title: HERO_TITLES[0],
       day: 1,
@@ -687,91 +558,94 @@ const FantasyStudyQuest = () => {
       class: heroClass
     };
   }, []);
+  
   const makeBossName = () => {
     const first = ['Malakar', 'Zarathos', 'Lilith', 'Nyxen', 'Azazel', 'Alastor', 'Barbatos', 'Furcas', 'Moloch', 'Xaphan'];
     const last = ['the Kind', 'the Blind', 'Deathbringer', 'the Wretched', 'the Fallen Angel', 'Rotten', 'Void Walker', 'the Forgotten', 'the Holy', 'Dread Lord', 'the Forsaken', 'the Tormentor'];
     return `${first[Math.floor(Math.random() * first.length)]} ${last[Math.floor(Math.random() * last.length)]}`;
   };
+  
+// FIXED: Helper function to get next occurrence of a day of week
+const getNextDayOfWeek = useCallback((dayName) => {
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const targetDayIndex = daysOfWeek.indexOf(dayName);
+  const today = new Date();
+  const todayIndex = today.getDay();
+  
+  let daysUntil = targetDayIndex - todayIndex;
+  if (daysUntil < 0) daysUntil += 7;
+  
+  const targetDate = new Date(today);
+  targetDate.setDate(today.getDate() + daysUntil);
+  return targetDate;
+}, []);
 
-  // FIXED: Helper function to get next occurrence of a day of week
-  const getNextDayOfWeek = useCallback(dayName => {
-    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const targetDayIndex = daysOfWeek.indexOf(dayName);
-    const today = new Date();
-    const todayIndex = today.getDay();
-    let daysUntil = targetDayIndex - todayIndex;
-    if (daysUntil < 0) daysUntil += 7;
-    const targetDate = new Date(today);
-    targetDate.setDate(today.getDate() + daysUntil);
-    return targetDate;
-  }, []);
+// Helper to create consistent date keys
+const getDateKey = useCallback((date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}, []);
 
-  // Helper to create consistent date keys
-  const getDateKey = useCallback(date => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }, []);
   const getCardStyle = (heroClass, day) => {
-    if (!heroClass || !heroClass.color) {
-      return { border: '3px solid #8B0000', bg: 'from-red-900 to-red-800', glow: 'shadow-xl', emblem: '⚔︎' };
-    }
     const borders = ['3px solid', '3px solid', '3px solid', '4px solid', '4px solid', '5px solid', '5px solid'];
     const borderColors = {
       red: ['#8B0000', '#8B0000', '#B22222', '#DC143C', '#DC143C', '#FF4500', '#FF4500'],
       purple: ['#4B0082', '#4B0082', '#6A0DAD', '#8B008B', '#8B008B', '#9370DB', '#9370DB'],
-      green: ['#004d00', '#004d00', '#006400', '#228B22', '#228B22', '#32CD32', '#32CD32'],
-      emerald: ['#004d00', '#004d00', '#006400', '#228B22', '#228B22', '#32CD32', '#32CD32'],
+      emerald: ['#022c22', '#022c22', '#064e3b', '#065f46', '#065f46', '#059669', '#059669'],
       yellow: ['#B8860B', '#B8860B', '#DAA520', '#FFD700', '#FFD700', '#FFEC8B', '#FFEC8B'],
-      amber: ['#8B4513', '#8B4513', '#A0522D', '#CD853F', '#CD853F', '#DEB887', '#DEB887'],
-      teal: ['#004D40', '#004D40', '#00695C', '#00897B', '#00897B', '#26A69A', '#26A69A'],
-      orange: ['#BF360C', '#BF360C', '#D84315', '#F4511E', '#F4511E', '#FF7043', '#FF7043'],
-      cyan: ['#006064', '#006064', '#00838F', '#0097A7', '#0097A7', '#00BCD4', '#00BCD4']
+      teal: ['#042f2e', '#042f2e', '#115e59', '#0f766e', '#0f766e', '#14b8a6', '#14b8a6']
     };
     const toColors = {
       red: ['to-red-800', 'to-red-800', 'to-red-700', 'to-red-600', 'to-red-600', 'to-orange-500', 'to-orange-500'],
       purple: ['to-purple-800', 'to-purple-800', 'to-purple-700', 'to-indigo-600', 'to-indigo-600', 'to-pink-500', 'to-pink-500'],
-      green: ['to-green-800', 'to-green-800', 'to-green-700', 'to-emerald-600', 'to-emerald-600', 'to-teal-500', 'to-teal-500'],
-      emerald: ['to-emerald-800', 'to-emerald-800', 'to-emerald-700', 'to-emerald-600', 'to-emerald-600', 'to-teal-500', 'to-teal-500'],
+      emerald: ['to-emerald-800', 'to-emerald-800', 'to-emerald-700', 'to-emerald-600', 'to-emerald-600', 'to-green-500', 'to-green-500'],
       yellow: ['to-yellow-800', 'to-yellow-800', 'to-yellow-700', 'to-amber-600', 'to-amber-600', 'to-orange-400', 'to-orange-400'],
-      amber: ['to-amber-800', 'to-amber-800', 'to-orange-700', 'to-orange-600', 'to-orange-600', 'to-yellow-500', 'to-yellow-500'],
-      teal: ['to-teal-800', 'to-teal-800', 'to-teal-700', 'to-teal-600', 'to-teal-600', 'to-cyan-500', 'to-cyan-500'],
-      orange: ['to-orange-800', 'to-orange-800', 'to-orange-700', 'to-orange-600', 'to-orange-600', 'to-amber-500', 'to-amber-500'],
-      cyan: ['to-cyan-800', 'to-cyan-800', 'to-cyan-700', 'to-cyan-600', 'to-cyan-600', 'to-sky-500', 'to-sky-500']
+      teal: ['to-teal-800', 'to-teal-800', 'to-teal-700', 'to-teal-600', 'to-teal-600', 'to-cyan-500', 'to-cyan-500']
     };
-    const colorKey = borderColors[heroClass.color] ? heroClass.color : 'red';
-    const d = Math.max(0, Math.min(day - 1, 6));
+    
+    const d = day - 1;
     const pulse = day === 7 ? ' animate-pulse' : '';
+    // Fallback for legacy saved data with old color keys
+    const colorKey = heroClass.color === 'green' ? 'emerald' : heroClass.color === 'amber' ? 'teal' : heroClass.color;
+    
     return {
-      border: `${borders[d]} ${borderColors[colorKey][d]}`,
-      bg: `${heroClass.gradient[Math.min(d, 3)]} ${toColors[colorKey][d]}`,
+      border: `${borders[d]} ${(borderColors[colorKey] || borderColors.red)[d]}`,
+      bg: `${heroClass.gradient[Math.min(d, 3)]} ${(toColors[colorKey] || toColors.red)[d]}`,
       glow: `shadow-xl ${heroClass.glow[Math.min(d, 3)]}${pulse}`,
       emblem: heroClass.emblem
     };
   };
-  const addLog = useCallback(msg => {
+  
+  const addLog = useCallback((msg) => {
     setLog(prev => [...prev, msg].slice(-GAME_CONSTANTS.LOG_MAX_ENTRIES));
   }, []);
+  
   const generateQuiz = useCallback((deckIndex, isRetake = false) => {
     const deck = flashcardDecks[deckIndex];
     if (!deck || deck.cards.length < 4) {
       alert('Need at least 4 cards to generate a quiz!');
       return;
     }
-
+    
     // Shuffle cards for quiz order
     const shuffledCards = [...deck.cards].sort(() => Math.random() - 0.5);
+    
     const questions = shuffledCards.map((card, idx) => {
       // Get the original index of this card in the deck
       const originalIndex = deck.cards.indexOf(card);
-
+      
       // Get 3 random wrong answers from other cards
       const otherCards = deck.cards.filter((_, i) => i !== originalIndex);
-      const wrongAnswers = otherCards.sort(() => Math.random() - 0.5).slice(0, 3).map(c => c.back);
-
+      const wrongAnswers = otherCards
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(c => c.back);
+      
       // Combine correct and wrong answers, then shuffle
       const allChoices = [card.back, ...wrongAnswers].sort(() => Math.random() - 0.5);
+      
       return {
         question: card.front,
         correctAnswer: card.back,
@@ -779,6 +653,7 @@ const FantasyStudyQuest = () => {
         cardIndex: originalIndex // Store original index
       };
     });
+    
     setQuizQuestions(questions);
     setCurrentQuizIndex(0);
     setQuizScore(0);
@@ -790,6 +665,7 @@ const FantasyStudyQuest = () => {
     setReviewingMistakes(false);
     setShowQuizModal(true);
   }, [flashcardDecks]);
+  
   useEffect(() => {
     const saved = localStorage.getItem('fantasyStudyQuest');
     if (saved) {
@@ -818,9 +694,9 @@ const FantasyStudyQuest = () => {
         if (data.skipCount !== undefined) setSkipCount(data.skipCount);
         if (data.consecutiveDays !== undefined) setConsecutiveDays(data.consecutiveDays);
         if (data.lastPlayedDate) setLastPlayedDate(data.lastPlayedDate);
-        if (data.curseLevel !== undefined) setCurseLevel(data.curseLevel);
-        if (data.eliteBossDefeatedToday !== undefined) setEliteBossDefeatedToday(data.eliteBossDefeatedToday);
-        if (data.lastRealDay) setLastRealDay(data.lastRealDay);
+       if (data.curseLevel !== undefined) setCurseLevel(data.curseLevel);
+if (data.eliteBossDefeatedToday !== undefined) setEliteBossDefeatedToday(data.eliteBossDefeatedToday);
+if (data.lastRealDay) setLastRealDay(data.lastRealDay);
         if (data.studyStats) setStudyStats(data.studyStats);
         if (data.weeklyPlan) setWeeklyPlan(data.weeklyPlan);
         if (data.calendarTasks) setCalendarTasks(data.calendarTasks);
@@ -833,47 +709,25 @@ const FantasyStudyQuest = () => {
       // No saved data exists - generate new hero
       setHero(makeName());
     }
+    
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission();
     }
   }, []);
+  
   useEffect(() => {
     if (hero) {
-      const saveData = {
-        hero,
-        currentDay,
-        hp,
-        stamina,
-        xp,
-        essence,
-        level,
-        healthPots,
-        staminaPots,
-        cleansePots,
-        weapon,
-        armor,
-        tasks,
-        flashcardDecks,
-        graveyard,
-        heroes,
-        hasStarted,
-        skipCount,
-        consecutiveDays,
-        lastPlayedDate,
-        curseLevel,
-        eliteBossDefeatedToday,
-        lastRealDay,
-        studyStats,
-        weeklyPlan,
-        calendarTasks,
-        gauntletMilestone,
-        gauntletUnlocked,
-        isDayActive
-      };
+     const saveData = {
+  hero, currentDay, hp, stamina, xp, essence, level, healthPots, staminaPots, cleansePots,
+  weapon, armor, tasks, flashcardDecks, graveyard, heroes, hasStarted, skipCount, consecutiveDays,
+  lastPlayedDate, curseLevel, eliteBossDefeatedToday, lastRealDay, studyStats, weeklyPlan, calendarTasks,
+  gauntletMilestone, gauntletUnlocked,
+  isDayActive
+};
       localStorage.setItem('fantasyStudyQuest', JSON.stringify(saveData));
     }
-  }, [hero, currentDay, hp, stamina, xp, essence, level, healthPots, staminaPots, cleansePots, weapon, armor, tasks, graveyard, heroes, hasStarted, skipCount, consecutiveDays, lastPlayedDate, curseLevel, eliteBossDefeatedToday, lastRealDay, studyStats, weeklyPlan, calendarTasks, flashcardDecks, gauntletMilestone, gauntletUnlocked, isDayActive]);
-
+ }, [hero, currentDay, hp, stamina, xp, essence, level, healthPots, staminaPots, cleansePots, weapon, armor, tasks, graveyard, heroes, hasStarted, skipCount, consecutiveDays, lastPlayedDate, curseLevel, eliteBossDefeatedToday, lastRealDay, studyStats, weeklyPlan, calendarTasks, flashcardDecks, gauntletMilestone, gauntletUnlocked, isDayActive]);
+  
   // Battle music - auto-manage based on battleMode and phase
   useEffect(() => {
     if (battleMode) {
@@ -891,21 +745,22 @@ const FantasyStudyQuest = () => {
   useEffect(() => {
     if (xp >= gauntletMilestone && !gauntletUnlocked) {
       setGauntletUnlocked(true);
-      addLog(`⚔️ THE GAUNTLET UNLOCKED! Face the trial when ready...`);
+      addLog(`THE GAUNTLET UNLOCKED! Face the trial when ready...`);
     }
   }, [xp, gauntletMilestone, gauntletUnlocked, addLog]);
-
+  
   // Update countdown to midnight every second (only shows last hour)
   useEffect(() => {
     const updateCountdown = () => {
       const now = new Date();
       const midnight = new Date(now);
       midnight.setHours(24, 0, 0, 0);
+      
       const diff = midnight - now;
       const hours = Math.floor(diff / (1000 * 60 * 60));
-      const minutes = Math.floor(diff % (1000 * 60 * 60) / (1000 * 60));
-      const seconds = Math.floor(diff % (1000 * 60) / 1000);
-
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
       // Only show countdown if less than 1 hour remains
       if (hours < 1) {
         setTimeUntilMidnight(`${minutes}m ${seconds}s`);
@@ -913,18 +768,21 @@ const FantasyStudyQuest = () => {
         setTimeUntilMidnight('');
       }
     };
+    
     updateCountdown(); // Initial update
     const interval = setInterval(updateCountdown, 1000);
+    
     return () => clearInterval(interval);
   }, []);
-
+  
   // Detect when real calendar day changes and auto-advance
   useEffect(() => {
     const checkDayChange = () => {
       const today = new Date().toDateString();
+      
       if (lastRealDay && lastRealDay !== today) {
         // New day detected!
-
+        
         // Check if day is dormant
         if (!isDayActive) {
           // Dormant day - no midnight logic, no curse, no advancement
@@ -932,31 +790,29 @@ const FantasyStudyQuest = () => {
         } else {
           // Active day - check midnight consequences
           const nextDay = currentDay + 1;
-
+          
           // Check curse before advancing
           if (!eliteBossDefeatedToday) {
             // Didn't beat elite boss - apply curse penalty
-            addLog('🔒 ELITE BOSS LOCKED - Midnight passed, opportunity missed');
+            addLog('ELITE BOSS LOCKED — Midnight passed, opportunity missed');
+            
             const newCurseLevel = curseLevel + 1;
             setCurseLevel(newCurseLevel);
+            
             if (newCurseLevel >= 4) {
               // 4th missed boss = death
-              addLog('☠️ THE CURSE CONSUMES YOU. Four failures... the abyss claims your soul.');
+              addLog('THE CURSE CONSUMES YOU. Four failures... the abyss claims your soul.');
               setTimeout(() => die(), 2000);
               return;
             }
-
+            
             // Apply curse penalties
-            const cursePenalties = [{
-              hp: 20,
-              msg: '🌑 CURSED. The curse takes root... -20 HP'
-            }, {
-              hp: 40,
-              msg: '🌑🌑 DEEPLY CURSED. The curse tightens its grip... -40 HP'
-            }, {
-              hp: 60,
-              msg: '☠️ CONDEMNED. One more failure... and the abyss claims you. -60 HP'
-            }];
+            const cursePenalties = [
+              { hp: 20, msg: 'CURSED. The curse takes root... -20 HP' },
+              { hp: 40, msg: 'DEEPLY CURSED. The curse tightens its grip... -40 HP' },
+              { hp: 60, msg: 'CONDEMNED. One more failure... and the abyss claims you. -60 HP' }
+            ];
+            
             const penalty = cursePenalties[newCurseLevel - 1];
             setHp(h => Math.max(1, h - penalty.hp));
             addLog(penalty.msg);
@@ -964,56 +820,58 @@ const FantasyStudyQuest = () => {
             // Beat yesterday's boss - clear curse if present
             if (curseLevel > 0) {
               setCurseLevel(0);
-              addLog('🌅 THE CURSE BREAKS! Yesterday\'s trial complete.');
+              addLog('THE CURSE BREAKS! Yesterday\'s trial complete.');
             }
           }
-
+          
           // Reset daily elite boss flag for new day
           setEliteBossDefeatedToday(false);
-
+          
           // Advance day
           setCurrentDay(nextDay);
           setHero(prev => ({
             ...prev,
             day: nextDay,
-            title: HERO_TITLES[(nextDay - 1) % HERO_TITLES.length],
-            // Wrap titles
-            survived: prev.survived + 1
-          }));
-
-          // Handle tasks on day change
-          const completedCount = tasks.filter(t => t.done).length;
-          const incompleteCount = tasks.filter(t => !t.done).length;
-
-          // Mark incomplete tasks as overdue
-          setTasks(prevTasks => prevTasks.filter(t => !t.done) // Remove completed tasks
-          .map(t => ({
-            ...t,
-            overdue: true
-          })) // Mark remaining as overdue
-          );
-          if (completedCount > 0) {
-            addLog(`✅ Cleared ${completedCount} completed task${completedCount > 1 ? 's' : ''}`);
-          }
-          if (incompleteCount > 0) {
-            addLog(`⚠️ ${incompleteCount} incomplete task${incompleteCount > 1 ? 's' : ''} marked OVERDUE`);
-          }
-          addLog('🌅 MIDNIGHT PASSED - Day auto-advanced');
-          addLog(`📅 Now on Day ${nextDay} (Dormant)`);
-
-          // Set day to dormant until next engagement
-          setIsDayActive(false);
+          title: HERO_TITLES[(nextDay - 1) % HERO_TITLES.length], // Wrap titles
+          survived: prev.survived + 1
+        }));
+        
+        // Handle tasks on day change
+        const completedCount = tasks.filter(t => t.done).length;
+        const incompleteCount = tasks.filter(t => !t.done).length;
+        
+        // Mark incomplete tasks as overdue
+        setTasks(prevTasks => 
+          prevTasks
+            .filter(t => !t.done) // Remove completed tasks
+            .map(t => ({ ...t, overdue: true })) // Mark remaining as overdue
+        );
+        
+        if (completedCount > 0) {
+          addLog(`Cleared ${completedCount} completed task${completedCount > 1 ? 's' : ''}`);
+        }
+        if (incompleteCount > 0) {
+          addLog(`${incompleteCount} incomplete task${incompleteCount > 1 ? 's' : ''} marked OVERDUE`);
+        }
+        
+        addLog('MIDNIGHT PASSED — Day auto-advanced');
+        addLog(`Now on Day ${nextDay} (Dormant)`);
+        
+        // Set day to dormant until next engagement
+        setIsDayActive(false);
         }
       }
-
+      
       // Always update to current day
       setLastRealDay(today);
     };
+    
     checkDayChange(); // Check on mount
     const interval = setInterval(checkDayChange, 60000); // Check every minute
-
+    
     return () => clearInterval(interval);
   }, [lastRealDay, currentDay, eliteBossDefeatedToday, curseLevel, isDayActive, tasks, addLog]);
+  
   useEffect(() => {
     let int;
     if (running && timerEndTime) {
@@ -1021,69 +879,77 @@ const FantasyStudyQuest = () => {
         const now = Date.now();
         const remaining = Math.max(0, Math.ceil((timerEndTime - now) / 1000));
         setTimer(remaining);
+        
         if (remaining <= 0) {
           setRunning(false);
           setTimerEndTime(null);
           setOverdueTask(activeTask);
           setHp(h => Math.max(1, h - 10));
+          
           if (Notification.permission === "granted" && activeTask) {
             const task = tasks.find(t => t.id === activeTask);
-            new Notification("⏰ Task Complete!", {
+            new Notification("Task Complete!", {
               body: `${task?.title || 'Task'} - Time to mark it done!`,
               icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><text y='75' font-size='75'>⏰</text></svg>"
             });
           }
+          
           if (activeTask) {
             const task = tasks.find(t => t.id === activeTask);
-            addLog(`⏰ Time's up for: ${task?.title || 'task'}!`);
-            addLog(`💔 Ran out of time! Lost 10 HP as penalty.`);
+            addLog(`Time's up for: ${task?.title || 'task'}!`);
+            addLog(`Ran out of time! Lost 10 HP as penalty.`);
           }
         }
       }, 1000);
     }
     return () => clearInterval(int);
   }, [running, timerEndTime, activeTask, tasks, addLog]);
-  useEffect(() => {
-    let interval;
-    if (pomodoroRunning && pomodoroTimer > 0) {
-      interval = setInterval(() => {
-        setPomodoroTimer(t => {
-          if (t <= 1) {
-            // Timer finished
-            setPomodoroRunning(false);
 
-            // Play sound and show notification
-            if (Notification.permission === "granted") {
-              new Notification(isBreak ? "Break Over! 🎯" : "Pomodoro Complete! 🍅", {
-                body: isBreak ? "Time to get back to work!" : "Great work! Take a 5 minute break.",
-                icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><text y='75' font-size='75'>🍅</text></svg>"
-              });
-            }
-            if (!isBreak) {
-              // Work session done - start break
-              setPomodorosCompleted(p => p + 1);
-              addLog(`🍅 Pomodoro #${pomodorosCompleted + 1} completed!`);
-              setIsBreak(true);
-              setPomodoroTimer(5 * 60); // 5 minute break
-            } else {
-              // Break done - start work session
-              addLog(`✨ Break over! Ready for another pomodoro?`);
-              setIsBreak(false);
-              setPomodoroTimer(25 * 60); // 25 minute work session
-            }
-            return 0;
+  useEffect(() => {
+  let interval;
+  if (pomodoroRunning && pomodoroTimer > 0) {
+    interval = setInterval(() => {
+      setPomodoroTimer(t => {
+        if (t <= 1) {
+          // Timer finished
+          setPomodoroRunning(false);
+          
+          // Play sound and show notification
+          if (Notification.permission === "granted") {
+            new Notification(isBreak ? "Break Over!" : "Pomodoro Complete!", {
+              body: isBreak ? "Time to get back to work!" : "Great work! Take a 5 minute break.",
+              icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><text y='75' font-size='75'>⏰</text></svg>"
+            });
           }
-          return t - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [pomodoroRunning, pomodoroTimer, isBreak, pomodorosCompleted, addLog]);
+          
+          if (!isBreak) {
+            // Work session done - start break
+            setPomodorosCompleted(p => p + 1);
+            addLog(`Pomodoro #${pomodorosCompleted + 1} completed!`);
+            setIsBreak(true);
+            setPomodoroTimer(5 * 60); // 5 minute break
+          } else {
+            // Break done - start work session
+            addLog(`Break over! Ready for another pomodoro?`);
+            setIsBreak(false);
+            setPomodoroTimer(25 * 60); // 25 minute work session
+          }
+          
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+  }
+  return () => clearInterval(interval);
+}, [pomodoroRunning, pomodoroTimer, isBreak, pomodorosCompleted, addLog]);
+  
   useEffect(() => {
     // Exponential XP curve: Level 1→2 = 100 XP, Level 2→3 = 130 XP, Level 3→4 = 169 XP, etc.
     let xpNeeded = 0;
     let newLevel = 1;
     let currentXp = xp;
+    
     while (currentXp >= xpNeeded) {
       xpNeeded = Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, newLevel - 1));
       if (currentXp >= xpNeeded) {
@@ -1093,19 +959,24 @@ const FantasyStudyQuest = () => {
         break;
       }
     }
+    
     if (newLevel > level) {
       setLevel(newLevel);
-      addLog(`🎉 LEVEL UP! Now level ${newLevel}`);
+      addLog(`LEVEL UP! Now level ${newLevel}`);
       setHp(h => Math.min(getMaxHp(), h + 20));
     }
   }, [xp, level, addLog, getMaxHp]);
+  
   const applySkipPenalty = useCallback(() => {
     const newSkipCount = skipCount + 1;
     setSkipCount(newSkipCount);
     setConsecutiveDays(0);
+    
     const penaltyIndex = Math.min(newSkipCount - 1, GAME_CONSTANTS.SKIP_PENALTIES.length - 1);
     const penalty = GAME_CONSTANTS.SKIP_PENALTIES[penaltyIndex];
+    
     addLog(penalty.message);
+    
     setHp(h => {
       const newHp = Math.max(0, h - penalty.hp);
       if (newHp <= 0 || penalty.death) {
@@ -1113,25 +984,30 @@ const FantasyStudyQuest = () => {
       }
       return newHp;
     });
+    
     if (penalty.levelLoss > 0) {
       setLevel(l => Math.max(1, l - penalty.levelLoss));
-      addLog(`⬇️ Lost ${penalty.levelLoss} level${penalty.levelLoss > 1 ? 's' : ''}!`);
+      addLog(`Lost ${penalty.levelLoss} level${penalty.levelLoss > 1 ? 's' : ''}!`);
     }
+    
     if (penalty.equipmentDebuff > 0) {
       setWeapon(w => Math.floor(w * (1 - penalty.equipmentDebuff)));
       setArmor(a => Math.floor(a * (1 - penalty.equipmentDebuff)));
-      addLog(`⚠️ Equipment weakened by ${penalty.equipmentDebuff * 100}%!`);
+      addLog(`Equipment weakened by ${penalty.equipmentDebuff * 100}%!`);
     }
+    
   }, [skipCount, addLog]);
+  
   const start = () => {
-    const today = new Date().toDateString();
-    const currentHour = new Date().getHours();
-
-    // Map game day (1-7, 8-14, etc.) to planner day name
-    const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const plannerDayName = dayNames[(currentDay - 1) % 7]; // Wrap around every 7 days
+  const today = new Date().toDateString();
+  const currentHour = new Date().getHours();
+  
+  // Map game day (1-7, 8-14, etc.) to planner day name
+  const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const plannerDayName = dayNames[(currentDay - 1) % 7]; // Wrap around every 7 days
 
     setLastPlayedDate(today);
+    
     if (lastPlayedDate && lastPlayedDate !== today) {
       setStudyStats(prev => ({
         ...prev,
@@ -1142,102 +1018,108 @@ const FantasyStudyQuest = () => {
         deepWorkSessions: 0
       }));
     }
+    
+    
     const plannedTasks = weeklyPlan[plannerDayName] || [];
-    if (tasks.length === 0) {
-      const newTasks = [];
-      plannedTasks.forEach((item, idx) => {
-        newTasks.push({
-          title: item.title,
-          priority: item.priority || 'routine',
-          id: Date.now() + idx,
-          done: false,
-          overdue: false
-        });
-      });
+
+if (tasks.length === 0) {
+  const newTasks = [];
+  
+  plannedTasks.forEach((item, idx) => {
+    newTasks.push({
+      title: item.title,
+      priority: item.priority || 'routine',
+      id: Date.now() + idx,
+      done: false,
+      overdue: false
+    });
+  });
+      
       if (newTasks.length > 0) {
         setTasks(newTasks);
-        addLog(`📋 Loaded ${newTasks.length} tasks from ${plannerDayName}'s plan`);
+        addLog(`Loaded ${newTasks.length} tasks from ${plannerDayName}'s plan`);
       }
     }
+    
     let earlyBirdBonus = false;
     if (currentHour < GAME_CONSTANTS.LATE_START_HOUR) {
       setXp(x => x + GAME_CONSTANTS.EARLY_BIRD_BONUS);
-      setStudyStats(prev => ({
-        ...prev,
-        earlyBirdDays: prev.earlyBirdDays + 1
-      }));
-      addLog(`🌅 Early Bird! +${GAME_CONSTANTS.EARLY_BIRD_BONUS} XP`);
+      setStudyStats(prev => ({ ...prev, earlyBirdDays: prev.earlyBirdDays + 1 }));
+      addLog(`Early Bird! +${GAME_CONSTANTS.EARLY_BIRD_BONUS} XP`);
       earlyBirdBonus = true;
     }
+    
     if (currentHour >= GAME_CONSTANTS.LATE_START_HOUR && !earlyBirdBonus) {
       setHp(h => Math.max(0, h - GAME_CONSTANTS.LATE_START_PENALTY));
-      addLog(`⚠️ Late start! -${GAME_CONSTANTS.LATE_START_PENALTY} HP`);
+      addLog(`Late start! -${GAME_CONSTANTS.LATE_START_PENALTY} HP`);
     } else if (!earlyBirdBonus) {
-      addLog('✨ Day begins...');
+      addLog('Day begins...');
     }
+    
     setHasStarted(true);
   };
 
-  // END OF PART 1 - Continue with part 2
-  // PART 2 OF 3 - Copy this after part 1
+// END OF PART 1 - Continue with part 2
+// PART 2 OF 3 - Copy this after part 1
 
   const addTask = () => {
-    if (newTask.title) {
-      const today = new Date();
-      const todayDayName = today.toLocaleDateString('en-US', {
-        weekday: 'long'
-      });
-      const dateKey = getDateKey(today);
-
-      // Add to tasks
-      const newTaskObj = {
+  if (newTask.title) {
+    const today = new Date();
+    const todayDayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+    const dateKey = getDateKey(today);
+    
+    // Add to tasks
+    const newTaskObj = {
+      title: newTask.title,
+      priority: newTask.priority,
+      id: Date.now(),
+      done: false,
+      overdue: false
+    };
+    
+    setTasks(prev => [...prev, newTaskObj]);
+    
+    // Add to today's planner
+    setWeeklyPlan(prev => ({
+      ...prev,
+      [todayDayName]: [...prev[todayDayName], { 
+        title: newTask.title, 
+        priority: newTask.priority,
+        completed: false 
+      }]
+    }));
+    
+    // Add to today's calendar
+    setCalendarTasks(prev => ({
+      ...prev,
+      [dateKey]: [...(prev[dateKey] || []), {
         title: newTask.title,
         priority: newTask.priority,
-        id: Date.now(),
-        done: false,
-        overdue: false
-      };
-      setTasks(prev => [...prev, newTaskObj]);
-
-      // Add to today's planner
-      setWeeklyPlan(prev => ({
-        ...prev,
-        [todayDayName]: [...prev[todayDayName], {
-          title: newTask.title,
-          priority: newTask.priority,
-          completed: false
-        }]
-      }));
-
-      // Add to today's calendar
-      setCalendarTasks(prev => ({
-        ...prev,
-        [dateKey]: [...(prev[dateKey] || []), {
-          title: newTask.title,
-          priority: newTask.priority,
-          done: false
-        }]
-      }));
-      setNewTask({
-        title: '',
-        priority: 'routine'
-      });
-      setShowModal(false);
-
-      // Activate day on first task
-      if (!isDayActive) {
-        setIsDayActive(true);
-        addLog(`⚡ DAY ${currentDay} ACTIVATED - Complete tasks before midnight!`);
-      }
-      addLog(`📜 New trial: ${newTask.title}`);
+        done: false
+      }]
+    }));
+    
+    setNewTask({ title: '', priority: 'routine' });
+    setShowModal(false);
+    
+    // Activate day on first task
+    if (!isDayActive) {
+      setIsDayActive(true);
+      addLog(`DAY ${currentDay} ACTIVATED — Complete tasks before midnight!`);
     }
-  };
-  const importFromPlanner = dayName => {
+    
+    addLog(`New trial: ${newTask.title}`);
+  }
+};
+
+  const importFromPlanner = (dayName) => {
     const plannedTasks = weeklyPlan[dayName] || [];
+    
     if (plannedTasks.length === 0) {
-      addLog(`⚠️ No tasks planned for ${dayName}`);
+      addLog(`No tasks planned for ${dayName}`);
       return;
     }
+    
     const newTasks = [];
     plannedTasks.forEach((item, idx) => {
       newTasks.push({
@@ -1248,17 +1130,20 @@ const FantasyStudyQuest = () => {
         overdue: false
       });
     });
+    
     setTasks(newTasks);
     setHasStarted(true);
-
+    
     // Activate day on import
     if (!isDayActive) {
       setIsDayActive(true);
-      addLog(`⚡ DAY ${currentDay} ACTIVATED - Complete tasks before midnight!`);
+      addLog(`DAY ${currentDay} ACTIVATED — Complete tasks before midnight!`);
     }
-    addLog(`📋 Imported ${newTasks.length} tasks from ${dayName}'s plan`);
+    
+    addLog(`Imported ${newTasks.length} tasks from ${dayName}'s plan`);
     setShowImportModal(false);
   };
+
   const getMerchantDialogue = () => {
     // Curse-based dialogue (highest priority)
     if (curseLevel === 3) {
@@ -1270,7 +1155,7 @@ const FantasyStudyQuest = () => {
     if (curseLevel === 1) {
       return "I see the mark upon you. The curse is hungry.";
     }
-
+    
     // Essence-based dialogue
     if (essence >= 200) {
       return "Ah, a successful hunter. The darkness has been generous.";
@@ -1284,50 +1169,31 @@ const FantasyStudyQuest = () => {
     if (essence < 20) {
       return "Empty-handed? The forge requires essence to work.";
     }
-
+    
     // Default
     return "What do you seek, traveler?";
   };
-  const craftItem = itemType => {
+
+  const craftItem = (itemType) => {
     const craftingRecipes = {
-      healthPotion: {
-        cost: 25,
-        name: 'Health Potion',
-        emoji: '💊'
-      },
-      staminaPotion: {
-        cost: 20,
-        name: 'Stamina Potion',
-        emoji: '⚡'
-      },
-      cleansePotion: {
-        cost: 50,
-        name: 'Cleanse Potion',
-        emoji: '🧪'
-      },
-      weaponOil: {
-        cost: 40,
-        name: 'Weapon Oil',
-        emoji: '⚔️'
-      },
-      armorPolish: {
-        cost: 40,
-        name: 'Armor Polish',
-        emoji: '🛡️'
-      },
-      luckyCharm: {
-        cost: 80,
-        name: 'Lucky Charm',
-        emoji: '🍀'
-      }
+      healthPotion: { cost: 25, name: 'Health Potion', emoji: '💊' },
+      staminaPotion: { cost: 20, name: 'Stamina Potion', emoji: '⚡' },
+      cleansePotion: { cost: 50, name: 'Cleanse Potion', emoji: '✧' },
+      weaponOil: { cost: 40, name: 'Weapon Oil', emoji: '⚔️' },
+      armorPolish: { cost: 40, name: 'Armor Polish', emoji: '🛡️' },
+      luckyCharm: { cost: 80, name: 'Lucky Charm', emoji: '✦' }
     };
+    
     const recipe = craftingRecipes[itemType];
+    
     if (essence < recipe.cost) {
-      addLog(`⚠️ Need ${recipe.cost} Essence to craft ${recipe.name} (have ${essence})`);
+      addLog(`Need ${recipe.cost} Essence to craft ${recipe.name} (have ${essence})`);
       return;
     }
+    
     setEssence(e => e - recipe.cost);
-    switch (itemType) {
+    
+    switch(itemType) {
       case 'healthPotion':
         setHealthPots(h => h + 1);
         break;
@@ -1347,213 +1213,220 @@ const FantasyStudyQuest = () => {
         setLuckyCharmActive(true);
         break;
     }
-    addLog(`⚒️ Crafted: ${recipe.emoji} ${recipe.name} (-${recipe.cost} Essence)`);
+    
+    addLog(`Crafted: ${recipe.emoji} ${recipe.name} (-${recipe.cost} Essence)`);
   };
-  const startTask = id => {
+  
+  const startTask = (id) => {
     if (canCustomize) {
-      setCanCustomize(false);
-    }
+  setCanCustomize(false);
+}
     const task = tasks.find(t => t.id === id);
     if (task && !task.done && !activeTask) {
       setActiveTask(id);
       const seconds = task.time * 60;
       setTimer(seconds);
-      setTimerEndTime(Date.now() + seconds * 1000);
+      setTimerEndTime(Date.now() + (seconds * 1000));
       setRunning(true);
       setSessionStartTime(Date.now());
       setTaskPauseCount(0);
-      addLog(`⚔️ Starting: ${task.title}`);
+      addLog(`Starting: ${task.title}`);
     }
   };
-
+  
   // FIXED: Added weapon, armor, overdueTask to dependencies
-  const complete = useCallback(id => {
-    const task = tasks.find(t => t.id === id);
-    if (task && !task.done) {
-      // Base XP for completing a task
-      const baseXp = 25;
+  const complete = useCallback((id) => {
+  const task = tasks.find(t => t.id === id);
+  if (task && !task.done) {
+    // Base XP for completing a task
+    const baseXp = 25;
+    
+   // Apply priority multiplier
+const priorityMultiplier = task.priority === 'important' ? 1.25 : 1.0;
+let xpMultiplier = GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * priorityMultiplier;
 
-      // Apply priority multiplier
-      const priorityMultiplier = task.priority === 'important' ? 1.25 : 1.0;
-      let xpMultiplier = GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * priorityMultiplier;
+// Apply curse debuff based on level
+if (curseLevel === 1) {
+  xpMultiplier *= 0.5; // 50% XP
+} else if (curseLevel === 2) {
+  xpMultiplier *= 0.25; // 25% XP
+} else if (curseLevel === 3) {
+  xpMultiplier *= 0.1; // 10% XP
+}
 
-      // Apply curse debuff based on level
-      if (curseLevel === 1) {
-        xpMultiplier *= 0.5; // 50% XP
-      } else if (curseLevel === 2) {
-        xpMultiplier *= 0.25; // 25% XP
-      } else if (curseLevel === 3) {
-        xpMultiplier *= 0.1; // 10% XP
+// Apply overdue penalty
+if (task.overdue) {
+  xpMultiplier *= 0.5; // 50% XP penalty for overdue tasks
+}
+    
+    let xpGain = Math.floor(baseXp * xpMultiplier);
+    
+    setXp(x => x + xpGain);
+    
+    setStudyStats(prev => ({
+      ...prev,
+      tasksCompletedToday: prev.tasksCompletedToday + 1
+    }));
+    
+    // Check for redemption
+    const completedCount = tasks.filter(t => t.done).length + 1;
+    if (completedCount === 1) {
+      const newConsecutive = consecutiveDays + 1;
+      setConsecutiveDays(newConsecutive);
+      
+      if (newConsecutive >= GAME_CONSTANTS.SKIP_REDEMPTION_DAYS && skipCount > 0) {
+        setSkipCount(s => s - 1);
+        setConsecutiveDays(0);
+        addLog(`REDEMPTION! ${GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days of dedication. Skip forgiven.`);
       }
-
-      // Apply overdue penalty
-      if (task.overdue) {
-        xpMultiplier *= 0.5; // 50% XP penalty for overdue tasks
-      }
-      let xpGain = Math.floor(baseXp * xpMultiplier);
-      setXp(x => x + xpGain);
-      setStudyStats(prev => ({
-        ...prev,
-        tasksCompletedToday: prev.tasksCompletedToday + 1
-      }));
-
-      // Check for redemption
-      const completedCount = tasks.filter(t => t.done).length + 1;
-      if (completedCount === 1) {
-        const newConsecutive = consecutiveDays + 1;
-        setConsecutiveDays(newConsecutive);
-        if (newConsecutive >= GAME_CONSTANTS.SKIP_REDEMPTION_DAYS && skipCount > 0) {
-          setSkipCount(s => s - 1);
-          setConsecutiveDays(0);
-          addLog(`🙏 REDEMPTION! ${GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days of dedication. Skip forgiven.`);
-        }
-      }
-
-      // Loot drop
-      const roll = Math.random();
-      if (roll < GAME_CONSTANTS.LOOT_RATES.HEALTH_POTION) {
-        setHealthPots(h => h + 1);
-        addLog('💊 Found Health Potion!');
-      } else if (roll < GAME_CONSTANTS.LOOT_RATES.STAMINA_POTION) {
-        setStaminaPots(s => s + 1);
-        addLog('⚡ Found Stamina Potion!');
-      } else if (roll < GAME_CONSTANTS.LOOT_RATES.WEAPON) {
-        const gain = 1 + Math.floor(currentDay / 2);
-        setWeapon(w => w + gain);
-        addLog(`⚔️ Weapon upgraded! +${gain}`);
-      } else if (roll < GAME_CONSTANTS.LOOT_RATES.ARMOR) {
-        const gain = 1 + Math.floor(currentDay / 2);
-        setArmor(a => a + gain);
-        addLog(`🛡️ Armor upgraded! +${gain}`);
-      }
-
-      // Mark task as done
-      setTasks(prev => prev.map(t => t.id === id ? {
-        ...t,
-        done: true
-      } : t));
-
-      // Sync with calendar
-      const today = new Date().toISOString().split('T')[0];
-      setCalendarTasks(prev => {
-        if (prev[today]) {
-          return {
-            ...prev,
-            [today]: prev[today].map(ct => ct.title === task.title ? {
-              ...ct,
-              done: true
-            } : ct)
-          };
-        }
-        return prev;
-      });
-
-      // Sync with planner
-      const todayDayName = new Date().toLocaleDateString('en-US', {
-        weekday: 'long'
-      });
-      setWeeklyPlan(prev => ({
-        ...prev,
-        [todayDayName]: prev[todayDayName].map(item => item.title === task.title ? {
-          ...item,
-          completed: true
-        } : item)
-      }));
-      setStamina(s => Math.min(getMaxStamina(), s + GAME_CONSTANTS.STAMINA_PER_TASK));
-      let completionMsg = `✅ Completed: ${task.title} (+${xpGain} XP`;
-      if (task.priority === 'important') completionMsg += ' • IMPORTANT';
-      if (task.overdue) completionMsg += ' • OVERDUE';
-      completionMsg += `)`;
-      addLog(completionMsg);
-
-      // Always spawn enemy after task completion
-      setTimeout(() => {
-        // 20% chance for wave attack
-        const waveRoll = Math.random();
-        if (waveRoll < 0.2) {
-          // Wave attack: 2-4 enemies
-          const numEnemies = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4
-          setWaveCount(numEnemies);
-          addLog(`⚠️ WAVE INCOMING! ${numEnemies} enemies detected!`);
-          setTimeout(() => spawnRegularEnemy(true, 1, numEnemies), 1000);
-        } else {
-          // Regular single enemy
-          spawnRegularEnemy(false, 0, 1);
-        }
-      }, 1000);
     }
-  }, [tasks, currentDay, addLog, consecutiveDays, skipCount, curseLevel, hp, sessionStartTime, taskPauseCount, getMaxHp, getMaxStamina, weapon, armor, overdueTask, calendarTasks, setCalendarTasks]);
-  const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves = 1) => {
-    if (canCustomize) setCanCustomize(false);
-    const baseHp = 50;
-    const dayScaling = 25;
-    const levelScaling = 10; // Reduced from 15 for smoother scaling
-    const enemyHp = baseHp + currentDay * dayScaling + level * levelScaling;
-    setCurrentAnimation('screen-shake');
-    setTimeout(() => setCurrentAnimation(null), 500);
-    const enemyName = makeBossName();
-    setBossName(enemyName);
-    setBossHp(enemyHp);
-    setBossMax(enemyHp);
-    setShowBoss(true);
-    setBattling(true);
-    setBattleMode(true);
-    sfx.playBattleStart('regular');
-    setIsFinalBoss(false);
-    setCanFlee(true); // Allow fleeing from regular and wave enemies
-    setBossDebuffs({
-      poisonTurns: 0,
-      poisonDamage: 0,
-      poisonedVulnerability: 0,
-      marked: false,
-      stunned: false
+    
+    // Loot drop
+    const roll = Math.random();
+    if (roll < GAME_CONSTANTS.LOOT_RATES.HEALTH_POTION) {
+      setHealthPots(h => h + 1);
+      addLog('Found Health Potion!');
+    } else if (roll < GAME_CONSTANTS.LOOT_RATES.STAMINA_POTION) {
+      setStaminaPots(s => s + 1);
+      addLog('Found Stamina Potion!');
+    } else if (roll < GAME_CONSTANTS.LOOT_RATES.WEAPON) {
+      const gain = 1 + Math.floor(currentDay / 2);
+      setWeapon(w => w + gain);
+      addLog(`Weapon upgraded! +${gain}`);
+    } else if (roll < GAME_CONSTANTS.LOOT_RATES.ARMOR) {
+      const gain = 1 + Math.floor(currentDay / 2);
+      setArmor(a => a + gain);
+      addLog(`Armor upgraded! +${gain}`);
+    }
+    
+    // Mark task as done
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: true } : t));
+    
+    // Sync with calendar
+    const today = new Date().toISOString().split('T')[0];
+    setCalendarTasks(prev => {
+      if (prev[today]) {
+        return {
+          ...prev,
+          [today]: prev[today].map(ct => 
+            ct.title === task.title ? { ...ct, done: true } : ct
+          )
+        };
+      }
+      return prev;
     });
-    setVictoryLoot([]); // Clear previous loot
+    
+    // Sync with planner
+    const todayDayName = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+    setWeeklyPlan(prev => ({
+      ...prev,
+      [todayDayName]: prev[todayDayName].map(item =>
+        item.title === task.title ? { ...item, completed: true } : item
+      )
+    }));
+    
+    setStamina(s => Math.min(getMaxStamina(), s + GAME_CONSTANTS.STAMINA_PER_TASK));
+    
+    let completionMsg = `Completed: ${task.title} (+${xpGain} XP`;
+    if (task.priority === 'important') completionMsg += ' • IMPORTANT';
+    if (task.overdue) completionMsg += ' • OVERDUE';
+    completionMsg += `)`;
+    
+    addLog(completionMsg);
 
-    // Set meta dialogue for regular enemies
-    const dialoguePool = isWave ? GAME_CONSTANTS.ENEMY_DIALOGUE.WAVE : GAME_CONSTANTS.ENEMY_DIALOGUE.REGULAR;
-    const randomDialogue = dialoguePool[Math.floor(Math.random() * dialoguePool.length)];
-    setEnemyDialogue(randomDialogue);
+// Always spawn enemy after task completion
+setTimeout(() => {
+  // 20% chance for wave attack
+  const waveRoll = Math.random();
+  if (waveRoll < 0.2) {
+    // Wave attack: 2-4 enemies
+    const numEnemies = Math.floor(Math.random() * 3) + 2; // 2, 3, or 4
+    setWaveCount(numEnemies);
+    addLog(`WAVE INCOMING! ${numEnemies} enemies detected!`);
+    setTimeout(() => spawnRegularEnemy(true, 1, numEnemies), 1000);
+  } else {
+    // Regular single enemy
+    spawnRegularEnemy(false, 0, 1);
+  }
+}, 1000);
+  }
 
-    // Reset taunt state
-    setIsTauntAvailable(false);
-    setHasTriggeredLowHpTaunt(false);
-    setEnragedTurns(0);
-    setPlayerTaunt('');
-    setEnemyTauntResponse('');
-    setShowTauntBoxes(false);
-    setHasFled(false); // Reset fled status
-
-    if (isWave) {
-      setBattleType('wave');
-      setCurrentWaveEnemy(waveIndex);
-      setTotalWaveEnemies(totalWaves);
-      if (waveIndex === 1) {
-        setWaveEssenceTotal(0); // Reset total at start of wave
-      }
-      addLog(`⚠️ WAVE ASSAULT - Enemy ${waveIndex}/${totalWaves}: ${enemyName}`);
-    } else {
-      setBattleType('regular');
-      addLog(`⚔️ ${enemyName} appears!`);
+}, [tasks, currentDay, addLog, consecutiveDays, skipCount, curseLevel, hp, sessionStartTime, taskPauseCount, getMaxHp, getMaxStamina, weapon, armor, overdueTask, calendarTasks, setCalendarTasks]);
+  
+const spawnRegularEnemy = useCallback((isWave = false, waveIndex = 0, totalWaves = 1) => {
+  if (canCustomize) setCanCustomize(false);
+  
+  const baseHp = 50;
+  const dayScaling = 25;
+  const levelScaling = 10; // Reduced from 15 for smoother scaling
+  const enemyHp = baseHp + (currentDay * dayScaling) + (level * levelScaling);
+  
+  setCurrentAnimation('screen-shake');
+  setTimeout(() => setCurrentAnimation(null), 500);
+  
+  const enemyName = makeBossName();
+  setBossName(enemyName);
+  setBossHp(enemyHp);
+  setBossMax(enemyHp);
+  setShowBoss(true);
+  setBattling(true);
+  setBattleMode(true);
+  sfx.playBattleStart('regular');
+  setIsFinalBoss(false);
+  setCanFlee(true); // Allow fleeing from regular and wave enemies
+  setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+  setVictoryLoot([]); // Clear previous loot
+  
+  // Set meta dialogue for regular enemies
+  const dialoguePool = isWave ? GAME_CONSTANTS.ENEMY_DIALOGUE.WAVE : GAME_CONSTANTS.ENEMY_DIALOGUE.REGULAR;
+  const randomDialogue = dialoguePool[Math.floor(Math.random() * dialoguePool.length)];
+  setEnemyDialogue(randomDialogue);
+  
+  // Reset taunt state
+  setIsTauntAvailable(false);
+  setHasTriggeredLowHpTaunt(false);
+  setEnragedTurns(0);
+  setPlayerTaunt('');
+  setEnemyTauntResponse('');
+  setShowTauntBoxes(false);
+  setHasFled(false); // Reset fled status
+  
+  if (isWave) {
+    setBattleType('wave');
+    setCurrentWaveEnemy(waveIndex);
+    setTotalWaveEnemies(totalWaves);
+    if (waveIndex === 1) {
+      setWaveEssenceTotal(0); // Reset total at start of wave
     }
-  }, [currentDay, canCustomize, addLog]);
+     addLog(`WAVE ASSAULT — Enemy ${waveIndex}/${totalWaves}: ${enemyName}`);
+  } else {
+    setBattleType('regular');
+    addLog(`${enemyName} appears!`);
+  }
+}, [currentDay, canCustomize, addLog]);
+
   const spawnRandomMiniBoss = (force = false) => {
     const completedTasks = tasks.filter(t => t.done).length;
     const totalTasks = tasks.length;
+    
     if (!force && totalTasks === 0) return;
     if (force) setStamina(getMaxStamina());
+    
     const bossNumber = miniBossCount + 1;
     const completionRate = totalTasks > 0 ? completedTasks / totalTasks : 0.5;
     const dayScaling = Math.floor(Math.sqrt(currentDay) * 50);
     const levelScaling = level * 25;
     const baseHp = GAME_CONSTANTS.MINI_BOSS_BASE + dayScaling + levelScaling;
-
+    
     // Diminishing returns cap instead of hard cap - grows but decelerates
     const cappedBaseHp = baseHp <= 600 ? baseHp : 600 + Math.floor(Math.sqrt(baseHp - 600) * 20);
+    
     const scaledHp = Math.floor(cappedBaseHp * (1 + bossNumber * 0.2));
     const bossHealth = Math.floor(scaledHp * (2 - completionRate));
+    
     setCurrentAnimation('screen-shake');
     setTimeout(() => setCurrentAnimation(null), 500);
+    
     const bossNameGenerated = makeBossName();
     setBossName(bossNameGenerated);
     setBossHp(bossHealth);
@@ -1565,15 +1438,9 @@ const FantasyStudyQuest = () => {
     setIsFinalBoss(false);
     setCanFlee(true);
     setMiniBossCount(bossNumber);
-    setBossDebuffs({
-      poisonTurns: 0,
-      poisonDamage: 0,
-      poisonedVulnerability: 0,
-      marked: false,
-      stunned: false
-    });
+    setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
     setVictoryLoot([]); // Clear previous loot
-
+    
     // Reset taunt state
     setIsTauntAvailable(false);
     setHasTriggeredLowHpTaunt(false);
@@ -1582,97 +1449,115 @@ const FantasyStudyQuest = () => {
     setEnemyTauntResponse('');
     setShowTauntBoxes(false);
     setHasFled(false); // Reset fled status
-
+    
     // Set cycling boss dialogue (day 1-7 repeating)
-    const bossDialogueKey = `DAY_${(currentDay - 1) % 7 + 1}`;
+    const bossDialogueKey = `DAY_${((currentDay - 1) % 7) + 1}`;
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
     if (bossDialogue) {
       setEnemyDialogue(bossDialogue.START);
     }
-    addLog(`⚔️ AMBUSH! ${bossNameGenerated} appears!`);
+    
+    addLog(`AMBUSH! ${bossNameGenerated} appears!`);
   };
+  
   const useHealth = () => {
-    if (curseLevel === 3) {
-      addLog('☠️ CONDEMNED - Cannot use Health Potions!');
-      return;
-    }
-    if (healthPots > 0 && hp < getMaxHp()) {
-      setHealthPots(h => h - 1);
-      setHp(h => Math.min(getMaxHp(), h + 50));
-      sfx.playPotion();
-      addLog('💊 Used Health Potion! +50 HP');
-    }
-  };
+  if (curseLevel === 3) {
+    addLog('CONDEMNED — Cannot use Health Potions!');
+    return;
+  }
+  if (healthPots > 0 && hp < getMaxHp()) {
+    setHealthPots(h => h - 1);
+    setHp(h => Math.min(getMaxHp(), h + 50));
+    sfx.playPotion();
+    addLog('Used Health Potion! +50 HP');
+  }
+};
   const useStamina = () => {
     const staminaCost = 5;
     const timeBonus = 5 * 60;
+    
     if (stamina >= staminaCost && activeTask) {
       setStamina(s => s - staminaCost);
       setTimer(t => t + timeBonus);
+      
       if (overdueTask === activeTask) {
         setOverdueTask(null);
       }
+      
       if (!running || timer <= 0) {
         setRunning(true);
-        setTimerEndTime(Date.now() + (timer + timeBonus) * 1000);
+        setTimerEndTime(Date.now() + ((timer + timeBonus) * 1000));
       } else {
-        setTimerEndTime(prev => prev ? prev + timeBonus * 1000 : null);
+        setTimerEndTime(prev => prev ? prev + (timeBonus * 1000) : null);
       }
-      addLog(`⚡ Spent ${staminaCost} Stamina! +5 minutes to timer`);
+      
+      addLog(`Spent ${staminaCost} Stamina! +5 minutes to timer`);
     }
   };
-  const useCleanse = () => {
-    if (cleansePots > 0 && curseLevel > 0) {
-      setCleansePots(c => c - 1);
-      const removedLevel = curseLevel;
-      setCurseLevel(0);
-      addLog(`✨ Used Cleanse Potion! ${removedLevel === 3 ? 'CONDEMNATION' : removedLevel === 2 ? 'DEEP CURSE' : 'CURSE'} removed!`);
-    }
-  };
+  
+ const useCleanse = () => {
+  if (cleansePots > 0 && curseLevel > 0) {
+    setCleansePots(c => c - 1);
+    const removedLevel = curseLevel;
+    setCurseLevel(0);
+    addLog(`Used Cleanse Potion! ${removedLevel === 3 ? 'CONDEMNATION' : removedLevel === 2 ? 'DEEP CURSE' : 'CURSE'} removed!`);
+  }
+};
+  
   const craftCleanse = () => {
     if (xp >= GAME_CONSTANTS.CLEANSE_POTION_COST) {
       setXp(x => x - GAME_CONSTANTS.CLEANSE_POTION_COST);
       setCleansePots(c => c + 1);
-      addLog(`🧪 Crafted Cleanse Potion! -${GAME_CONSTANTS.CLEANSE_POTION_COST} XP`);
+      addLog(`Crafted Cleanse Potion! -${GAME_CONSTANTS.CLEANSE_POTION_COST} XP`);
     }
   };
+  
   const miniBoss = () => {
     const eliteXpRequired = 200;
+    
     if (xp < eliteXpRequired) {
-      addLog(`⚠️ Need ${eliteXpRequired} XP to face the darkness! (${xp}/${eliteXpRequired})`);
+      addLog(`Need ${eliteXpRequired} XP to face the darkness! (${xp}/${eliteXpRequired})`);
       return;
     }
+    
     setBattleType('elite');
     spawnRandomMiniBoss();
     setCanFlee(false);
   };
+  
   const finalBoss = () => {
     if (!gauntletUnlocked) {
-      addLog(`⚠️ THE GAUNTLET is locked! Reach ${gauntletMilestone} XP to unlock.`);
+      addLog(`THE GAUNTLET is locked! Reach ${gauntletMilestone} XP to unlock.`);
       return;
     }
+    
     const completedTasks = tasks.filter(t => t.done).length;
     const totalTasks = tasks.length;
+    
     if (totalTasks === 0) {
-      addLog('⚠️ No trials accepted! Create some first.');
+      addLog('No trials accepted! Create some first.');
       return;
     }
+    
     if (completedTasks < totalTasks) {
-      addLog(`⚠️ Must complete ALL trials! (${completedTasks}/${totalTasks} done)`);
+      addLog(`Must complete ALL trials! (${completedTasks}/${totalTasks} done)`);
       return;
     }
+    
     const dayScaling = Math.floor(Math.sqrt(currentDay) * 100);
     const levelScaling = level * 50;
     const baseHp = GAME_CONSTANTS.FINAL_BOSS_BASE + dayScaling + levelScaling;
     const cappedBaseHp = Math.min(baseHp, 2000);
     const completionRate = totalTasks > 0 ? completedTasks / totalTasks : 1.0;
     const totalBossHp = Math.floor(cappedBaseHp * (1.5 - completionRate * 0.5));
-
+    
     // Phase 1 gets 40% of total HP (escalating: 40/60/80)
     const phase1Hp = Math.floor(totalBossHp * 0.40);
     setGauntletBaseHp(totalBossHp);
+    
     setCurrentAnimation('screen-shake');
     setTimeout(() => setCurrentAnimation(null), 500);
+    
     const bossNameGenerated = makeBossName();
     setBossName(bossNameGenerated);
     setBossHp(phase1Hp);
@@ -1685,7 +1570,7 @@ const FantasyStudyQuest = () => {
     setIsFinalBoss(true);
     setCanFlee(false);
     setVictoryLoot([]);
-
+    
     // Reset taunt state
     setIsTauntAvailable(false);
     setHasTriggeredLowHpTaunt(false);
@@ -1694,7 +1579,7 @@ const FantasyStudyQuest = () => {
     setEnemyTauntResponse('');
     setShowTauntBoxes(false);
     setHasFled(false);
-
+    
     // Reset all phase states - start at Phase 1
     setGauntletPhase(1);
     setInPhase1(true);
@@ -1713,86 +1598,76 @@ const FantasyStudyQuest = () => {
     setDodgeReady(false);
     setPhase3TurnCounter(0);
     setLifeDrainCounter(0);
-
+    
     // Reset debuffs for clean phase start
-    setBossDebuffs({
-      poisonTurns: 0,
-      poisonDamage: 0,
-      poisonedVulnerability: 0,
-      marked: false,
-      stunned: false
-    });
-
+    setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+    
     // Set Gauntlet dialogue
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
     setEnemyDialogue(bossDialogue.START);
-    addLog(`👹 ${bossNameGenerated.toUpperCase()} - THE GAUNTLET! (Phase 1 of 3)`);
-    addLog(`💀 Defeat this foe 3 times. Each form grows stronger.`);
+    
+    addLog(`${bossNameGenerated.toUpperCase()} — THE GAUNTLET! (Phase 1 of 3)`);
+    addLog(`Defeat this foe 3 times. Each form grows stronger.`);
   };
-
+  
   // Unified Gauntlet phase transition handler (wave-style)
   // Called from all victory paths (normal attack, poison, special attack)
   const handleGauntletPhaseDefeat = () => {
     const nextPhase = gauntletPhase + 1;
-    const phaseNames = {
-      2: 'THE PRESSURE',
-      3: 'ABYSS AWAKENING'
-    };
-    const phaseHpPercents = {
-      2: 0.60,
-      3: 0.80
-    };
+    const phaseNames = { 2: 'THE PRESSURE', 3: 'ABYSS AWAKENING' };
+    const phaseHpPercents = { 2: 0.60, 3: 0.80 };
     const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
-
+    
     // Per-phase XP reward (smaller than full victory)
     const phaseXp = Math.floor(GAME_CONSTANTS.XP_REWARDS.finalBoss * 0.3);
     const phaseEssence = 30;
     setXp(x => x + phaseXp);
     setEssence(e => e + phaseEssence);
     const bossFirstName = bossName.split(' ')[0];
-    const phaseTitles = {
-      1: bossName,
-      2: `${bossFirstName}, The Accursed`,
-      3: `${bossFirstName}, Devourer of Souls`
-    };
-    addLog(`⚔️ ${phaseTitles[gauntletPhase]} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
-
+    const phaseTitles = { 1: bossName, 2: `${bossFirstName}, The Accursed`, 3: `${bossFirstName}, Devourer of Souls` };
+    addLog(`${phaseTitles[gauntletPhase]} CONQUERED! +${phaseXp} XP, +${phaseEssence} Essence`);
+    
     // Show transition screen — do NOT set bossHp yet (button handler does that)
     setPhaseTransitioning(true);
     setBattling(false);
-
+    
     // Set phase transition dialogue
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
     setEnemyDialogue(nextPhase === 2 ? bossDialogue.PHASE2 : bossDialogue.PHASE3);
-
+    
     // Store transition info for display
-    setVictoryLoot([`💀 PHASE ${nextPhase}: ${phaseNames[nextPhase]}`, `🔮 +${phaseEssence} Essence`, `✨ +${phaseXp} XP`, `❤️ Full HP Restored`, `⚡ Stamina Restored`, `⚠️ Boss HP: ${nextPhaseHp}`]);
+    setVictoryLoot([
+      `PHASE ${nextPhase}: ${phaseNames[nextPhase]}`,
+      `+${phaseEssence} Essence`,
+      `+${phaseXp} XP`,
+      `Full HP Restored`,
+      `Stamina Restored`,
+      `Boss HP: ${nextPhaseHp}`,
+    ]);
+    
     sfx.playPhaseTransition(gauntletPhase + 1);
     setVictoryFlash(true);
     setTimeout(() => setVictoryFlash(false), 400);
   };
-
+  
   // Start a new gauntlet phase cleanly (called by NEXT PHASE button)
   const beginNextGauntletPhase = () => {
     const nextPhase = gauntletPhase + 1;
-    const phaseHpPercents = {
-      2: 0.60,
-      3: 0.80
-    };
+    const phaseHpPercents = { 2: 0.60, 3: 0.80 };
     const nextPhaseHp = Math.floor(gauntletBaseHp * phaseHpPercents[nextPhase]);
-
+    
     // Set phase number
     setGauntletPhase(nextPhase);
-
+    
     // Set boss HP fresh
     setBossHp(nextPhaseHp);
     setBossMax(nextPhaseHp);
-
+    
     // Set phase flags
     setInPhase1(false);
     setInPhase2(nextPhase === 2);
     setInPhase3(nextPhase === 3);
-
+    
     // Reset all phase-specific mechanics
     setPhase1TurnCounter(0);
     setPhase2TurnCounter(0);
@@ -1808,31 +1683,25 @@ const FantasyStudyQuest = () => {
     setDodgeReady(false);
     setEnragedTurns(0);
     setRecklessStacks(0);
-
+    
     // Reset debuffs
-    setBossDebuffs({
-      poisonTurns: 0,
-      poisonDamage: 0,
-      poisonedVulnerability: 0,
-      marked: false,
-      stunned: false
-    });
-
+    setBossDebuffs({ poisonTurns: 0, poisonDamage: 0, poisonedVulnerability: 0, marked: false, stunned: false });
+    
     // Reset taunt state
     setIsTauntAvailable(false);
     setHasTriggeredLowHpTaunt(false);
     setPlayerTaunt('');
     setEnemyTauntResponse('');
     setShowTauntBoxes(false);
-
+    
     // Full heal + stamina reset (potions stay)
     setHp(getMaxHp());
     setStamina(getMaxStamina());
-
+    
     // Resume battle
     setPhaseTransitioning(false);
     setBattling(true);
-
+    
     // Set phase dialogue
     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
     const firstNameOnly = bossName.split(' ')[0];
@@ -1846,114 +1715,123 @@ const FantasyStudyQuest = () => {
       addLog(`🌑 Shadows swarm! Life drain active!`);
     }
     addLog(`❤️ HP restored! ⚡ Stamina restored!`);
+    
     setCurrentAnimation('screen-shake');
     setTimeout(() => setCurrentAnimation(null), 500);
   };
+  
   const taunt = () => {
     if (!battling || !isTauntAvailable) return;
-
+    
     // Get appropriate taunt pool
     let tauntPool;
     if (battleType === 'elite' || battleType === 'final') {
-      const dayKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
+      const dayKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
       tauntPool = GAME_CONSTANTS.BOSS_DIALOGUE[dayKey].TAUNTS;
     } else if (battleType === 'wave') {
       tauntPool = GAME_CONSTANTS.ENEMY_DIALOGUE.TAUNTS.WAVE;
     } else {
       tauntPool = GAME_CONSTANTS.ENEMY_DIALOGUE.TAUNTS.REGULAR;
     }
-
+    
     // Pick random taunt
     const randomTaunt = tauntPool[Math.floor(Math.random() * tauntPool.length)];
-
+    
     // Show both dialogue boxes immediately
     setShowTauntBoxes(true);
     sfx.playTaunt();
-
+    
     // Player text appears immediately
     setPlayerTaunt(randomTaunt.player);
     setEnemyTauntResponse(''); // Clear enemy text initially
     addLog(`💬 YOU: "${randomTaunt.player}"`);
-
+    
     // Delay enemy response (text appears after 1 second)
     setTimeout(() => {
       setEnemyTauntResponse(randomTaunt.enemy);
       addLog(`😡 ${bossName}: "${randomTaunt.enemy}"`);
       setEnemyDialogue(randomTaunt.enemy);
-
+      
       // Apply ENRAGED status
-      setEnragedTurns(3); // Lasts 3 turns
-      sfx.playEnrage();
-      addLog(`🔥 Enemy is ENRAGED! (+20% damage taken, +15% damage dealt, -25% accuracy for 3 turns)`);
+       setEnragedTurns(3); // Lasts 3 turns
+       sfx.playEnrage();
+       addLog(`🔥 Enemy is ENRAGED! (+20% damage taken, +15% damage dealt, -25% accuracy for 3 turns)`);
     }, 1000);
-
+    
     // Consume taunt
     setIsTauntAvailable(false);
   };
+  
   const attack = () => {
     if (!battling || bossHp <= 0) return;
-
+    
     // Target shadow adds if player chose to (no longer forced)
     if ((gauntletPhase === 2 || gauntletPhase === 3) && shadowAdds.length > 0 && targetingAdds) {
       const targetAdd = shadowAdds[0];
       const damage = Math.floor((getBaseAttack() + weapon + (weaponOilActive ? 5 : 0)) * 0.7); // Reduced damage to adds
       const newAddHp = Math.max(0, targetAdd.hp - damage);
+      
       if (newAddHp <= 0) {
         setShadowAdds(prev => prev.slice(1));
         addLog(`⚔️ Shadow Add destroyed! (${damage} damage)`);
       } else {
         setShadowAdds(prev => {
           const updated = [...prev];
-          updated[0] = {
-            ...updated[0],
-            hp: newAddHp
-          };
+          updated[0] = { ...updated[0], hp: newAddHp };
           return updated;
         });
         addLog(`⚔️ Hit Shadow Add for ${damage} damage! (${newAddHp}/${targetAdd.maxHp} HP remaining)`);
       }
-
+      
       // Still trigger boss counter-attack after killing add
       setTimeout(() => {
         if (!battling || hp <= 0) return;
+        
         setCurrentAnimation('battle-shake');
         setTimeout(() => setCurrentAnimation(null), 250);
-
+        
         // Use same boss attack formula as normal counter-attacks
         const dayScaling = Math.floor(Math.sqrt(currentDay) * 5);
         let baseAttack = GAME_CONSTANTS.BOSS_ATTACK_BASE + dayScaling;
         baseAttack = Math.min(baseAttack, 50); // Cap at 50
-
-        const baseDamage = Math.max(1, Math.floor(baseAttack - (getBaseDefense() + armor + (armorPolishActive ? 5 : 0))));
+        
+        const baseDamage = Math.max(1, Math.floor(
+          baseAttack - 
+          (getBaseDefense() + armor + (armorPolishActive ? 5 : 0))
+        ));
+        
         setHp(h => Math.max(0, h - baseDamage));
         addLog(`💥 Boss counter-attacks for ${baseDamage} damage!`);
-        setPlayerFlash(true);
-        sfx.playDamage();
-        setTimeout(() => setPlayerFlash(false), 200);
+         setPlayerFlash(true);
+         sfx.playDamage();
+         setTimeout(() => setPlayerFlash(false), 200);
       }, 1000);
+      
       return;
     }
+    
     if (recklessStacks > 0) setRecklessStacks(0);
+    
     setCurrentAnimation('battle-shake');
     setTimeout(() => setCurrentAnimation(null), 250);
+    
     const damage = getBaseAttack() + weapon + (weaponOilActive ? 5 : 0) + Math.floor(Math.random() * 10) + (level - 1) * 2;
     let finalDamage = damage;
     let bonusMessages = [];
+    
     if (bossDebuffs.marked) {
       const markBonus = Math.floor(damage * 0.35);
       finalDamage = damage + markBonus;
       bonusMessages.push(`🎯 WEAK POINT! +${markBonus} bonus damage (Mark consumed)`);
-      setBossDebuffs(prev => ({
-        ...prev,
-        marked: false
-      }));
+      setBossDebuffs(prev => ({ ...prev, marked: false }));
     }
+    
     if (bossDebuffs.poisonTurns > 0) {
       const poisonBonus = Math.floor(finalDamage * bossDebuffs.poisonedVulnerability);
       finalDamage += poisonBonus;
       bonusMessages.push(`☠️ +${poisonBonus} from poison vulnerability`);
     }
-
+    
     // AOE Warning - Boss vulnerable but will counter-attack
     if (aoeWarning && gauntletPhase === 3) {
       const vulnerableBonus = Math.floor(finalDamage * 0.5);
@@ -1962,48 +1840,47 @@ const FantasyStudyQuest = () => {
       addLog(`🎯 Risky attack! Boss takes extra damage but WILL counter!`);
       setShowDodgeButton(false); // Can't dodge after attacking
     }
-
+    
     // Apply enraged bonus (enemy takes +20% damage when enraged)
     if (enragedTurns > 0) {
       const enragedBonus = Math.floor(finalDamage * 0.2);
       finalDamage += enragedBonus;
       bonusMessages.push(`🔥 +${enragedBonus} from ENRAGED!`);
     }
+    
     const newBossHp = Math.max(0, bossHp - finalDamage);
     setBossHp(newBossHp);
-
+    
     // Update dialogue based on HP phase
     const hpPercent = newBossHp / bossMax;
-
+    
     // Phase 1 - Enrage at 50% HP (Gauntlet only) - uses flag to avoid narrow window
     if (battleType === 'final' && gauntletPhase === 1 && hpPercent <= 0.50 && !hasTriggeredPhase1Enrage && enragedTurns === 0) {
       setHasTriggeredPhase1Enrage(true);
-      setEnragedTurns(2);
-      sfx.playEnrage();
-      addLog(`Boss ENRAGED! (2 turns)`);
+       setEnragedTurns(2);
+       sfx.playEnrage();
+       addLog(`Boss ENRAGED! (2 turns)`);
       addLog(`Enemy deals +15% damage but has 25% miss chance!`);
     }
-
+    
     // Phase 2 - Spawn preview add at 50% HP
     if (battleType === 'final' && gauntletPhase === 2 && !hasSpawnedPreviewAdd && hpPercent <= 0.50) {
       const addId = `preview_add_${Date.now()}`;
       const addHp = 18 + level * 2;
-      setShadowAdds([{
-        id: addId,
-        hp: addHp,
-        maxHp: addHp
-      }]);
+      setShadowAdds([{ id: addId, hp: addHp, maxHp: addHp }]);
       setHasSpawnedPreviewAdd(true);
       addLog(`👤 A Shadow has materialized! (Preview of what's to come in Phase 3...)`);
     }
+    
     if (battleType === 'elite' || battleType === 'final') {
       // Boss dialogue (GAUNTLET for final, cycling for elite)
-      const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
+      const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
       const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
-
+      
       // For Gauntlet, only use HP-based dialogue if not in any active phase (phases have cycling dialogue)
       // For elite bosses, use normal HP-based dialogue
       const isGauntletInActivePhase = battleType === 'final' && gauntletPhase >= 1;
+      
       if (bossDialogue && !isGauntletInActivePhase) {
         if (hpPercent <= 0.25 && hpPercent > 0) {
           setEnemyDialogue(bossDialogue.LOW);
@@ -2019,253 +1896,273 @@ const FantasyStudyQuest = () => {
         setEnemyDialogue(randomQuote);
       }
     }
-
+    
     // Context-based taunt triggers
     if (!isTauntAvailable && newBossHp > 0) {
       // Trigger 1: Enemy drops below 50% HP (one time only)
       if (hpPercent <= 0.5 && !hasTriggeredLowHpTaunt) {
         setIsTauntAvailable(true);
         setHasTriggeredLowHpTaunt(true);
-        addLog(`💬 [TAUNT AVAILABLE]`);
+        addLog(`[TAUNT AVAILABLE]`);
       }
       // Trigger 2: Deal 30+ damage in one hit (15% chance)
       else if (finalDamage >= 30 && Math.random() < 0.15) {
         setIsTauntAvailable(true);
-        addLog(`💬 [TAUNT AVAILABLE]`);
+        addLog(`[TAUNT AVAILABLE]`);
       }
     }
+    
     if (bossDebuffs.marked || bossDebuffs.poisonTurns > 0 || enragedTurns > 0) {
-      addLog(`⚔️ Attack: ${damage} base damage`);
+      addLog(`Attack: ${damage} base damage`);
       bonusMessages.forEach(msg => addLog(msg));
-      addLog(`💥 TOTAL DAMAGE: ${finalDamage}!`);
+      addLog(`TOTAL DAMAGE: ${finalDamage}!`);
     } else {
-      addLog(`⚔️ Dealt ${finalDamage} damage!`);
+      addLog(`Dealt ${finalDamage} damage!`);
     }
+    
     setBossFlash(true);
     sfx.playHit();
     setTimeout(() => setBossFlash(false), 200);
+    
     if (newBossHp <= 0) {
-      setTimeout(() => {
-        setCurrentAnimation('battle-shake');
-        setTimeout(() => setCurrentAnimation(null), 250);
-      }, 100);
-      setRecklessStacks(0);
+  setTimeout(() => {
+    setCurrentAnimation('battle-shake');
+    setTimeout(() => setCurrentAnimation(null), 250);
+  }, 100);
+  
+  setRecklessStacks(0);
+  
+  // GAUNTLET PHASE TRANSITION - wave-style: delegate to unified handler
+  if (isFinalBoss && gauntletPhase < 3) {
+    handleGauntletPhaseDefeat();
+    return;
+  }
+  
+  // Different XP based on battle type
+  let xpGain;
+  let essenceGain;
+  if (isFinalBoss) {
+    xpGain = GAME_CONSTANTS.XP_REWARDS.finalBoss;
+    essenceGain = 100; // Final boss - phase 3 complete
+  } else if (battleType === 'elite') {
+    xpGain = GAME_CONSTANTS.XP_REWARDS.miniBoss;
+    essenceGain = 50; // Elite boss
+  } else if (battleType === 'wave') {
+    xpGain = 25; // Regular enemy XP
+    essenceGain = 8; // Wave enemies drop less
+  } else {
+    xpGain = 25; // Regular enemy XP
+    essenceGain = 10; // Regular enemies
+  }
+  
+  setXp(x => x + xpGain);
+  setEssence(e => e + essenceGain);
+  
+  // Accumulate wave essence for final display
+  if (battleType === 'wave') {
+    setWaveEssenceTotal(t => t + essenceGain);
+  }
+  
+  addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+  
+  // Set victory dialogue
+  if (battleType === 'elite' || battleType === 'final') {
+    const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
+    const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
+    if (bossDialogue) {
+      setEnemyDialogue(bossDialogue.VICTORY_PLAYER);
+    }
+  } else {
+    // Regular enemy victory dialogue
+    const victoryQuotes = GAME_CONSTANTS.ENEMY_DIALOGUE.VICTORY_PLAYER;
+    const randomQuote = victoryQuotes[Math.floor(Math.random() * victoryQuotes.length)];
+    setEnemyDialogue(randomQuote);
+  }
 
-      // GAUNTLET PHASE TRANSITION - wave-style: delegate to unified handler
-      if (isFinalBoss && gauntletPhase < 3) {
-        handleGauntletPhaseDefeat();
-        return;
-      }
-
-      // Different XP based on battle type
-      let xpGain;
-      let essenceGain;
-      if (isFinalBoss) {
-        xpGain = GAME_CONSTANTS.XP_REWARDS.finalBoss;
-        essenceGain = 100; // Final boss - phase 3 complete
-      } else if (battleType === 'elite') {
-        xpGain = GAME_CONSTANTS.XP_REWARDS.miniBoss;
-        essenceGain = 50; // Elite boss
-      } else if (battleType === 'wave') {
-        xpGain = 25; // Regular enemy XP
-        essenceGain = 8; // Wave enemies drop less
-      } else {
-        xpGain = 25; // Regular enemy XP
-        essenceGain = 10; // Regular enemies
-      }
-      setXp(x => x + xpGain);
-      setEssence(e => e + essenceGain);
-
-      // Accumulate wave essence for final display
-      if (battleType === 'wave') {
-        setWaveEssenceTotal(t => t + essenceGain);
-      }
-      addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
-
-      // Set victory dialogue
-      if (battleType === 'elite' || battleType === 'final') {
-        const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
-        const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
-        if (bossDialogue) {
-          setEnemyDialogue(bossDialogue.VICTORY_PLAYER);
-        }
-      } else {
-        // Regular enemy victory dialogue
-        const victoryQuotes = GAME_CONSTANTS.ENEMY_DIALOGUE.VICTORY_PLAYER;
-        const randomQuote = victoryQuotes[Math.floor(Math.random() * victoryQuotes.length)];
-        setEnemyDialogue(randomQuote);
-      }
-
-      // Elite boss defeated - set daily flag (curse cleared at midnight)
-      if (battleType === 'elite') {
-        setEliteBossDefeatedToday(true);
-        addLog('✨ Today\'s elite trial complete. Curse will be cleared at midnight.');
-      }
-
-      // Check if wave continues
-      if (battleType === 'wave' && currentWaveEnemy < totalWaveEnemies) {
-        // More enemies in wave
-        const nextEnemy = currentWaveEnemy + 1;
-        addLog(`⚠️ Next wave enemy incoming...`);
-        setTimeout(() => spawnRegularEnemy(true, nextEnemy, totalWaveEnemies), 1500);
-        setShowBoss(false);
-        setBattling(false);
-        setBattleMode(false);
-        return;
-      }
-
-      // Wave complete bonus
-      if (battleType === 'wave') {
-        setXp(x => x + 25);
-        addLog(`🌊 Wave defeated! +25 bonus XP`);
-      }
-      setBattling(false);
-      setBattleMode(false);
+  // Elite boss defeated - set daily flag (curse cleared at midnight)
+if (battleType === 'elite') {
+  setEliteBossDefeatedToday(true);
+  addLog('Today\'s elite trial complete. Curse will be cleared at midnight.');
+}
+  
+  // Check if wave continues
+  if (battleType === 'wave' && currentWaveEnemy < totalWaveEnemies) {
+    // More enemies in wave
+    const nextEnemy = currentWaveEnemy + 1;
+    addLog(`Next wave enemy incoming...`);
+    setTimeout(() => spawnRegularEnemy(true, nextEnemy, totalWaveEnemies), 1500);
+    setShowBoss(false);
+    setBattling(false);
+    setBattleMode(false);
+    return;
+  }
+  
+  // Wave complete bonus
+  if (battleType === 'wave') {
+    setXp(x => x + 25);
+    addLog(`Wave defeated! +25 bonus XP`);
+  }
+  
+  setBattling(false);
+  setBattleMode(false);
+      
       const lootMessages = [];
+      
       if (!isFinalBoss) {
         // Regular/wave enemies: potions only
         if (battleType === 'regular' || battleType === 'wave') {
           const lootRoll = Math.random();
           if (lootRoll < 0.2) {
             setHealthPots(h => h + 1);
-            lootMessages.push('💊 Health Potion');
-            addLog('💊 Looted: Health Potion!');
+            lootMessages.push('Health Potion');
+            addLog('Looted: Health Potion!');
           } else if (lootRoll < 0.55) {
             setStaminaPots(s => s + 1);
-            lootMessages.push('⚡ Stamina Potion');
-            addLog('⚡ Looted: Stamina Potion!');
+            lootMessages.push('Stamina Potion');
+            addLog('Looted: Stamina Potion!');
           }
         } else {
           // Elite bosses: weapon/armor upgrades
           const lootRoll = Math.random();
           const luckMultiplier = luckyCharmActive ? 2 : 1;
+          
           if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.HEALTH_POTION) {
             setHealthPots(h => h + luckMultiplier);
-            lootMessages.push(`💎 Health Potion${luckyCharmActive ? ' x2' : ''}`);
-            addLog(`💎 Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+            lootMessages.push(`Health Potion${luckyCharmActive ? ' x2' : ''}`);
+            addLog(`Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
           } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.STAMINA_POTION) {
             setStaminaPots(s => s + luckMultiplier);
-            lootMessages.push(`💎 Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
-            addLog(`💎 Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+            lootMessages.push(`Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
+            addLog(`Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
           } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.WEAPON) {
             const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
             setWeapon(w => w + gain);
-            lootMessages.push(`⚔️ Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-            addLog(`💎 Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+            lootMessages.push(`Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+            addLog(`Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
           } else {
             const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
             setArmor(a => a + gain);
-            lootMessages.push(`🛡️ Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-            addLog(`💎 Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+            lootMessages.push(`Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+            addLog(`Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
           }
+          
           if (luckyCharmActive) {
             setLuckyCharmActive(false);
-            addLog('🍀 Lucky Charm consumed!');
+            addLog('Lucky Charm consumed!');
           }
         }
-        lootMessages.push('✨ Fully Healed');
+        
+        lootMessages.push('Fully Healed');
         setHp(getMaxHp());
-        addLog('✨ Fully healed!');
+        addLog('Fully healed!');
       }
-
+      
       // Add essence gain to loot display
       const displayEssence = battleType === 'wave' ? waveEssenceTotal : essenceGain;
-      lootMessages.unshift(`🔮 +${displayEssence} Essence`);
-      setVictoryLoot(lootMessages);
-      sfx.playVictory();
-      setVictoryFlash(true);
-      setTimeout(() => setVictoryFlash(false), 400);
-
+      lootMessages.unshift(`+${displayEssence} Essence`);
+      
+       setVictoryLoot(lootMessages);
+       sfx.playVictory();
+       setVictoryFlash(true);
+       setTimeout(() => setVictoryFlash(false), 400);
+      
       // No auto-close - let player click continue button
-
+      
       return;
     }
+    
     setTimeout(() => {
       if (!battling || hp <= 0) return;
+      
       setCurrentAnimation('battle-shake');
       setTimeout(() => setCurrentAnimation(null), 250);
-
+      
       // Regular enemies hit softer
-      let baseAttack, attackScaling;
-      if (battleType === 'regular' || battleType === 'wave') {
-        baseAttack = 25;
-        attackScaling = 2;
-      } else {
-        // Elite and Final bosses use square root scaling with cap
-        const dayScaling = Math.floor(Math.sqrt(currentDay) * 5);
-        baseAttack = GAME_CONSTANTS.BOSS_ATTACK_BASE + dayScaling;
-        // Cap boss base attack at 50 to prevent one-shotting
-        baseAttack = Math.min(baseAttack, 50);
-        attackScaling = 0; // No linear scaling, already handled above
+let baseAttack, attackScaling;
+if (battleType === 'regular' || battleType === 'wave') {
+  baseAttack = 25;
+  attackScaling = 2;
+} else {
+  // Elite and Final bosses use square root scaling with cap
+  const dayScaling = Math.floor(Math.sqrt(currentDay) * 5);
+  baseAttack = GAME_CONSTANTS.BOSS_ATTACK_BASE + dayScaling;
+  // Cap boss base attack at 50 to prevent one-shotting
+  baseAttack = Math.min(baseAttack, 50);
+  attackScaling = 0; // No linear scaling, already handled above
+}
+
+let bossDamage = Math.max(1, Math.floor(
+  baseAttack - 
+  (getBaseDefense() + armor + (armorPolishActive ? 5 : 0))
+));
+
+// Curse level increases enemy damage
+if (curseLevel === 2) {
+  bossDamage = Math.floor(bossDamage * 1.2); // 20% harder
+} else if (curseLevel === 3) {
+  bossDamage = Math.floor(bossDamage * 1.4); // 40% harder
+}
+
+// Phase 2 ramping damage (Gauntlet only) - capped at 10 stacks
+if (gauntletPhase === 2 && battleType === 'final') {
+  const cappedStacks = Math.min(phase2DamageStacks, 10);
+  const rampBonus = Math.floor(bossDamage * (cappedStacks * 0.05));
+  if (rampBonus > 0) {
+    bossDamage += rampBonus;
+  }
+  setPhase2DamageStacks(prev => Math.min(prev + 1, 10));
+}
+
+// Enraged enemies hit +15% harder
+if (enragedTurns > 0) {
+  const enragedBonus = Math.floor(bossDamage * 0.15);
+  bossDamage += enragedBonus;
+  
+  // 25% miss chance when enraged (wild swings)
+  if (Math.random() < 0.25) {
+    addLog(`Boss's ENRAGED attack missed!`);
+    
+    // Decrement enraged turns even on miss
+    setEnragedTurns(prev => {
+      const newTurns = prev - 1;
+      if (newTurns === 0) {
+        addLog(`Enemy is no longer ENRAGED`);
+        setPlayerTaunt('');
+        setEnemyTauntResponse('');
+        setShowTauntBoxes(false);
       }
-      let bossDamage = Math.max(1, Math.floor(baseAttack - (getBaseDefense() + armor + (armorPolishActive ? 5 : 0))));
-
-      // Curse level increases enemy damage
-      if (curseLevel === 2) {
-        bossDamage = Math.floor(bossDamage * 1.2); // 20% harder
-      } else if (curseLevel === 3) {
-        bossDamage = Math.floor(bossDamage * 1.4); // 40% harder
-      }
-
-      // Phase 2 ramping damage (Gauntlet only) - capped at 10 stacks
-      if (gauntletPhase === 2 && battleType === 'final') {
-        const cappedStacks = Math.min(phase2DamageStacks, 10);
-        const rampBonus = Math.floor(bossDamage * (cappedStacks * 0.05));
-        if (rampBonus > 0) {
-          bossDamage += rampBonus;
-        }
-        setPhase2DamageStacks(prev => Math.min(prev + 1, 10));
-      }
-
-      // Enraged enemies hit +15% harder
-      if (enragedTurns > 0) {
-        const enragedBonus = Math.floor(bossDamage * 0.15);
-        bossDamage += enragedBonus;
-
-        // 25% miss chance when enraged (wild swings)
-        if (Math.random() < 0.25) {
-          addLog(`💨 Boss's ENRAGED attack missed!`);
-
-          // Decrement enraged turns even on miss
-          setEnragedTurns(prev => {
-            const newTurns = prev - 1;
-            if (newTurns === 0) {
-              addLog(`😤 Enemy is no longer ENRAGED`);
-              setPlayerTaunt('');
-              setEnemyTauntResponse('');
-              setShowTauntBoxes(false);
-            }
-            return newTurns;
-          });
-
-          // Taunt becomes available on enemy miss
-          if (!isTauntAvailable) {
-            setIsTauntAvailable(true);
-            addLog(`💬 [TAUNT AVAILABLE] - Enemy missed! Opening spotted!`);
-          }
-          return; // Skip damage entirely
-        }
-      }
-      setPlayerFlash(true);
-      sfx.playDamage();
-      setTimeout(() => setPlayerFlash(false), 200);
-
+      return newTurns;
+    });
+    
+    // Taunt becomes available on enemy miss
+    if (!isTauntAvailable) {
+      setIsTauntAvailable(true);
+      addLog(`[TAUNT AVAILABLE] — Enemy missed! Opening spotted!`);
+    }
+    return; // Skip damage entirely
+  }
+}
+      
+       setPlayerFlash(true);
+       sfx.playDamage();
+       setTimeout(() => setPlayerFlash(false), 200);
+      
       // Check for AOE execution (Phase 3 gauntlet)
       if (aoeWarning && gauntletPhase === 3 && battleType === 'final') {
         if (dodgeReady) {
           // Player dodged successfully
-          addLog(`🌀 You rolled out of the way! AOE DODGED!`);
-          sfx.playDodge();
-          setDodgeReady(false);
+           addLog(`You rolled out of the way! AOE DODGED!`);
+           sfx.playDodge();
+           setDodgeReady(false);
         } else {
           // AOE hits for 35 damage
           const aoeDamage = 35;
-          addLog(`💥 DEVASTATING AOE SLAM! -${aoeDamage} HP`);
+          addLog(`DEVASTATING AOE SLAM! -${aoeDamage} HP`);
           setHp(currentHp => {
             const newHp = Math.max(0, currentHp - aoeDamage);
             if (newHp <= 0) {
               setTimeout(() => {
-                addLog('💀 You have been defeated by the AOE!');
+                addLog('You have been defeated by the AOE!');
                 die();
               }, 500);
             }
@@ -2277,30 +2174,31 @@ const FantasyStudyQuest = () => {
         // Skip normal attack this turn
         return;
       }
+      
       setHp(currentHp => {
         const newHp = Math.max(0, currentHp - bossDamage);
         if (newHp <= 0) {
           setTimeout(() => {
-            addLog('💀 You have been defeated!');
+            addLog('You have been defeated!');
             die();
           }, 500);
         }
         return newHp;
       });
-      addLog(`💥 Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
-
+      addLog(`Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
+      
       // Taunt trigger: 25% chance after taking damage
       if (!isTauntAvailable && bossDamage > 0 && Math.random() < 0.25) {
         setIsTauntAvailable(true);
-        addLog(`💬 [TAUNT AVAILABLE] - Enemy left an opening!`);
+        addLog(`[TAUNT AVAILABLE] — Enemy left an opening!`);
       }
-
+      
       // Decrement enraged turns
       if (enragedTurns > 0) {
         setEnragedTurns(prev => {
           const newTurns = prev - 1;
           if (newTurns === 0) {
-            addLog(`😤 Enemy is no longer ENRAGED`);
+            addLog(`Enemy is no longer ENRAGED`);
             setPlayerTaunt(''); // Clear taunt dialogue when enraged expires
             setEnemyTauntResponse('');
             setShowTauntBoxes(false);
@@ -2308,30 +2206,35 @@ const FantasyStudyQuest = () => {
           return newTurns;
         });
       }
+      
       setTimeout(() => {
         if (!battling) return;
+        
         if (bossDebuffs.poisonTurns > 0) {
           const poisonDmg = bossDebuffs.poisonDamage;
           setBossHp(h => {
             const newHp = Math.max(0, h - poisonDmg);
             if (newHp > 0) {
-              addLog(`☠️ Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
+              addLog(`Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
             } else {
-              addLog(`☠️ Poison deals ${poisonDmg} damage!`);
-              addLog(`💀 Boss succumbed to poison!`);
+              addLog(`Poison deals ${poisonDmg} damage!`);
+              addLog(`Boss succumbed to poison!`);
+              
               setTimeout(() => {
                 // GAUNTLET PHASE TRANSITION - poison kill: delegate to unified handler
                 if (isFinalBoss && gauntletPhase < 3) {
                   handleGauntletPhaseDefeat();
                   return;
                 }
+                
                 const xpGain = isFinalBoss ? GAME_CONSTANTS.XP_REWARDS.finalBoss : GAME_CONSTANTS.XP_REWARDS.miniBoss;
-                const essenceGain = isFinalBoss ? 100 : battleType === 'elite' ? 50 : 10;
+                const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : 10);
                 setXp(x => x + xpGain);
                 setEssence(e => e + essenceGain);
-                addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+                addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+                
                 if (battleType === 'elite' || battleType === 'final') {
-                  const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
+                  const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
                   const bossDialogueData = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
                   if (bossDialogueData) {
                     setEnemyDialogue(bossDialogueData.VICTORY_PLAYER);
@@ -2341,16 +2244,19 @@ const FantasyStudyQuest = () => {
                   const randomQuote = victoryQuotes[Math.floor(Math.random() * victoryQuotes.length)];
                   setEnemyDialogue(randomQuote);
                 }
+                
                 setBattling(false);
                 setBattleMode(false);
                 setRecklessStacks(0);
+                
                 if (!isFinalBoss) {
                   setHp(getMaxHp());
-                  addLog('✨ Fully healed!');
+                  addLog('Fully healed!');
                 }
-                sfx.playVictory();
-                setVictoryFlash(true);
-                setTimeout(() => setVictoryFlash(false), 400);
+                
+                 sfx.playVictory();
+                 setVictoryFlash(true);
+                 setTimeout(() => setVictoryFlash(false), 400);
               }, 500);
             }
             return newHp;
@@ -2362,11 +2268,11 @@ const FantasyStudyQuest = () => {
             poisonedVulnerability: prev.poisonTurns > 1 ? 0.15 : 0
           }));
         }
-
+        
         // Phase 1 mechanics for Gauntlet boss
         if (gauntletPhase === 1 && battleType === 'final' && bossHp > 0) {
           setPhase1TurnCounter(prev => prev + 1);
-
+          
           // Cycle Phase 1 dialogue every 3 turns
           if (phase1TurnCounter > 0 && phase1TurnCounter % 3 === 0) {
             const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
@@ -2375,11 +2281,11 @@ const FantasyStudyQuest = () => {
             setEnemyDialogue(randomLine);
           }
         }
-
+        
         // Phase 2 mechanics for Gauntlet boss
         if (gauntletPhase === 2 && battleType === 'final' && bossHp > 0) {
           setPhase2TurnCounter(prev => prev + 1);
-
+          
           // Cycle Phase 2 dialogue every 3 turns
           if (phase2TurnCounter > 0 && phase2TurnCounter % 3 === 0) {
             const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
@@ -2388,12 +2294,12 @@ const FantasyStudyQuest = () => {
             setEnemyDialogue(randomLine);
           }
         }
-
+        
         // Phase 3 mechanics for Gauntlet boss
         if (gauntletPhase === 3 && battleType === 'final' && bossHp > 0) {
           setPhase3TurnCounter(prev => prev + 1);
           setLifeDrainCounter(prev => prev + 1);
-
+          
           // Cycle Phase 3 dialogue every 3 turns
           if (phase3TurnCounter > 0 && phase3TurnCounter % 3 === 0) {
             const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE.GAUNTLET;
@@ -2401,38 +2307,34 @@ const FantasyStudyQuest = () => {
             const randomLine = cycleDialogue[Math.floor(Math.random() * cycleDialogue.length)];
             setEnemyDialogue(randomLine);
           }
-
+          
           // Spawn shadow add every 4 turns (max 3 active)
           if (phase3TurnCounter > 0 && phase3TurnCounter % 4 === 0 && shadowAdds.length < 3) {
             const addId = `add_${Date.now()}`;
             const addHp = 18 + level * 2; // Scale with player level
-            setShadowAdds(prev => [...prev, {
-              id: addId,
-              hp: addHp,
-              maxHp: addHp
-            }]);
+            setShadowAdds(prev => [...prev, { id: addId, hp: addHp, maxHp: addHp }]);
             addLog(`👤 A Shadow emerges from the abyss! (${addHp} HP)`);
           }
-
+          
           // Life drain every 5 turns
           if (lifeDrainCounter >= 5) {
             const drainAmount = 15;
             setHp(h => Math.max(0, h - drainAmount));
             setBossHp(b => Math.min(bossMax, b + drainAmount));
-            addLog(`🩸 LIFE DRAIN! Boss drains ${drainAmount} HP from you!`);
-            sfx.playLifeDrain();
-            setLifeDrainCounter(0);
+             addLog(`🩸 LIFE DRAIN! Boss drains ${drainAmount} HP from you!`);
+             sfx.playLifeDrain();
+             setLifeDrainCounter(0);
           }
-
+          
           // AOE warning every 5 turns (offset from life drain)
           if (phase3TurnCounter > 0 && phase3TurnCounter % 5 === 2) {
-            setAoeWarning(true);
-            sfx.playAoeWarning();
-            setShowDodgeButton(true);
-            addLog(`⚠️ THE BOSS RAISES ITS WEAPON TO THE SKY!`);
+             setAoeWarning(true);
+             sfx.playAoeWarning();
+             setShowDodgeButton(true);
+             addLog(`⚠️ THE BOSS RAISES ITS WEAPON TO THE SKY!`);
             addLog(`🛡️ [DODGE] button available - or attack for bonus damage!`);
           }
-
+          
           // Shadow adds heal boss if alive
           if (shadowAdds.length > 0) {
             const healPerAdd = 8;
@@ -2444,27 +2346,34 @@ const FantasyStudyQuest = () => {
       }, 200);
     }, GAME_CONSTANTS.BOSS_ATTACK_DELAY);
   };
+  
   const specialAttack = () => {
     if (!battling || bossHp <= 0 || !hero || !hero.class) return;
+    
     const special = GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name];
     if (!special) return;
+    
     if (hero.class.name === 'Ranger' && bossDebuffs.marked) {
       addLog(`⚠️ Target already marked! Use a normal attack to exploit the weak point first.`);
       return;
     }
+    
     if (stamina < special.cost) {
       addLog(`⚠️ Need ${special.cost} stamina! (Have ${stamina})`);
       return;
     }
+    
     let hpCost = special.hpCost || 0;
     if (special.hpCost && hero.class.name === 'Warrior') {
-      hpCost = special.hpCost + recklessStacks * 10;
+      hpCost = special.hpCost + (recklessStacks * 10);
       if (hp <= hpCost) {
         addLog(`⚠️ Reckless Strike requires more than ${hpCost} HP! (Current: ${hp} HP)`);
         return;
       }
     }
+    
     setStamina(s => s - special.cost);
+    
     if (hpCost > 0) {
       setHp(h => Math.max(1, h - hpCost));
       if (recklessStacks === 0) {
@@ -2474,23 +2383,26 @@ const FantasyStudyQuest = () => {
       }
       setRecklessStacks(s => s + 1);
     }
+    
     setCurrentAnimation('battle-shake');
     setTimeout(() => setCurrentAnimation(null), 250);
-
+    
     // Special attacks scale with level: +10% damage per level beyond 1
     const levelScaling = 1 + (level - 1) * 0.1;
     let damage = Math.floor((getBaseAttack() + weapon + Math.floor(Math.random() * 10) + (level - 1) * 2) * special.damageMultiplier * levelScaling);
+    
     const wasMarked = bossDebuffs.marked;
     if (wasMarked && hero.class.name !== 'Ranger') {
       const markBonus = Math.floor(damage * 0.35);
       damage += markBonus;
     }
+    
     const wasPoisoned = bossDebuffs.poisonTurns > 0;
     if (wasPoisoned && bossDebuffs.poisonedVulnerability > 0) {
       const bonusDamage = Math.floor(damage * bossDebuffs.poisonedVulnerability);
       damage += bonusDamage;
     }
-
+    
     // AOE Warning - Boss vulnerable but will counter-attack (special attacks too)
     if (aoeWarning && gauntletPhase === 3) {
       const vulnerableBonus = Math.floor(damage * 0.5);
@@ -2498,22 +2410,17 @@ const FantasyStudyQuest = () => {
       addLog(`⚠️ Boss is VULNERABLE! +${vulnerableBonus} bonus damage!`);
       setShowDodgeButton(false); // Can't dodge after attacking
     }
+    
     let effectMessage = '';
     let skipCounterAttack = false;
+    
     if (hero.class.name === 'Warrior') {
       effectMessage = '⚔️ DEVASTATING BLOW!';
       if (wasMarked) {
-        setBossDebuffs(prev => ({
-          ...prev,
-          marked: false
-        }));
+        setBossDebuffs(prev => ({ ...prev, marked: false }));
       }
     } else if (hero.class.name === 'Mage') {
-      setBossDebuffs(prev => ({
-        ...prev,
-        stunned: true,
-        marked: false
-      }));
+      setBossDebuffs(prev => ({ ...prev, stunned: true, marked: false }));
       // During AOE warning, boss WILL counter-attack even if stunned (too focused on AOE)
       skipCounterAttack = !aoeWarning;
       effectMessage = '✨ Boss stunned!';
@@ -2522,44 +2429,35 @@ const FantasyStudyQuest = () => {
       }
     } else if (hero.class.name === 'Rogue') {
       const poisonDmg = 5 + Math.floor(level * 2); // Scales: 7 at lvl 1, 15 at lvl 5, 25 at lvl 10
-      setBossDebuffs(prev => ({
-        ...prev,
-        poisonTurns: 5,
-        poisonDamage: poisonDmg,
-        poisonedVulnerability: 0.15,
-        marked: false
-      }));
+      setBossDebuffs(prev => ({ ...prev, poisonTurns: 5, poisonDamage: poisonDmg, poisonedVulnerability: 0.15, marked: false }));
       effectMessage = `☠️ Boss poisoned for ${poisonDmg}/turn! Takes +15% damage from all attacks!`;
     } else if (hero.class.name === 'Paladin') {
       const healAmount = 20 + Math.floor(getMaxHp() * 0.1); // 20 base + 10% of max HP
       setHp(h => Math.min(getMaxHp(), h + healAmount));
       effectMessage = `✨ Healed for ${healAmount} HP!`;
       if (wasMarked) {
-        setBossDebuffs(prev => ({
-          ...prev,
-          marked: false
-        }));
+        setBossDebuffs(prev => ({ ...prev, marked: false }));
       }
     } else if (hero.class.name === 'Ranger') {
-      setBossDebuffs(prev => ({
-        ...prev,
-        marked: true
-      }));
+      setBossDebuffs(prev => ({ ...prev, marked: true }));
       effectMessage = '🎯 TARGET MARKED! Your next attack will deal +35% bonus damage!';
     }
+    
     const newBossHp = Math.max(0, bossHp - damage);
     setBossHp(newBossHp);
-
+    
     // Update dialogue based on HP phase
     const hpPercent = newBossHp / bossMax;
+    
     if (battleType === 'elite' || battleType === 'final') {
       // Boss dialogue (GAUNTLET for final, cycling for elite)
-      const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
+      const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
       const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
-
+      
       // For Gauntlet, only use HP-based dialogue if not in any active phase (phases have cycling dialogue)
       // For elite bosses, use normal HP-based dialogue
       const isGauntletInActivePhase = battleType === 'final' && gauntletPhase >= 1;
+      
       if (bossDialogue && !isGauntletInActivePhase) {
         if (hpPercent <= 0.25 && hpPercent > 0) {
           setEnemyDialogue(bossDialogue.LOW);
@@ -2575,7 +2473,7 @@ const FantasyStudyQuest = () => {
         setEnemyDialogue(randomQuote);
       }
     }
-
+    
     // Context-based taunt triggers
     if (!isTauntAvailable && newBossHp > 0) {
       // Trigger 1: Enemy drops below 50% HP (one time only)
@@ -2590,44 +2488,55 @@ const FantasyStudyQuest = () => {
         addLog(`💬 [TAUNT AVAILABLE]`);
       }
     }
+    
     let damageLog = `⚡ ${special.name}! Dealt ${damage} damage!`;
     let bonusMessages = [];
+    
     if (wasMarked && hero.class.name !== 'Ranger') {
-      const markBonus = Math.floor(damage / 1.35 * 0.35);
+      const markBonus = Math.floor((damage / 1.35) * 0.35);
       bonusMessages.push(`🎯 +${markBonus} from weak point!`);
     }
+    
     if (wasPoisoned && bossDebuffs.poisonedVulnerability > 0) {
-      const bonusDmg = Math.floor(damage / (1 + bossDebuffs.poisonedVulnerability) * bossDebuffs.poisonedVulnerability);
-      bonusMessages.push(`☠️ +${bonusDmg} from poison vulnerability`);
+      const bonusDmg = Math.floor((damage / (1 + bossDebuffs.poisonedVulnerability)) * bossDebuffs.poisonedVulnerability);
+      bonusMessages.push(`+${bonusDmg} from poison vulnerability`);
     }
+    
     addLog(damageLog);
     bonusMessages.forEach(msg => addLog(msg));
     if (effectMessage) addLog(effectMessage);
-    setBossFlash(true);
-    sfx.playCritical();
-    setTimeout(() => setBossFlash(false), 200);
+    
+     setBossFlash(true);
+     sfx.playCritical();
+     setTimeout(() => setBossFlash(false), 200);
+    
     if (newBossHp <= 0) {
       setTimeout(() => {
         setCurrentAnimation('battle-shake');
         setTimeout(() => setCurrentAnimation(null), 250);
       }, 100);
+      
       setRecklessStacks(0);
-
+      
       // GAUNTLET PHASE TRANSITION - special attack kill: delegate to unified handler
       if (isFinalBoss && gauntletPhase < 3) {
         handleGauntletPhaseDefeat();
         return;
       }
+      
       const xpGain = isFinalBoss ? GAME_CONSTANTS.XP_REWARDS.finalBoss : GAME_CONSTANTS.XP_REWARDS.miniBoss;
-      const essenceGain = isFinalBoss ? 100 : battleType === 'elite' ? 50 : battleType === 'wave' ? 8 : 10;
+      const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : (battleType === 'wave' ? 8 : 10));
       setXp(x => x + xpGain);
       setEssence(e => e + essenceGain);
+      
       if (battleType === 'wave') {
         setWaveEssenceTotal(t => t + essenceGain);
       }
-      addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+      
+      addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+      
       if (battleType === 'elite' || battleType === 'final') {
-        const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
+        const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
         const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
         if (bossDialogue) {
           setEnemyDialogue(bossDialogue.VICTORY_PLAYER);
@@ -2637,157 +2546,172 @@ const FantasyStudyQuest = () => {
         const randomQuote = victoryQuotes[Math.floor(Math.random() * victoryQuotes.length)];
         setEnemyDialogue(randomQuote);
       }
+      
       setBattling(false);
       setBattleMode(false);
+      
       const lootMessages = [];
+      
       if (!isFinalBoss) {
-        if (battleType === 'regular' || battleType === 'wave') {
-          const lootRoll = Math.random();
-          if (lootRoll < 0.2) {
-            setHealthPots(h => h + 1);
-            lootMessages.push('💊 Health Potion');
-            addLog('💊 Looted: Health Potion!');
-          } else if (lootRoll < 0.55) {
-            setStaminaPots(s => s + 1);
-            lootMessages.push('⚡ Stamina Potion');
-            addLog('⚡ Looted: Stamina Potion!');
-          }
-        } else {
-          const lootRoll = Math.random();
-          const luckMultiplier = luckyCharmActive ? 2 : 1;
-          if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.HEALTH_POTION) {
-            setHealthPots(h => h + luckMultiplier);
-            lootMessages.push(`💎 Health Potion${luckyCharmActive ? ' x2' : ''}`);
-            addLog(`💎 Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
-          } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.STAMINA_POTION) {
-            setStaminaPots(s => s + luckMultiplier);
-            lootMessages.push(`💎 Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
-            addLog(`💎 Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
-          } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.WEAPON) {
-            const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
-            setWeapon(w => w + gain);
-            lootMessages.push(`⚔️ Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-            addLog(`💎 Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
-          } else {
-            const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
-            setArmor(a => a + gain);
-            lootMessages.push(`🛡️ Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
-            addLog(`💎 Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
-          }
-          if (luckyCharmActive) {
-            setLuckyCharmActive(false);
-            addLog('🍀 Lucky Charm consumed!');
+  if (battleType === 'regular' || battleType === 'wave') {
+    const lootRoll = Math.random();
+    if (lootRoll < 0.2) {
+      setHealthPots(h => h + 1);
+      lootMessages.push('Health Potion');
+      addLog('Looted: Health Potion!');
+    } else if (lootRoll < 0.55) {
+      setStaminaPots(s => s + 1);
+      lootMessages.push('Stamina Potion');
+      addLog('Looted: Stamina Potion!');
+    }
+  } else {
+    const lootRoll = Math.random();
+    const luckMultiplier = luckyCharmActive ? 2 : 1;
+    
+    if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.HEALTH_POTION) {
+      setHealthPots(h => h + luckMultiplier);
+      lootMessages.push(`Health Potion${luckyCharmActive ? ' x2' : ''}`);
+      addLog(`Looted: Health Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+    } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.STAMINA_POTION) {
+      setStaminaPots(s => s + luckMultiplier);
+      lootMessages.push(`Stamina Potion${luckyCharmActive ? ' x2' : ''}`);
+      addLog(`Looted: Stamina Potion${luckyCharmActive ? ' x2 (Lucky Charm!)' : '!'}`);
+    } else if (lootRoll < GAME_CONSTANTS.MINI_BOSS_LOOT_RATES.WEAPON) {
+      const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
+      setWeapon(w => w + gain);
+      lootMessages.push(`Weapon +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+      addLog(`Looted: Weapon Upgrade! +${gain} (Total: ${weapon + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+    } else {
+      const gain = (4 + Math.floor(currentDay / 3)) * luckMultiplier;
+      setArmor(a => a + gain);
+      lootMessages.push(`Armor +${gain}${luckyCharmActive ? ' (Lucky!)' : ''}`);
+      addLog(`Looted: Armor Upgrade! +${gain} (Total: ${armor + gain})${luckyCharmActive ? ' (Lucky Charm!)' : ''}`);
+    }
+    
+    if (luckyCharmActive) {
+      setLuckyCharmActive(false);
+            addLog('Lucky Charm consumed!');
           }
         }
-        lootMessages.push('✨ Fully Healed');
+        
+        lootMessages.push('Fully Healed');
         setHp(getMaxHp());
-        addLog('✨ Fully healed!');
+        addLog('Fully healed!');
       }
+      
       const displayEssence = battleType === 'wave' ? waveEssenceTotal : essenceGain;
-      lootMessages.unshift(`🔮 +${displayEssence} Essence`);
+      lootMessages.unshift(`+${displayEssence} Essence`);
+      
       setVictoryLoot(lootMessages);
-      sfx.playVictory();
-      setVictoryFlash(true);
-      setTimeout(() => setVictoryFlash(false), 400);
+       sfx.playVictory();
+       setVictoryFlash(true);
+       setTimeout(() => setVictoryFlash(false), 400);
+      
       return;
     }
+    
     if (!skipCounterAttack) {
       setTimeout(() => {
         if (!battling || hp <= 0) return;
-        setBossDebuffs(prev => ({
-          ...prev,
-          stunned: false
-        }));
+        
+        setBossDebuffs(prev => ({ ...prev, stunned: false }));
+        
         setCurrentAnimation('battle-shake');
         setTimeout(() => setCurrentAnimation(null), 250);
-
+        
         // Regular enemies hit softer
-        let baseAttack, attackScaling;
-        if (battleType === 'regular' || battleType === 'wave') {
-          baseAttack = 25;
-          attackScaling = 2;
-        } else {
-          // Elite and Final bosses use square root scaling with cap
-          const dayScaling = Math.floor(Math.sqrt(currentDay) * 5);
-          baseAttack = GAME_CONSTANTS.BOSS_ATTACK_BASE + dayScaling;
-          // Cap boss base attack at 50 to prevent one-shotting
-          baseAttack = Math.min(baseAttack, 50);
-          attackScaling = 0; // No linear scaling, already handled above
-        }
-        let bossDamage = Math.max(1, Math.floor(baseAttack - (getBaseDefense() + armor + (armorPolishActive ? 5 : 0))));
+let baseAttack, attackScaling;
+if (battleType === 'regular' || battleType === 'wave') {
+  baseAttack = 25;
+  attackScaling = 2;
+} else {
+  // Elite and Final bosses use square root scaling with cap
+  const dayScaling = Math.floor(Math.sqrt(currentDay) * 5);
+  baseAttack = GAME_CONSTANTS.BOSS_ATTACK_BASE + dayScaling;
+  // Cap boss base attack at 50 to prevent one-shotting
+  baseAttack = Math.min(baseAttack, 50);
+  attackScaling = 0; // No linear scaling, already handled above
+}
 
-        // Curse level increases enemy damage
-        if (curseLevel === 2) {
-          bossDamage = Math.floor(bossDamage * 1.2); // 20% harder
-        } else if (curseLevel === 3) {
-          bossDamage = Math.floor(bossDamage * 1.4); // 40% harder
-        }
+let bossDamage = Math.max(1, Math.floor(
+  baseAttack - 
+  (getBaseDefense() + armor + (armorPolishActive ? 5 : 0))
+));
 
-        // Phase 2 ramping damage (Gauntlet only)
-        if (inPhase2 && battleType === 'final' && !inPhase3) {
-          const rampBonus = Math.floor(bossDamage * (phase2DamageStacks * 0.05));
-          if (rampBonus > 0) {
-            bossDamage += rampBonus;
-          }
-          setPhase2DamageStacks(prev => prev + 1);
-        }
+// Curse level increases enemy damage
+if (curseLevel === 2) {
+  bossDamage = Math.floor(bossDamage * 1.2); // 20% harder
+} else if (curseLevel === 3) {
+  bossDamage = Math.floor(bossDamage * 1.4); // 40% harder
+}
 
-        // Enraged enemies hit +15% harder
-        if (enragedTurns > 0) {
-          const enragedBonus = Math.floor(bossDamage * 0.15);
-          bossDamage += enragedBonus;
+// Phase 2 ramping damage (Gauntlet only)
+if (inPhase2 && battleType === 'final' && !inPhase3) {
+  const rampBonus = Math.floor(bossDamage * (phase2DamageStacks * 0.05));
+  if (rampBonus > 0) {
+    bossDamage += rampBonus;
+  }
+  setPhase2DamageStacks(prev => prev + 1);
+}
 
-          // 25% miss chance when enraged (wild swings)
-          if (Math.random() < 0.25) {
-            addLog(`💨 Boss's ENRAGED attack missed!`);
-
-            // Decrement enraged turns even on miss
-            setEnragedTurns(prev => {
-              const newTurns = prev - 1;
-              if (newTurns === 0) {
-                addLog(`😤 Enemy is no longer ENRAGED`);
-                setPlayerTaunt('');
-                setEnemyTauntResponse('');
-                setShowTauntBoxes(false);
-              }
-              return newTurns;
-            });
-
-            // Taunt becomes available on enemy miss
-            if (!isTauntAvailable) {
-              setIsTauntAvailable(true);
-              addLog(`💬 [TAUNT AVAILABLE] - Enemy missed! Opening spotted!`);
-            }
-            return; // Skip damage entirely
-          }
-        }
-        setPlayerFlash(true);
-        sfx.playDamage();
-        setTimeout(() => setPlayerFlash(false), 200);
+// Enraged enemies hit +15% harder
+if (enragedTurns > 0) {
+  const enragedBonus = Math.floor(bossDamage * 0.15);
+  bossDamage += enragedBonus;
+  
+  // 25% miss chance when enraged (wild swings)
+  if (Math.random() < 0.25) {
+    addLog(`Boss's ENRAGED attack missed!`);
+    
+    // Decrement enraged turns even on miss
+    setEnragedTurns(prev => {
+      const newTurns = prev - 1;
+      if (newTurns === 0) {
+        addLog(`Enemy is no longer ENRAGED`);
+        setPlayerTaunt('');
+        setEnemyTauntResponse('');
+        setShowTauntBoxes(false);
+      }
+      return newTurns;
+    });
+    
+    // Taunt becomes available on enemy miss
+    if (!isTauntAvailable) {
+      setIsTauntAvailable(true);
+      addLog(`[TAUNT AVAILABLE] — Enemy missed! Opening spotted!`);
+    }
+    return; // Skip damage entirely
+  }
+}
+        
+         setPlayerFlash(true);
+         sfx.playDamage();
+         setTimeout(() => setPlayerFlash(false), 200);
+        
         setHp(currentHp => {
           const newHp = Math.max(0, currentHp - bossDamage);
           if (newHp <= 0) {
             setTimeout(() => {
-              addLog('💀 You have been defeated!');
+              addLog('You have been defeated!');
               die();
             }, 500);
           }
           return newHp;
         });
-        addLog(`💥 Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
-
+        addLog(`Boss strikes! -${bossDamage} HP${enragedTurns > 0 ? ' (ENRAGED!)' : ''}`);
+        
         // Taunt trigger: 25% chance after taking damage
         if (!isTauntAvailable && bossDamage > 0 && Math.random() < 0.25) {
           setIsTauntAvailable(true);
-          addLog(`💬 [TAUNT AVAILABLE] - Enemy left an opening!`);
+          addLog(`[TAUNT AVAILABLE] — Enemy left an opening!`);
         }
-
+        
         // Decrement enraged turns
         if (enragedTurns > 0) {
           setEnragedTurns(prev => {
             const newTurns = prev - 1;
             if (newTurns === 0) {
-              addLog(`😤 Enemy is no longer ENRAGED`);
+              addLog(`Enemy is no longer ENRAGED`);
               setPlayerTaunt(''); // Clear taunt dialogue when enraged expires
               setEnemyTauntResponse('');
               setShowTauntBoxes(false);
@@ -2795,27 +2719,30 @@ const FantasyStudyQuest = () => {
             return newTurns;
           });
         }
+        
         setTimeout(() => {
           if (!battling) return;
+          
           if (bossDebuffs.poisonTurns > 0) {
             const poisonDmg = bossDebuffs.poisonDamage;
             setBossHp(h => {
               const newHp = Math.max(0, h - poisonDmg);
               if (newHp > 0) {
-                addLog(`☠️ Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
+                addLog(`Poison deals ${poisonDmg} damage! (${bossDebuffs.poisonTurns - 1} turns left)`);
               } else {
-                addLog(`☠️ Poison deals ${poisonDmg} damage!`);
-                addLog(`💀 Boss succumbed to poison!`);
+                addLog(`Poison deals ${poisonDmg} damage!`);
+                addLog(`Boss succumbed to poison!`);
+                
                 setTimeout(() => {
                   const xpGain = isFinalBoss ? GAME_CONSTANTS.XP_REWARDS.finalBoss : GAME_CONSTANTS.XP_REWARDS.miniBoss;
-                  const essenceGain = isFinalBoss ? 100 : battleType === 'elite' ? 50 : 10;
+                  const essenceGain = isFinalBoss ? 100 : (battleType === 'elite' ? 50 : 10);
                   setXp(x => x + xpGain);
                   setEssence(e => e + essenceGain);
-                  addLog(`🎊 VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
-
+                  addLog(`VICTORY! +${xpGain} XP, +${essenceGain} Essence`);
+                  
                   // Set victory dialogue
                   if (battleType === 'elite' || battleType === 'final') {
-                    const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${(currentDay - 1) % 7 + 1}`;
+                    const bossDialogueKey = battleType === 'final' ? 'GAUNTLET' : `DAY_${((currentDay - 1) % 7) + 1}`;
                     const bossDialogue = GAME_CONSTANTS.BOSS_DIALOGUE[bossDialogueKey];
                     if (bossDialogue) {
                       setEnemyDialogue(bossDialogue.VICTORY_PLAYER);
@@ -2825,16 +2752,19 @@ const FantasyStudyQuest = () => {
                     const randomQuote = victoryQuotes[Math.floor(Math.random() * victoryQuotes.length)];
                     setEnemyDialogue(randomQuote);
                   }
+                  
                   setBattling(false);
                   setBattleMode(false);
                   setRecklessStacks(0);
+                  
                   if (!isFinalBoss) {
                     setHp(getMaxHp());
-                    addLog('✨ Fully healed!');
+                    addLog('Fully healed!');
                   }
-                  sfx.playVictory();
-                  setVictoryFlash(true);
-                  setTimeout(() => setVictoryFlash(false), 400);
+                  
+                   sfx.playVictory();
+                   setVictoryFlash(true);
+                   setTimeout(() => setVictoryFlash(false), 400);
                 }, 500);
               }
               return newHp;
@@ -2848,27 +2778,28 @@ const FantasyStudyQuest = () => {
         }, 200);
       }, GAME_CONSTANTS.BOSS_ATTACK_DELAY);
     } else {
-      setBossDebuffs(prev => ({
-        ...prev,
-        stunned: false
-      }));
+      setBossDebuffs(prev => ({ ...prev, stunned: false }));
     }
   };
+  
   const flee = () => {
     if (!canFlee) return;
-
+    
     // Check stamina requirement
     if (stamina < 25) {
-      addLog('⚠️ Not enough stamina to flee! (Need 25 SP)');
+      addLog('Not enough stamina to flee! (Need 25 SP)');
       return;
     }
-
+    
     // Cost 25 stamina to flee
     setStamina(s => Math.max(0, s - 25));
     sfx.playFlee();
-
+    
     // Enemy mocks you for fleeing - show in enemy dialogue box
-    const fleeDialogue = GAME_CONSTANTS.ENEMY_DIALOGUE.FLEE[Math.floor(Math.random() * GAME_CONSTANTS.ENEMY_DIALOGUE.FLEE.length)];
+    const fleeDialogue = GAME_CONSTANTS.ENEMY_DIALOGUE.FLEE[
+      Math.floor(Math.random() * GAME_CONSTANTS.ENEMY_DIALOGUE.FLEE.length)
+    ];
+    
     setEnemyDialogue(fleeDialogue); // Show insult in enemy dialogue box
     setVictoryLoot([]); // No loot when fleeing
     setHasFled(true); // Mark that we fled
@@ -2876,36 +2807,45 @@ const FantasyStudyQuest = () => {
     setBattling(false);
     setBattleMode(false); // Clear battle border
     setRecklessStacks(0);
-    addLog(`🏃 Fled from ${bossName}! Lost 25 Stamina.`);
-    addLog(`💬 ${bossName}: "${fleeDialogue}"`);
+    
+    addLog(`Fled from ${bossName}! Lost 25 Stamina.`);
+    addLog(`${bossName}: "${fleeDialogue}"`);
   };
+  
   const dodge = () => {
     if (!showDodgeButton || !aoeWarning) return;
-    setDodgeReady(true);
-    sfx.playDodge();
-    setShowDodgeButton(false);
-    addLog(`🛡️ You prepare to dodge the incoming AOE!`);
-    addLog(`🌀 Ready to roll...`);
+    
+     setDodgeReady(true);
+     sfx.playDodge();
+     setShowDodgeButton(false);
+    addLog(`You prepare to dodge the incoming AOE!`);
+    addLog(`Ready to roll...`);
   };
+  
   const die = () => {
     if (hp === GAME_CONSTANTS.MAX_HP && currentDay === 1 && level === 1) return;
+    
     const completedTasks = tasks.filter(t => t.done).length;
     const totalTasks = tasks.length;
+    
     setBattling(false);
     setShowBoss(false);
     setBattleMode(false);
     setRecklessStacks(0);
-    setGraveyard(prev => [...prev, {
-      ...hero,
-      day: currentDay,
-      lvl: level,
-      xp: xp,
-      tasks: completedTasks,
-      total: totalTasks,
-      skipCount: skipCount
-    }]);
-    addLog('💀 You have fallen...');
+    
+   setGraveyard(prev => [...prev, { 
+  ...hero, 
+  day: currentDay, 
+  lvl: level,
+  xp: xp,
+  tasks: completedTasks, 
+  total: totalTasks,
+  skipCount: skipCount
+}]);
+    
+    addLog('You have fallen...');
     sfx.playDefeat();
+    
     const newHero = makeName();
     setHero(newHero);
     setCanCustomize(true);
@@ -2919,6 +2859,7 @@ const FantasyStudyQuest = () => {
     setCleansePots(0);
     setWeapon(0);
     setArmor(0);
+    
     setStudyStats(prev => ({
       totalMinutesToday: 0,
       totalMinutesWeek: 0,
@@ -2931,19 +2872,22 @@ const FantasyStudyQuest = () => {
       perfectDays: prev.perfectDays,
       weeklyHistory: []
     }));
-    setTasks([]);
-    setActiveTask(null);
-    setTimer(0);
-    setRunning(false);
-    setHasStarted(false);
-    setSkipCount(0);
-    setConsecutiveDays(0);
-    setLastPlayedDate(null);
-    setMiniBossCount(0);
+    
+   setTasks([]);
+setActiveTask(null);
+setTimer(0);
+setRunning(false);
+setHasStarted(false);
+setSkipCount(0);
+setConsecutiveDays(0);
+setLastPlayedDate(null);
+setMiniBossCount(0);
+    
     setTimeout(() => setActiveTab('grave'), 1000);
   };
 
-  // PART 3 OF 6 - Copy this after part 2
+
+// PART 3 OF 6 - Copy this after part 2
 
   const advance = () => {
     if (isFinalBoss && bossHp <= 0) {
@@ -2951,24 +2895,24 @@ const FantasyStudyQuest = () => {
       setGauntletUnlocked(false);
       const gauntletTier = Math.floor(gauntletMilestone / 1000); // How many times defeated
       setGauntletMilestone(m => m + 1000);
-      addLog(`🏆 THE GAUNTLET CONQUERED! Next trial at ${gauntletMilestone + 1000} XP.`);
-
+      addLog(`THE GAUNTLET CONQUERED! Next trial at ${gauntletMilestone + 1000} XP.`);
+      
       // Unique Gauntlet rewards that scale with tier
       const bonusEssence = 50 + gauntletTier * 25;
       setEssence(e => e + bonusEssence);
-      addLog(`🔮 Gauntlet Bounty: +${bonusEssence} Essence!`);
-
+      addLog(`Gauntlet Bounty: +${bonusEssence} Essence!`);
+      
       // Permanent stat boost per Gauntlet clear
       const statBoost = 1 + Math.floor(gauntletTier / 2);
       setWeapon(w => w + statBoost);
       setArmor(a => a + statBoost);
-      addLog(`⚔️ Gauntlet Forging: +${statBoost} Weapon, +${statBoost} Armor (permanent)`);
-
+      addLog(`Gauntlet Forging: +${statBoost} Weapon, +${statBoost} Armor (permanent)`);
+      
       // Bonus health potions for surviving
       const potBonus = Math.min(1 + gauntletTier, 3);
       setHealthPots(h => h + potBonus);
-      addLog(`💊 Victory Spoils: +${potBonus} Health Potion${potBonus > 1 ? 's' : ''}!`);
-
+      addLog(`Victory Spoils: +${potBonus} Health Potion${potBonus > 1 ? 's' : ''}!`);
+      
       // Close battle but keep all progress
       setShowBoss(false);
       setHasFled(false);
@@ -2976,58 +2920,68 @@ const FantasyStudyQuest = () => {
       setBattleMode(false);
       setIsFinalBoss(false);
       setTargetingAdds(false);
+      
       setTimeout(() => setActiveTab('home'), 1000);
     } else if (!isFinalBoss && bossHp <= 0) {
       // Elite boss defeated - just close screen (day advances at midnight)
       const totalTasks = tasks.length;
       const completedTasks = tasks.filter(t => t.done).length;
       if (totalTasks > 0 && completedTasks === totalTasks) {
-        setStudyStats(prev => ({
-          ...prev,
-          perfectDays: prev.perfectDays + 1
-        }));
+        setStudyStats(prev => ({ ...prev, perfectDays: prev.perfectDays + 1 }));
         setXp(x => x + GAME_CONSTANTS.PERFECT_DAY_BONUS);
-        addLog(`⭐ PERFECT DAY! +${GAME_CONSTANTS.PERFECT_DAY_BONUS} XP`);
+        addLog(`PERFECT DAY! +${GAME_CONSTANTS.PERFECT_DAY_BONUS} XP`);
       }
-
+      
       // Close battle
       setShowBoss(false);
       setHasFled(false);
       setBattling(false);
       setBattleMode(false);
-      addLog(`✨ Elite boss defeated! Day continues until midnight...`);
+      
+      addLog(`Elite boss defeated! Day continues until midnight...`);
     }
   };
-  const fmt = seconds => {
+  
+  const fmt = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-  const getColor = difficulty => {
-    switch (difficulty) {
-      case 'easy':
-        return 'bg-green-900 text-green-400';
-      case 'medium':
-        return 'bg-yellow-900 text-yellow-400';
-      case 'hard':
-        return 'bg-red-900 text-red-400';
-      default:
-        return 'bg-gray-900 text-gray-400';
+  
+  const getColor = (difficulty) => {
+    switch(difficulty) {
+      case 'easy': return 'bg-green-900 text-green-400';
+      case 'medium': return 'bg-yellow-900 text-yellow-400';
+      case 'hard': return 'bg-red-900 text-red-400';
+      default: return 'bg-gray-900 text-gray-400';
     }
   };
-  if (!hero) return <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+
+  if (!hero) return (
+    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
       <div className="text-2xl">Loading your fate...</div>
-    </div>;
-  return <div className={`min-h-screen bg-black text-white relative overflow-hidden ${currentAnimation || ''} ${curseLevel === 3 ? 'border-8 border-red-600 animate-pulse' : ''}`}>
-      {victoryFlash && <div className="fixed inset-0 pointer-events-none z-50 victory-flash"></div>}
+    </div>
+  );
+
+  return (
+  <div className={`min-h-screen bg-black text-white relative overflow-hidden ${currentAnimation || ''} ${
+    curseLevel === 3 ? 'border-8 border-red-600 animate-pulse' : ''
+  }`}>
+      {victoryFlash && (
+        <div className="fixed inset-0 pointer-events-none z-50 victory-flash"></div>
+      )}
       
-      {battleMode && <div className="fixed inset-0 pointer-events-none z-40" style={{
-      border: '10px solid rgba(220, 38, 38, 0.8)',
-      animation: 'battle-pulse 1s ease-in-out infinite',
-      boxShadow: 'inset 0 0 100px rgba(220, 38, 38, 0.3)'
-    }}></div>}
+      {battleMode && (
+        <div className="fixed inset-0 pointer-events-none z-40" style={{
+          border: '10px solid rgba(220, 38, 38, 0.8)',
+          animation: 'battle-pulse 1s ease-in-out infinite',
+          boxShadow: 'inset 0 0 100px rgba(220, 38, 38, 0.3)'
+        }}></div>
+      )}
       
-      {playerFlash && <div className="fixed inset-0 pointer-events-none z-45 damage-flash-player"></div>}
+      {playerFlash && (
+        <div className="fixed inset-0 pointer-events-none z-45 damage-flash-player"></div>
+      )}
       
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&display=swap');
@@ -3120,35 +3074,51 @@ const FantasyStudyQuest = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-red-950 via-black to-purple-950 opacity-60"></div>
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-black to-black opacity-80"></div>
       <div className="absolute inset-0" style={{
-      backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(75, 0, 130, 0.1) 0%, transparent 50%)',
-      animation: 'pulse-glow 8s ease-in-out infinite'
-    }}></div>
+        backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(75, 0, 130, 0.1) 0%, transparent 50%)',
+        animation: 'pulse-glow 8s ease-in-out infinite'
+      }}></div>
       
-      {!hero ? <div className="relative z-10 p-6">
+      {!hero ? (
+        <div className="relative z-10 p-6">
           <div className="max-w-6xl mx-auto text-center">
-            <h1 className="text-6xl font-black text-red-400 mb-4">Loading...</h1>
-            <p className="text-gray-400">Preparing your journey...</p>
+            <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-wider font-fantasy-decorative bg-gradient-to-b from-red-300 via-red-500 to-red-800 bg-clip-text text-transparent" style={{filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6))'}}>Loading...</h1>
+            <p className="text-gray-300 font-fantasy italic">Preparing your journey...</p>
           </div>
-        </div> : <div className="relative z-10 p-6">
+        </div>
+      ) : (
+      
+      <div className="relative z-10 p-6">
         <div className={`max-w-6xl mx-auto rounded-xl transition-all`}>
-          <header className="text-center mb-8">
-            <h1 className="text-6xl font-black text-red-400 mb-2 tracking-wider font-fantasy-decorative title-reveal" style={{
-            textShadow: '0 0 30px rgba(220, 38, 38, 0.8), 0 0 60px rgba(139, 0, 0, 0.5)',
-            letterSpacing: '0.15em'
-          }}>
+           <header className="text-center mb-8">
+            {/* Decorative top flourish */}
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="h-px w-16 bg-gradient-to-r from-transparent to-amber-600/50"></div>
+              <span className="text-amber-500/60 text-xs font-fantasy tracking-[0.3em]">⚜ ━━━ ⚜</span>
+              <div className="h-px w-16 bg-gradient-to-l from-transparent to-amber-600/50"></div>
+            </div>
+            <h1 
+              className="text-5xl md:text-6xl font-black mb-2 tracking-wider font-fantasy-decorative title-reveal bg-gradient-to-b from-red-300 via-red-500 to-red-800 bg-clip-text text-transparent" 
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) drop-shadow(0 0 40px rgba(139, 0, 0, 0.3))',
+                letterSpacing: '0.15em'
+              }}
+            >
               CURSE OF KNOWLEDGE
             </h1>
-            <p className="text-gray-400 text-sm mb-4 italic font-fantasy">"Study or be consumed by the abyss..."</p>
+            {/* Decorative divider */}
+            <div className="flex items-center justify-center gap-3 mt-1 mb-3">
+              <div className="h-px w-20 bg-gradient-to-r from-transparent via-red-700/40 to-transparent"></div>
+              <span className="text-red-600/50 text-[10px]">◆</span>
+              <div className="h-px w-20 bg-gradient-to-r from-transparent via-red-700/40 to-transparent"></div>
+            </div>
+            <p className="text-gray-300 text-sm mb-4 italic font-fantasy tracking-wide">"Study or be consumed by the abyss..."</p>
             
-            <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{
-            border: getCardStyle(hero.class, currentDay).border
-          }}>
+            <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{border: getCardStyle(hero.class, currentDay).border}}>
+              {/* Parchment texture & corner rune ornaments */}
+              <HeroCardDecorations colorClass={hero.class.color} />
               {/* Watermark emblem */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white opacity-10 pointer-events-none" style={{
-              fontSize: '18rem',
-              lineHeight: 1
-            }}>
-                {getCardStyle(hero.class, currentDay).emblem}
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-[0.07] pointer-events-none">
+                <ClassEmblem heroClass={hero.class.name} size={280} />
               </div>
               
               {/* Decorative top edge */}
@@ -3158,13 +3128,13 @@ const FantasyStudyQuest = () => {
                 {/* Hero Identity Section */}
                 <div className="px-6 pt-6 pb-4">
                   <div className="flex items-center justify-between mb-3">
-                    <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{getCardStyle(hero.class, currentDay).emblem}</div>
+                    <div className="drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]"><ClassEmblem heroClass={hero.class.name} size={56} /></div>
                     <div className="text-right">
-                      <p className="text-xs text-white/70 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
-                      <p className="text-sm text-white/85">
+                      <p className="text-xs text-white/90 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
+                      <p className="text-sm text-white/90">
                         {timeUntilMidnight && isDayActive && <span className="text-red-400">({timeUntilMidnight}) </span>}
-                        {!isDayActive && <span className="text-gray-400">💤 </span>}
-                        Day {currentDay} {!isDayActive && <span className="text-gray-400 text-xs">• Dormant</span>}
+                        {!isDayActive && <span className="text-gray-200">💤 </span>}
+                        Day {currentDay} {!isDayActive && <span className="text-gray-200 text-xs">• Dormant</span>}
                       </p>
                       <p className="text-2xl font-bold text-white font-fantasy tracking-wide">Lvl {level}</p>
                     </div>
@@ -3198,19 +3168,17 @@ const FantasyStudyQuest = () => {
                       })()}</span>
                     </div>
                     <div className="bg-black/50 rounded-full h-3 overflow-hidden border border-yellow-900/20">
-                      <div className="bg-gradient-to-r from-yellow-600 to-amber-400 h-3 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]" style={{
-                      width: `${(() => {
+                      <div className="bg-gradient-to-r from-yellow-600 to-amber-400 h-3 rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(234,179,8,0.3)]" style={{width: `${(() => {
                         let xpSpent = 0;
                         for (let i = 1; i < level; i++) {
                           xpSpent += Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, i - 1));
                         }
                         const currentLevelXp = xp - xpSpent;
                         const xpNeeded = Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, level - 1));
-                        return currentLevelXp / xpNeeded * 100;
-                      })()}%`
-                    }}></div>
+                        return (currentLevelXp / xpNeeded) * 100;
+                      })()}%`}}></div>
                     </div>
-                    <p className="text-[10px] text-white/50 mt-1.5 text-right font-fantasy">{(() => {
+                    <p className="text-[10px] text-white/70 mt-1.5 text-right font-fantasy">{(() => {
                       let xpSpent = 0;
                       for (let i = 1; i < level; i++) {
                         xpSpent += Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, i - 1));
@@ -3223,44 +3191,68 @@ const FantasyStudyQuest = () => {
                 </div>
                 
                 {/* Warnings Section (skip count, curse) */}
-                {(skipCount > 0 || curseLevel > 0) && <div className="px-6 pb-2 space-y-3">
-                    {skipCount > 0 && <div className={`rounded-lg p-3 border ${skipCount >= 3 ? 'bg-red-950/60 border-red-500/50 animate-pulse' : skipCount >= 2 ? 'bg-red-950/40 border-red-700/40' : 'bg-red-950/20 border-red-800/30'}`}>
+                {(skipCount > 0 || curseLevel > 0) && (
+                  <div className="px-6 pb-2 space-y-3">
+                    {skipCount > 0 && (
+                      <div className={`rounded-lg p-3 border ${
+                        skipCount >= 3 ? 'bg-red-950/60 border-red-500/50 animate-pulse' : 
+                        skipCount >= 2 ? 'bg-red-950/40 border-red-700/40' : 
+                        'bg-red-950/20 border-red-800/30'
+                      }`}>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <Skull className="text-red-500/80" size={18} />
+                            <Skull className="text-red-500/80" size={18}/>
                             <span className="font-fantasy text-xs tracking-wider text-red-400 uppercase">
-                              {skipCount === 3 ? '☠️ Final Warning' : 'Curse Progress'}
+                              {skipCount === 3 ? 'Final Warning' : 'Curse Progress'}
                             </span>
                           </div>
                           <span className="text-xl font-bold text-red-400/80 font-mono">{skipCount}/4</span>
                         </div>
-                        {skipCount === 3 && <p className="text-xs text-red-300 mt-2 italic font-fantasy">One more skip and you die. No mercy.</p>}
-                        {consecutiveDays > 0 && skipCount > 0 && <p className="text-xs text-green-400 mt-2 font-fantasy">
-                            🙏 Redemption: {consecutiveDays}/{GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days
-                          </p>}
-                      </div>}
+                        {skipCount === 3 && (
+                          <p className="text-xs text-red-300 mt-2 italic font-fantasy">One more skip and you die. No mercy.</p>
+                        )}
+                        {consecutiveDays > 0 && skipCount > 0 && (
+                          <p className="text-xs text-green-400 mt-2 font-fantasy">
+                            Redemption: {consecutiveDays}/{GAME_CONSTANTS.SKIP_REDEMPTION_DAYS} days
+                          </p>
+                        )}
+                      </div>
+                    )}
                     
-                    {curseLevel > 0 && <div className={`rounded-lg p-3 border animate-pulse ${curseLevel === 3 ? 'bg-red-950/60 border-red-500/40' : curseLevel === 2 ? 'bg-purple-950/50 border-purple-500/40' : 'bg-purple-950/30 border-purple-600/30'}`}>
+                    {curseLevel > 0 && (
+                      <div className={`rounded-lg p-3 border animate-pulse ${
+                        curseLevel === 3 ? 'bg-red-950/60 border-red-500/40' :
+                        curseLevel === 2 ? 'bg-purple-950/50 border-purple-500/40' :
+                        'bg-purple-950/30 border-purple-600/30'
+                      }`}>
                         <div className="flex items-center gap-2">
                           <span className="text-xl">
-                            {curseLevel === 3 ? '☠️' : curseLevel === 2 ? '🌑🌑' : '🌑'}
+                            {curseLevel === 3 ? '☠️' : ''}
                           </span>
                           <div>
-                            <p className={`font-fantasy text-xs tracking-wider uppercase ${curseLevel === 3 ? 'text-red-300' : 'text-purple-300'}`}>
+                            <p className={`font-fantasy text-xs tracking-wider uppercase ${
+                              curseLevel === 3 ? 'text-red-300' : 'text-purple-300'
+                            }`}>
                               {curseLevel === 3 ? 'Condemned' : curseLevel === 2 ? 'Deeply Cursed' : 'Cursed'}
                             </p>
-                            <p className={`text-[10px] ${curseLevel === 3 ? 'text-red-400' : 'text-purple-400'}`}>
-                              {curseLevel === 3 ? '90% XP penalty • One failure from death' : curseLevel === 2 ? '75% XP penalty • Enemies hit harder' : '50% XP penalty'}
+                            <p className={`text-[10px] ${
+                              curseLevel === 3 ? 'text-red-400' : 'text-purple-400'
+                            }`}>
+                              {curseLevel === 3 ? '90% XP penalty • One failure from death' :
+                               curseLevel === 2 ? '75% XP penalty • Enemies hit harder' :
+                               '50% XP penalty'}
                             </p>
                           </div>
                         </div>
-                      </div>}
-                  </div>}
+                      </div>
+                    )}
+                  </div>
+                )}
                 
                 {/* Divider */}
                 <div className="flex items-center gap-3 px-6">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                  <span className="text-white/40 text-[10px] font-fantasy tracking-[0.3em] uppercase">Combat Stats</span>
+                  <span className="text-white/60 text-[10px] font-fantasy tracking-[0.3em] uppercase">Combat Stats</span>
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
                 </div>
                 
@@ -3269,49 +3261,54 @@ const FantasyStudyQuest = () => {
                   <div className="grid grid-cols-2 gap-2.5">
                     <div className="bg-black/30 rounded-lg p-3 border border-red-800/20 hover:border-red-700/30 transition-all">
                       <div className="flex items-center justify-center mb-1.5">
-                        <Heart size={18} className="text-red-400/80" />
+                        <Heart size={18} className="text-red-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{hp}/{getMaxHp()}</p>
                       <div className="bg-black/50 rounded-full h-1.5 overflow-hidden mt-1.5 border border-red-900/10">
-                        <div className={`h-1.5 rounded-full transition-all duration-500 ${hp / getMaxHp() > 0.5 ? 'bg-gradient-to-r from-red-600 to-red-400 shadow-[0_0_6px_rgba(220,38,38,0.3)]' : hp / getMaxHp() > 0.25 ? 'bg-gradient-to-r from-yellow-600 to-yellow-400' : 'bg-gradient-to-r from-red-700 to-red-500 animate-pulse'}`} style={{
-                        width: `${hp / getMaxHp() * 100}%`
-                      }}></div>
+                        <div className={`h-1.5 rounded-full transition-all duration-500 ${
+                          (hp / getMaxHp()) > 0.5 ? 'bg-gradient-to-r from-red-600 to-red-400 shadow-[0_0_6px_rgba(220,38,38,0.3)]' :
+                          (hp / getMaxHp()) > 0.25 ? 'bg-gradient-to-r from-yellow-600 to-yellow-400' :
+                          'bg-gradient-to-r from-red-700 to-red-500 animate-pulse'
+                        }`} style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
                       </div>
                     </div>
                     
                     <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/20 hover:border-cyan-700/30 transition-all">
                       <div className="flex items-center justify-center mb-1.5">
-                        <Zap size={18} className="text-cyan-400/80" />
+                        <Zap size={18} className="text-cyan-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{stamina}/{getMaxStamina()}</p>
                       <div className="bg-black/50 rounded-full h-1.5 overflow-hidden mt-1.5 border border-cyan-900/10">
-                        <div className="bg-gradient-to-r from-cyan-600 to-cyan-400 h-1.5 rounded-full transition-all duration-500 shadow-[0_0_6px_rgba(34,211,238,0.2)]" style={{
-                        width: `${stamina / getMaxStamina() * 100}%`
-                      }}></div>
+                        <div className="bg-gradient-to-r from-cyan-600 to-cyan-400 h-1.5 rounded-full transition-all duration-500 shadow-[0_0_6px_rgba(34,211,238,0.2)]" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                       </div>
                     </div>
                     
                     <div className="bg-black/30 rounded-lg p-3 border border-orange-800/20 hover:border-orange-700/30 transition-all">
                       <div className="flex items-center justify-center mb-1.5">
-                        <Sword size={18} className="text-orange-400/80" />
+                        <Sword size={18} className="text-orange-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{getBaseAttack() + weapon + (level - 1) * 2}</p>
-                      <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage per hit</p>
+                      <p className="text-[10px] text-white/70 text-center font-fantasy tracking-wide">damage per hit</p>
                     </div>
                     
-                    <div className="bg-black/30 rounded-lg p-3 border border-blue-800/20 hover:border-blue-700/30 transition-all">
+                    <div className="bg-black/30 rounded-lg p-3 border border-amber-800/20 hover:border-amber-700/30 transition-all">
                       <div className="flex items-center justify-center mb-1.5">
-                        <Shield size={18} className="text-blue-400/80" />
+                        <Shield size={18} className="text-amber-400/80"/>
                       </div>
-                      <p className="text-lg font-bold text-white text-center font-mono">{Math.floor((getBaseDefense() + armor) / (getBaseDefense() + armor + 50) * 100)}%</p>
-                      <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage resist</p>
+                      <p className="text-lg font-bold text-white text-center font-mono">{Math.floor(((getBaseDefense() + armor) / ((getBaseDefense() + armor) + 50)) * 100)}%</p>
+                      <p className="text-[10px] text-white/70 text-center font-fantasy tracking-wide">damage resist</p>
                     </div>
                   </div>
                 </div>
                 
                 {/* Cleanse Potion */}
-                {curseLevel > 0 && <div className="px-6 pb-3">
-                    <button onClick={useCleanse} disabled={cleansePots === 0} className="w-full bg-black/30 rounded-lg p-3 border border-purple-700/30 hover:border-purple-600/40 hover:bg-black/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed animate-pulse">
+                {curseLevel > 0 && (
+                  <div className="px-6 pb-3">
+                    <button 
+                      onClick={useCleanse}
+                      disabled={cleansePots === 0}
+                      className="w-full bg-black/30 rounded-lg p-3 border border-purple-700/30 hover:border-purple-600/40 hover:bg-black/40 transition-all disabled:opacity-30 disabled:cursor-not-allowed animate-pulse"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">✨</span>
@@ -3323,14 +3320,20 @@ const FantasyStudyQuest = () => {
                         <span className="text-lg font-bold text-purple-400 font-mono">{cleansePots}</span>
                       </div>
                     </button>
-                  </div>}
+                  </div>
+                )}
                 
                 {/* Customize Button */}
-                {canCustomize && <div className="px-6 pb-3">
-                    <button onClick={() => setShowCustomizeModal(true)} className="w-full bg-gradient-to-b from-blue-800/40 to-blue-950/40 hover:from-blue-700/50 hover:to-blue-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 border border-blue-700/30 hover:border-blue-600/40 shadow-[0_0_10px_rgba(59,130,246,0.1)]">
-                      ✨ Customize Your Hero
+                {canCustomize && (
+                  <div className="px-6 pb-3">
+                    <button 
+                      onClick={() => setShowCustomizeModal(true)}
+                      className="w-full bg-gradient-to-b from-amber-800/40 to-amber-950/40 hover:from-amber-700/50 hover:to-amber-900/50 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-amber-200 border border-amber-700/30 hover:border-amber-600/40 shadow-[0_0_10px_rgba(180,83,9,0.1)]"
+                    >
+                      ✦ Customize Your Hero
                     </button>
-                  </div>}
+                  </div>
+                )}
                 
                 {/* Bottom divider */}
                 <div className="flex items-center gap-3 px-6">
@@ -3342,11 +3345,17 @@ const FantasyStudyQuest = () => {
                 {/* Action Buttons */}
                 <div className="px-6 py-4">
                   <div className="grid grid-cols-2 gap-2.5">
-                    <button onClick={() => setShowInventoryModal(true)} className="bg-gradient-to-b from-red-800/50 to-red-950/50 hover:from-red-700/60 hover:to-red-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 hover:border-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.08)] flex items-center justify-center gap-2">
-                      🎒 Inventory
+                    <button 
+                      onClick={() => setShowInventoryModal(true)}
+                      className="bg-gradient-to-b from-red-800/50 to-red-950/50 hover:from-red-700/60 hover:to-red-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 hover:border-red-600/30 shadow-[0_0_10px_rgba(220,38,38,0.08)] flex items-center justify-center gap-2"
+                    >
+                      Inventory
                     </button>
-                    <button onClick={() => setShowCraftingModal(true)} className="bg-gradient-to-b from-orange-800/50 to-orange-950/50 hover:from-orange-700/60 hover:to-orange-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-orange-200 border border-orange-700/30 hover:border-orange-600/30 shadow-[0_0_10px_rgba(234,88,12,0.08)] flex items-center justify-center gap-2">
-                      🏪 Merchant
+                    <button 
+                      onClick={() => setShowCraftingModal(true)}
+                      className="bg-gradient-to-b from-orange-800/50 to-orange-950/50 hover:from-orange-700/60 hover:to-orange-900/60 px-4 py-3 rounded-lg transition-all font-fantasy tracking-wide text-orange-200 border border-orange-700/30 hover:border-orange-600/30 shadow-[0_0_10px_rgba(234,88,12,0.08)] flex items-center justify-center gap-2"
+                    >
+                      Merchant
                     </button>
                   </div>
                 </div>
@@ -3366,35 +3375,30 @@ const FantasyStudyQuest = () => {
             </div>
             
             <div className="flex gap-1.5 justify-center flex-wrap px-2">
-              {[{
-              id: 'quest',
-              icon: Sword,
-              label: 'Quests'
-            }, {
-              id: 'planner',
-              icon: Calendar,
-              label: 'Planner'
-            }, {
-              id: 'study',
-              icon: Calendar,
-              label: 'Forge'
-            }, {
-              id: 'legacy',
-              icon: Skull,
-              label: 'Legacy'
-            }, {
-              id: 'progress',
-              icon: Trophy,
-              label: 'Progress'
-            }].map(t => <button key={t.id} onClick={() => {
-              sfx.playClick();
-              setActiveTab(t.id);
-            }} className={`group relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-lg transition-all duration-300 font-fantasy text-sm tracking-wide ${activeTab === t.id ? 'bg-gradient-to-b from-yellow-500/20 to-yellow-700/10 text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.15)] border border-yellow-500/40' : 'bg-black/40 text-yellow-200/70 hover:text-yellow-200 hover:bg-black/60 border border-transparent hover:border-yellow-900/30'}`}>
+              {[
+                {id:'quest', icon:Sword, label:'Quests'},
+                {id:'planner', icon:Calendar, label:'Planner'},
+                {id:'study', icon:Calendar, label:'Forge'},
+                {id:'legacy', icon:Skull, label:'Legacy'},
+                {id:'progress', icon:Trophy, label:'Progress'},
+              ].map(t => (
+                <button 
+                  key={t.id} 
+                  onClick={() => { sfx.playClick(); setActiveTab(t.id); }} 
+                  className={`group relative flex flex-col items-center gap-1 px-5 py-2.5 rounded-lg transition-all duration-300 font-fantasy text-sm tracking-wide ${
+                    activeTab === t.id 
+                      ? 'bg-gradient-to-b from-yellow-500/20 to-yellow-700/10 text-yellow-300 shadow-[0_0_20px_rgba(234,179,8,0.15)] border border-yellow-500/40' 
+                      : 'bg-black/40 text-yellow-200/70 hover:text-yellow-200 hover:bg-black/60 border border-transparent hover:border-yellow-900/30'
+                  }`}
+                >
                   {/* Active glow indicator */}
-                  {activeTab === t.id && <div className="absolute -top-px left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>}
-                  <t.icon size={18} className={`transition-all duration-300 ${activeTab === t.id ? 'drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]' : 'opacity-60 group-hover:opacity-80'}`} />
+                  {activeTab === t.id && (
+                    <div className="absolute -top-px left-1/4 right-1/4 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent"></div>
+                  )}
+                  <t.icon size={18} className={`transition-all duration-300 ${activeTab === t.id ? 'drop-shadow-[0_0_6px_rgba(234,179,8,0.5)]' : 'opacity-60 group-hover:opacity-80'}`}/>
                   <span className={`transition-all duration-300 ${activeTab === t.id ? 'text-yellow-300' : ''}`}>{t.label}</span>
-                </button>)}
+                </button>
+              ))}
             </div>
             
             {/* Decorative bottom border */}
@@ -3405,46 +3409,145 @@ const FantasyStudyQuest = () => {
             </div>
           </nav>
 
-          {showDebug && <DebugPanel hero={hero} currentDay={currentDay} hp={hp} stamina={stamina} xp={xp} essence={essence} level={level} skipCount={skipCount} curseLevel={curseLevel} cleansePots={cleansePots} healthPots={healthPots} staminaPots={staminaPots} weapon={weapon} armor={armor} gauntletUnlocked={gauntletUnlocked} gauntletMilestone={gauntletMilestone} consecutiveDays={consecutiveDays} miniBossCount={miniBossCount} battleType={battleType} classes={classes} setHp={setHp} setStamina={setStamina} setXp={setXp} setEssence={setEssence} setLevel={setLevel} setHealthPots={setHealthPots} setStaminaPots={setStaminaPots} setCleansePots={setCleansePots} setWeapon={setWeapon} setArmor={setArmor} setSkipCount={setSkipCount} setCurseLevel={setCurseLevel} setConsecutiveDays={setConsecutiveDays} setGauntletUnlocked={setGauntletUnlocked} setGauntletMilestone={setGauntletMilestone} setHero={setHero} setLog={setLog} setGraveyard={setGraveyard} setHeroes={setHeroes} setStudyStats={setStudyStats} setCalendarTasks={setCalendarTasks} setWeeklyPlan={setWeeklyPlan} setCurrentDay={setCurrentDay} setHasStarted={setHasStarted} setCanCustomize={setCanCustomize} setTasks={setTasks} setActiveTask={setActiveTask} setTimer={setTimer} setRunning={setRunning} setShowPomodoro={setShowPomodoro} setPomodoroTask={setPomodoroTask} setShowBoss={setShowBoss} setBattling={setBattling} setLastPlayedDate={setLastPlayedDate} setMiniBossCount={setMiniBossCount} setActiveTab={setActiveTab} setWaveCount={setWaveCount} setBattleType={setBattleType} getMaxHp={getMaxHp} getMaxStamina={getMaxStamina} addLog={addLog} spawnRegularEnemy={spawnRegularEnemy} spawnRandomMiniBoss={spawnRandomMiniBoss} makeName={makeName} sfx={sfx} makeBossName={makeBossName} setBossName={setBossName} setBossHp={setBossHp} setBossMax={setBossMax} setGauntletBaseHp={setGauntletBaseHp} setBattleMode={setBattleMode} setIsFinalBoss={setIsFinalBoss} setCanFlee={setCanFlee} setVictoryLoot={setVictoryLoot} setGauntletPhase={setGauntletPhase} setInPhase1={setInPhase1} setInPhase2={setInPhase2} setInPhase3={setInPhase3} setPhaseTransitioning={setPhaseTransitioning} setPhase1TurnCounter={setPhase1TurnCounter} setPhase2TurnCounter={setPhase2TurnCounter} setPhase2DamageStacks={setPhase2DamageStacks} setPhase3TurnCounter={setPhase3TurnCounter} setLifeDrainCounter={setLifeDrainCounter} setHasSpawnedPreviewAdd={setHasSpawnedPreviewAdd} setHasTriggeredPhase1Enrage={setHasTriggeredPhase1Enrage} setTargetingAdds={setTargetingAdds} setShadowAdds={setShadowAdds} setAoeWarning={setAoeWarning} setShowDodgeButton={setShowDodgeButton} setDodgeReady={setDodgeReady} setRecklessStacks={setRecklessStacks} setEnragedTurns={setEnragedTurns} setBossDebuffs={setBossDebuffs} setEnemyDialogue={setEnemyDialogue} setPlayerTaunt={setPlayerTaunt} setEnemyTauntResponse={setEnemyTauntResponse} setShowTauntBoxes={setShowTauntBoxes} setIsTauntAvailable={setIsTauntAvailable} setHasTriggeredLowHpTaunt={setHasTriggeredLowHpTaunt} setHasFled={setHasFled} GAME_CONSTANTS={GAME_CONSTANTS} />}
+          {showDebug && (
+            <DebugPanel
+              hero={hero}
+              currentDay={currentDay}
+              hp={hp}
+              stamina={stamina}
+              xp={xp}
+              essence={essence}
+              level={level}
+              skipCount={skipCount}
+              curseLevel={curseLevel}
+              cleansePots={cleansePots}
+              healthPots={healthPots}
+              staminaPots={staminaPots}
+              weapon={weapon}
+              armor={armor}
+              gauntletUnlocked={gauntletUnlocked}
+              gauntletMilestone={gauntletMilestone}
+              consecutiveDays={consecutiveDays}
+              miniBossCount={miniBossCount}
+              battleType={battleType}
+              classes={classes}
+              setHp={setHp}
+              setStamina={setStamina}
+              setXp={setXp}
+              setEssence={setEssence}
+              setLevel={setLevel}
+              setHealthPots={setHealthPots}
+              setStaminaPots={setStaminaPots}
+              setCleansePots={setCleansePots}
+              setWeapon={setWeapon}
+              setArmor={setArmor}
+              setSkipCount={setSkipCount}
+              setCurseLevel={setCurseLevel}
+              setConsecutiveDays={setConsecutiveDays}
+              setGauntletUnlocked={setGauntletUnlocked}
+              setGauntletMilestone={setGauntletMilestone}
+              setHero={setHero}
+              setLog={setLog}
+              setGraveyard={setGraveyard}
+              setHeroes={setHeroes}
+              setStudyStats={setStudyStats}
+              setCalendarTasks={setCalendarTasks}
+              setWeeklyPlan={setWeeklyPlan}
+              setCurrentDay={setCurrentDay}
+              setHasStarted={setHasStarted}
+              setCanCustomize={setCanCustomize}
+              setTasks={setTasks}
+              setActiveTask={setActiveTask}
+              setTimer={setTimer}
+              setRunning={setRunning}
+              setShowPomodoro={setShowPomodoro}
+              setPomodoroTask={setPomodoroTask}
+              setShowBoss={setShowBoss}
+              setBattling={setBattling}
+              setLastPlayedDate={setLastPlayedDate}
+              setMiniBossCount={setMiniBossCount}
+              setActiveTab={setActiveTab}
+              setWaveCount={setWaveCount}
+              setBattleType={setBattleType}
+              getMaxHp={getMaxHp}
+              getMaxStamina={getMaxStamina}
+              addLog={addLog}
+              spawnRegularEnemy={spawnRegularEnemy}
+              spawnRandomMiniBoss={spawnRandomMiniBoss}
+              makeName={makeName}
+              sfx={sfx}
+              makeBossName={makeBossName}
+              setBossName={setBossName}
+              setBossHp={setBossHp}
+              setBossMax={setBossMax}
+              setGauntletBaseHp={setGauntletBaseHp}
+              setBattleMode={setBattleMode}
+              setIsFinalBoss={setIsFinalBoss}
+              setCanFlee={setCanFlee}
+              setVictoryLoot={setVictoryLoot}
+              setGauntletPhase={setGauntletPhase}
+              setInPhase1={setInPhase1}
+              setInPhase2={setInPhase2}
+              setInPhase3={setInPhase3}
+              setPhaseTransitioning={setPhaseTransitioning}
+              setPhase1TurnCounter={setPhase1TurnCounter}
+              setPhase2TurnCounter={setPhase2TurnCounter}
+              setPhase2DamageStacks={setPhase2DamageStacks}
+              setPhase3TurnCounter={setPhase3TurnCounter}
+              setLifeDrainCounter={setLifeDrainCounter}
+              setHasSpawnedPreviewAdd={setHasSpawnedPreviewAdd}
+              setHasTriggeredPhase1Enrage={setHasTriggeredPhase1Enrage}
+              setTargetingAdds={setTargetingAdds}
+              setShadowAdds={setShadowAdds}
+              setAoeWarning={setAoeWarning}
+              setShowDodgeButton={setShowDodgeButton}
+              setDodgeReady={setDodgeReady}
+              setRecklessStacks={setRecklessStacks}
+              setEnragedTurns={setEnragedTurns}
+              setBossDebuffs={setBossDebuffs}
+              setEnemyDialogue={setEnemyDialogue}
+              setPlayerTaunt={setPlayerTaunt}
+              setEnemyTauntResponse={setEnemyTauntResponse}
+              setShowTauntBoxes={setShowTauntBoxes}
+              setIsTauntAvailable={setIsTauntAvailable}
+              setHasTriggeredLowHpTaunt={setHasTriggeredLowHpTaunt}
+              setHasFled={setHasFled}
+              GAME_CONSTANTS={GAME_CONSTANTS}
+            />
+          )}
 
 
 
-          {activeTab === 'quest' && <div className="space-y-6">
-              {!hasStarted ? <div className="start-day-entrance rounded-xl overflow-hidden border-2 border-red-900/50 pulse-border-gold">
+          {activeTab === 'quest' && (
+            <div className="space-y-6">
+              {!hasStarted ? (
+                <div className="start-day-entrance rounded-xl overflow-hidden border-2 border-red-900/50 pulse-border-gold">
                   {/* Atmospheric background */}
                   <div className="relative bg-gradient-to-b from-gray-950 via-red-950/30 to-gray-950 p-10 md:p-14">
                     <div className="absolute inset-0 opacity-5" style={{
-                backgroundImage: 'radial-gradient(circle at 30% 40%, rgba(220, 38, 38, 0.4) 0%, transparent 60%), radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.3) 0%, transparent 60%)'
-              }} />
+                      backgroundImage: 'radial-gradient(circle at 30% 40%, rgba(220, 38, 38, 0.4) 0%, transparent 60%), radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.3) 0%, transparent 60%)'
+                    }} />
                     
                     <div className="relative z-10 text-center">
                       {/* Class emblem - large, atmospheric */}
-                      <div className="text-8xl md:text-9xl mb-6 opacity-80" style={{
-                  filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.5))'
-                }}>
-                        {hero.class.emblem}
+                      <div className="mb-6 opacity-80 flex justify-center" style={{ filter: 'drop-shadow(0 0 30px rgba(220, 38, 38, 0.5))' }}>
+                        <ClassEmblem heroClass={hero.class.name} size={140} />
                       </div>
                       
                       {/* Hero name */}
                       <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 font-fantasy tracking-wide">
                         {hero.name}
                       </h2>
-                      <p className="text-sm text-gray-400 mb-6 font-fantasy">
+                      <p className="text-sm text-gray-200 mb-6 font-fantasy">
                         {hero.title} {hero.class.name} — Level {level}
                       </p>
                       
                       {/* Date */}
                       <div className="subtitle-fade">
                         <p className="text-xl md:text-2xl font-semibold text-yellow-400/90 mb-1 font-fantasy">
-                          {new Date().toLocaleDateString('en-US', {
-                      weekday: 'long',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+                          {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </p>
-                        <p className="text-sm text-gray-400 mb-2">{new Date().toLocaleDateString('en-US', {
-                      year: 'numeric'
-                    })}</p>
+                        <p className="text-sm text-gray-200 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
                       </div>
                       
                       {/* Divider */}
@@ -3454,26 +3557,28 @@ const FantasyStudyQuest = () => {
                         <div className="h-px w-16 bg-gradient-to-l from-transparent to-red-600/50" />
                       </div>
                       
-                      <p className="text-sm text-gray-400 italic mb-6 subtitle-fade font-fantasy">
+                      <p className="text-sm text-gray-200 italic mb-6 subtitle-fade font-fantasy">
                         "The abyss awaits those who hesitate..."
                       </p>
                       
-                      <p className="mb-6 text-xs text-gray-400">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
+                      <p className="mb-6 text-xs text-gray-200">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
                       
-                      <button onClick={() => {
-                  sfx.playClick();
-                  start();
-                }} className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-black px-10 py-4 rounded-lg font-bold text-xl hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 hover:scale-105 active:scale-95 font-fantasy tracking-wider">
+                      <button 
+                        onClick={() => { sfx.playClick(); start(); }} 
+                        className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-black px-10 py-4 rounded-lg font-bold text-xl hover:from-yellow-500 hover:to-yellow-400 transition-all shadow-lg shadow-yellow-500/30 hover:shadow-yellow-500/50 hover:scale-105 active:scale-95 font-fantasy tracking-wider"
+                      >
                         START DAY
                       </button>
                     </div>
                   </div>
-                </div> : <>
+                </div>
+              ) : (
+                <>
                   <div className="bg-black/50 rounded-xl overflow-hidden border border-red-900/40">
                     {/* Header */}
                     <div className="px-6 pt-6 pb-4 text-center">
                       <h2 className="text-2xl font-fantasy-decorative text-red-400 mb-1 tracking-wider drop-shadow-[0_0_12px_rgba(220,38,38,0.3)]">Trials of the Cursed</h2>
-                      <p className="text-sm text-gray-400 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
+                      <p className="text-sm text-gray-200 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
                     </div>
                     
                     {/* Divider */}
@@ -3485,80 +3590,116 @@ const FantasyStudyQuest = () => {
                     
                     {/* Action buttons */}
                     <div className="flex gap-2 justify-center px-6 py-4">
-                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-blue-800/50 to-blue-950/50 px-4 py-2 rounded-lg hover:from-blue-700/60 hover:to-blue-900/60 transition-all font-fantasy tracking-wide text-blue-200 border border-blue-700/30 text-sm">
-                        <Calendar size={16} />Import from Planner
+                      <button onClick={() => setShowImportModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-amber-800/50 to-amber-950/50 px-4 py-2 rounded-lg hover:from-amber-700/60 hover:to-amber-900/60 transition-all font-fantasy tracking-wide text-amber-200 border border-amber-700/30 text-sm">
+                        <Calendar size={16}/>Import from Planner
                       </button>
                       <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-gradient-to-b from-red-800/50 to-red-950/50 px-4 py-2 rounded-lg hover:from-red-700/60 hover:to-red-900/60 transition-all font-fantasy tracking-wide text-red-200 border border-red-700/30 text-sm">
-                        <Plus size={16} />Accept Trial
+                        <Plus size={16}/>Accept Trial
                       </button>
                     </div>
                     
                     {/* Task list */}
                     <div className="px-6 pb-6">
-                    {tasks.length === 0 ? <div className="text-center py-8">
-                        <p className="text-gray-400 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
-                      </div> : <div className="space-y-2.5">
+                    {tasks.length === 0 ? (
+                      <div className="text-center py-8">
+                        <p className="text-gray-200 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2.5">
                         {[...tasks].sort((a, b) => {
-                    if (a.priority === 'important' && b.priority !== 'important') return -1;
-                    if (a.priority !== 'important' && b.priority === 'important') return 1;
-                    return 0;
-                  }).map(t => <div key={t.id} className={`rounded-lg p-4 border transition-all ${t.done ? 'bg-black/30 border-green-800/20 opacity-50' : t.overdue ? 'bg-red-950/30 border-red-700/40' : t.priority === 'important' ? 'bg-gradient-to-r from-yellow-950/30 to-black/30 border-yellow-700/30 shadow-[0_0_15px_rgba(234,179,8,0.06)]' : 'bg-black/30 border-gray-800/30 hover:border-gray-700/40'}`}>
+  if (a.priority === 'important' && b.priority !== 'important') return -1;
+  if (a.priority !== 'important' && b.priority === 'important') return 1;
+  return 0;
+}).map(t => (
+  <div key={t.id} className={`rounded-lg p-4 border transition-all ${
+    t.done 
+      ? 'bg-black/30 border-green-800/20 opacity-50' 
+      : t.overdue
+        ? 'bg-red-950/30 border-red-700/40'
+      : t.priority === 'important'
+        ? 'bg-gradient-to-r from-yellow-950/30 to-black/30 border-yellow-700/30 shadow-[0_0_15px_rgba(234,179,8,0.06)]'
+        : 'bg-black/30 border-gray-800/30 hover:border-gray-700/40'
+  }`}>
     <div className="flex items-center gap-3">
-      {t.overdue && !t.done && <span className="bg-red-700/60 text-red-200 text-[10px] font-fantasy tracking-wider px-2 py-0.5 rounded uppercase">Overdue</span>}
+      {t.overdue && !t.done && (
+        <span className="bg-red-700/60 text-red-200 text-[10px] font-fantasy tracking-wider px-2 py-0.5 rounded uppercase">Overdue</span>
+      )}
       <div className="flex-1">
-        <p className={`${t.done ? 'line-through text-gray-500' : t.overdue ? 'text-red-300' : 'text-white/95'} font-medium text-base`}>
+        <p className={`${t.done ? 'line-through text-gray-300' : t.overdue ? 'text-red-300' : 'text-white/95'} font-medium text-base`}>
           {t.title}
         </p>
         <p className="text-xs mt-1">
-          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500' : 'text-gray-400'}`}>
-            {t.priority === 'important' ? '⭐ Important • 1.25x XP' : 'Routine • 1.0x XP'}
+          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500' : 'text-gray-200'}`}>
+            {t.priority === 'important' ? '★ Important • 1.25x XP' : 'Routine • 1.0x XP'}
           </span>
           {t.overdue && !t.done && <span className="text-red-400 ml-2">• 50% XP Penalty</span>}
         </p>
       </div>
       
-      {!t.done && <div className="flex gap-2">
-          <button onClick={() => {
-                          setPomodoroTask(t);
-                          setShowPomodoro(true);
-                          setPomodoroTimer(25 * 60);
-                          setPomodorosCompleted(0);
-                          setIsBreak(false);
-                          setPomodoroRunning(true);
-                          addLog(`Starting focus session: ${t.title}`);
-                        }} className="bg-gradient-to-b from-purple-800/60 to-purple-950/60 px-3 py-1.5 rounded-lg hover:from-purple-700/70 hover:to-purple-900/70 transition-all text-purple-200 text-sm font-fantasy tracking-wide border border-purple-700/30">
+      {!t.done && (
+        <div className="flex gap-2">
+          <button 
+            onClick={() => {
+              setPomodoroTask(t);
+              setShowPomodoro(true);
+              setPomodoroTimer(25 * 60);
+              setPomodorosCompleted(0);
+              setIsBreak(false);
+              setPomodoroRunning(true);
+              addLog(`Starting focus session: ${t.title}`);
+            }} 
+            className="bg-gradient-to-b from-purple-800/60 to-purple-950/60 px-3 py-1.5 rounded-lg hover:from-purple-700/70 hover:to-purple-900/70 transition-all text-purple-200 text-sm font-fantasy tracking-wide border border-purple-700/30"
+          >
             Focus
           </button>
-          <button onClick={() => complete(t.id)} className="bg-gradient-to-b from-green-800/60 to-green-950/60 px-4 py-1.5 rounded-lg hover:from-green-700/70 hover:to-green-900/70 transition-all text-green-200 text-sm font-fantasy tracking-wide font-bold border border-green-700/30">
+          <button 
+            onClick={() => complete(t.id)} 
+            className="bg-gradient-to-b from-green-800/60 to-green-950/60 px-4 py-1.5 rounded-lg hover:from-green-700/70 hover:to-green-900/70 transition-all text-green-200 text-sm font-fantasy tracking-wide font-bold border border-green-700/30"
+          >
             Complete
           </button>
-        </div>}
-      {t.done && <span className="text-green-400 font-fantasy text-sm tracking-wide flex items-center gap-1">✓ Done</span>}
+        </div>
+      )}
+      {t.done && (<span className="text-green-400 font-fantasy text-sm tracking-wide flex items-center gap-1">✓ Done</span>)}
     </div>
-  </div>)}   
-                      </div>}
+  </div>
+))}   
+                      </div>
+                    )}
                     </div>
                   </div>
                   
                   {/* Boss challenge buttons */}
                   <div className="grid md:grid-cols-2 gap-3">
-                    <button onClick={() => {
-                sfx.playClick();
-                miniBoss();
-              }} disabled={!isDayActive || eliteBossDefeatedToday || xp < 200} className="bg-gradient-to-b from-red-900/70 to-red-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-red-200 hover:from-red-800/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.1)] border border-red-700/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20">
-  ⚔️ Face the Darkness
-  {!isDayActive ? <div className="text-xs font-normal mt-1 text-gray-400">Day dormant — add tasks to begin</div> : eliteBossDefeatedToday ? <div className="text-xs font-normal mt-1 text-green-400">✓ Today's trial complete</div> : <div className={`text-xs font-normal mt-1 ${xp >= 200 ? 'text-green-400' : 'text-yellow-400'}`}>
+                    <button 
+  onClick={() => { sfx.playClick(); miniBoss(); }} 
+  disabled={!isDayActive || eliteBossDefeatedToday || xp < 200} 
+  className="bg-gradient-to-b from-red-900/70 to-red-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-red-200 hover:from-red-800/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.1)] border border-red-700/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20"
+>
+  Face the Darkness
+  {!isDayActive ? (
+    <div className="text-xs font-normal mt-1 text-gray-400">Day dormant — add tasks to begin</div>
+  ) : eliteBossDefeatedToday ? (
+    <div className="text-xs font-normal mt-1 text-green-400">✓ Today's trial complete</div>
+  ) : (
+    <div className={`text-xs font-normal mt-1 ${xp >= 200 ? 'text-green-400' : 'text-yellow-400'}`}>
       {xp >= 200 ? `Ready • 200 XP` : `${200 - xp} XP needed`}
-      {timeUntilMidnight && !eliteBossDefeatedToday && xp >= 200 && <span className="text-red-400 ml-2">• ⏰ {timeUntilMidnight}</span>}
-    </div>}
-              </button>
-                    <button onClick={() => {
-                sfx.playClick();
-                finalBoss();
-              }} disabled={!gauntletUnlocked || tasks.length === 0 || tasks.filter(t => t.done).length < tasks.length} className="bg-gradient-to-b from-purple-900/70 to-purple-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-purple-200 hover:from-purple-800/80 hover:to-purple-900/80 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)] border border-red-600/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20">
-  💀 The Gauntlet
-  {!gauntletUnlocked && <div className="text-xs font-normal mt-1 text-gray-400">{gauntletMilestone - xp} XP needed</div>}
-              </button>
+      {timeUntilMidnight && !eliteBossDefeatedToday && xp >= 200 && (
+        <span className="text-red-400 ml-2">• {timeUntilMidnight}</span>
+      )}
+    </div>
+  )}
+</button>
+                    <button 
+  onClick={() => { sfx.playClick(); finalBoss(); }} 
+  disabled={!gauntletUnlocked || tasks.length === 0 || tasks.filter(t => t.done).length < tasks.length} 
+  className="bg-gradient-to-b from-purple-900/70 to-purple-950/70 px-6 py-4 rounded-xl font-fantasy text-lg tracking-wide text-purple-200 hover:from-purple-800/80 hover:to-purple-900/80 transition-all shadow-[0_0_20px_rgba(168,85,247,0.1)] border border-red-600/30 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:shadow-none disabled:border-gray-600/20"
+>
+  The Gauntlet
+  {!gauntletUnlocked && (
+    <div className="text-xs font-normal mt-1 text-gray-200">{gauntletMilestone - xp} XP needed</div>
+  )}
+</button>
                   </div>
                   
                   {/* Chronicle of Events */}
@@ -3569,154 +3710,175 @@ const FantasyStudyQuest = () => {
                         <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Chronicle of Events</h3>
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
                       </div>
-                      {log.length === 0 ? <p className="text-sm text-gray-500 italic font-fantasy">The journey begins...</p> : <div className="space-y-1">{log.map((l, i) => <p key={i} className="text-sm text-gray-300/80">{l}</p>)}</div>}
+                      {log.length === 0 ? (<p className="text-sm text-gray-300 italic font-fantasy">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-100/90">{l}</p>))}</div>)}
                     </div>
                   </div>
-                </>}
-            </div>}
+                </>
+              )}
+            </div>
+          )}
 
-           {activeTab === 'planner' && <div className="bg-black/50 rounded-xl overflow-hidden border border-blue-900/40">
+           {activeTab === 'planner' && (
+            <div className="bg-black/50 rounded-xl overflow-hidden border border-amber-900/40">
               {/* Header */}
               <div className="px-6 pt-6 pb-4 text-center">
-                <h2 className="text-2xl font-fantasy-decorative text-blue-400 tracking-wider drop-shadow-[0_0_12px_rgba(59,130,246,0.3)]">Battle Planner</h2>
-                <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
+                <h2 className="text-2xl font-fantasy-decorative text-amber-300 tracking-wider drop-shadow-[0_0_12px_rgba(245,158,11,0.3)]">Battle Planner</h2>
+                <p className="text-gray-300 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
               </div>
               
               {/* Divider */}
               <div className="flex items-center gap-3 px-6">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/25 to-transparent"></div>
-                <div className="w-1.5 h-1.5 rotate-45 bg-blue-600/30"></div>
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-600/25 to-transparent"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/25 to-transparent"></div>
+                <div className="w-1.5 h-1.5 rotate-45 bg-amber-600/30"></div>
+                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/25 to-transparent"></div>
               </div>
               
               {/* Sub-toggle: Weekly / Calendar */}
               <div className="flex justify-center px-6 py-4">
-                <div className="inline-flex bg-black/40 rounded-lg border border-blue-900/30 p-1 gap-1">
-                  <button onClick={() => setPlannerView('weekly')} className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${plannerView === 'weekly' ? 'bg-blue-800/30 text-blue-300 border border-blue-500/30 shadow-[0_0_10px_rgba(59,130,246,0.1)]' : 'text-gray-400 hover:text-gray-300'}`}>
+                <div className="inline-flex bg-black/40 rounded-lg border border-amber-900/30 p-1 gap-1">
+                  <button 
+                    onClick={() => setPlannerView('weekly')}
+                    className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
+                      plannerView === 'weekly' 
+                        ? 'bg-amber-800/30 text-amber-300 border border-amber-500/30 shadow-[0_0_10px_rgba(245,158,11,0.1)]' 
+                        : 'text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
                     Weekly Plan
                   </button>
-                  <button onClick={() => setPlannerView('calendar')} className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${plannerView === 'calendar' ? 'bg-green-800/30 text-green-300 border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' : 'text-gray-400 hover:text-gray-300'}`}>
+                  <button 
+                    onClick={() => setPlannerView('calendar')}
+                    className={`px-4 py-1.5 rounded-md text-sm font-fantasy tracking-wide transition-all ${
+                      plannerView === 'calendar' 
+                        ? 'bg-emerald-800/30 text-emerald-300 border border-emerald-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]' 
+                        : 'text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
                     Calendar
                   </button>
                 </div>
               </div>
 
               <div className="px-6 pb-6">
-              {plannerView === 'weekly' && <div className="grid gap-3">
-                {Object.keys(weeklyPlan).map(day => <div key={day} className="bg-gray-800/40 rounded-lg p-4 border border-gray-600/25 hover:border-blue-800/30 transition-all">
+              {plannerView === 'weekly' && (
+              <div className="grid gap-3">
+                {Object.keys(weeklyPlan).map(day => (
+                  <div key={day} className="bg-gray-800/40 rounded-lg p-4 border border-gray-600/25 hover:border-blue-800/30 transition-all">
                     <div className="flex justify-between items-center mb-3">
                       <div>
-                        <h3 className="text-lg font-fantasy tracking-wide text-blue-300">{day}</h3>
+                        <h3 className="text-lg font-fantasy tracking-wide text-amber-300">{day}</h3>
                         <p className="text-xs">
   {(() => {
-                        const today = new Date();
-                        const todayDayName = today.toLocaleDateString('en-US', {
-                          weekday: 'long'
-                        });
-                        if (day === todayDayName) {
-                          return <span className="text-yellow-400/80 font-fantasy text-[10px] tracking-wider uppercase">Today</span>;
-                        } else {
-                          return <span className="text-gray-400 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })}</span>;
-                        }
-                      })()}
-                    </p>
+    const today = new Date();
+    const todayDayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+    if (day === todayDayName) {
+      return <span className="text-yellow-400/80 font-fantasy text-[10px] tracking-wider uppercase">Today</span>;
+    } else {
+      return <span className="text-gray-200 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
+    }
+  })()}
+</p>
                       </div>
-                      <button onClick={() => {
-                    setSelectedDay(day);
-                    setShowPlanModal(true);
-                  }} className="bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-blue-200 border border-blue-700/30">
-                        <Plus size={14} /> Add Task
+                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-gradient-to-b from-amber-800/50 to-amber-950/50 hover:from-amber-700/60 hover:to-amber-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-amber-200 border border-amber-700/30">
+                        <Plus size={14}/> Add Task
                       </button>
                     </div>
                     
-                    {weeklyPlan[day].length === 0 ? <p className="text-gray-500 text-sm italic font-fantasy">No tasks planned</p> : <div className="space-y-1.5">
+                    {weeklyPlan[day].length === 0 ? (
+                      <p className="text-gray-300 text-sm italic font-fantasy">No tasks planned</p>
+                    ) : (
+                      <div className="space-y-1.5">
                       {[...weeklyPlan[day]].sort((a, b) => {
-                    if (a.priority === 'important' && b.priority !== 'important') return -1;
-                    if (a.priority !== 'important' && b.priority === 'important') return 1;
-                    return 0;
-                  }).map(item => {
-                    const idx = weeklyPlan[day].indexOf(item);
-                    return <div key={idx} className={`rounded-lg p-3 flex justify-between items-start transition-all ${item.completed ? 'bg-black/20 opacity-50' : item.priority === 'important' ? 'bg-gradient-to-r from-yellow-950/30 to-black/20 border border-yellow-700/25' : 'bg-black/20 border border-transparent hover:border-gray-800/30'}`}>
+  if (a.priority === 'important' && b.priority !== 'important') return -1;
+  if (a.priority !== 'important' && b.priority === 'important') return 1;
+  return 0;
+}).map((item) => {
+  const idx = weeklyPlan[day].indexOf(item);
+  return (
+    <div 
+      key={idx} 
+      className={`rounded-lg p-3 flex justify-between items-start transition-all ${
+        item.completed 
+          ? 'bg-black/20 opacity-50' 
+          : item.priority === 'important'
+            ? 'bg-gradient-to-r from-yellow-950/30 to-black/20 border border-yellow-700/25'
+            : 'bg-black/20 border border-transparent hover:border-gray-800/30'
+      }`}
+    >
       <div className="flex-1 flex items-start gap-2">
-        {item.priority === 'important' && !item.completed && <span className="text-base">⭐</span>}
+        {item.priority === 'important' && !item.completed && (
+          <span className="text-base">★</span>
+        )}
         <div>
-          <p className={`font-medium text-sm ${item.completed ? 'line-through text-gray-600' : 'text-white/80'}`}>
+          <p className={`font-medium text-sm ${item.completed ? 'line-through text-gray-400' : 'text-white/90'}`}>
             {item.completed && '✓ '}{item.title}
           </p>
-          {item.priority === 'important' && <p className="text-[10px] text-yellow-500/50 mt-0.5 font-fantasy tracking-wide">Important • 1.25x XP</p>}
+          {item.priority === 'important' && (
+            <p className="text-[10px] text-yellow-500/50 mt-0.5 font-fantasy tracking-wide">Important • 1.25x XP</p>
+          )}
         </div>
       </div>
       <div className="flex gap-2 ml-2">
-        <button onClick={() => {
-                          if (window.confirm(`Delete "${item.title}" from weekly plan? This will also remove it from all future calendar dates.`)) {
-                            setWeeklyPlan(prev => ({
-                              ...prev,
-                              [day]: prev[day].filter((_, i) => i !== idx)
-                            }));
-                            setCalendarTasks(prev => {
-                              const updated = {
-                                ...prev
-                              };
-                              const today = new Date();
-                              today.setHours(0, 0, 0, 0);
-                              Object.keys(updated).forEach(dateKey => {
-                                const [year, month, dayNum] = dateKey.split('-').map(Number);
-                                const date = new Date(year, month - 1, dayNum);
-                                const dateDayName = date.toLocaleDateString('en-US', {
-                                  weekday: 'long'
-                                });
-                                if (dateDayName === day && date >= today) {
-                                  updated[dateKey] = updated[dateKey].filter(t => !(t.title === item.title && t.fromPlanner === true));
-                                  if (updated[dateKey].length === 0) {
-                                    delete updated[dateKey];
-                                  }
-                                }
-                              });
-                              return updated;
-                            });
-                            addLog(`🗑️ Deleted "${item.title}" from ${day} plan and future calendar dates`);
-                          }
-                        }} className="text-red-500/50 hover:text-red-400/70 transition-all">
-          <X size={14} />
+        <button 
+          onClick={() => {
+            if (window.confirm(`Delete "${item.title}" from weekly plan? This will also remove it from all future calendar dates.`)) {
+              setWeeklyPlan(prev => ({
+                ...prev,
+                [day]: prev[day].filter((_, i) => i !== idx)
+              }));
+              
+              setCalendarTasks(prev => {
+                const updated = { ...prev };
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                Object.keys(updated).forEach(dateKey => {
+                  const [year, month, dayNum] = dateKey.split('-').map(Number);
+                  const date = new Date(year, month - 1, dayNum);
+                  const dateDayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+                  
+                  if (dateDayName === day && date >= today) {
+                    updated[dateKey] = updated[dateKey].filter(t => 
+                      !(t.title === item.title && t.fromPlanner === true)
+                    );
+                    if (updated[dateKey].length === 0) {
+                      delete updated[dateKey];
+                    }
+                  }
+                });
+                return updated;
+              });
+              
+              addLog(`Deleted "${item.title}" from ${day} plan and future calendar dates`);
+            }
+          }}
+          className="text-red-500/50 hover:text-red-400/70 transition-all"
+        >
+          <X size={14}/>
         </button>
       </div>
-    </div>;
-                  })}
+    </div>
+  );
+})}
     
-                      </div>}
-                  </div>)}
-              </div>}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+              )}
 
-              {plannerView === 'calendar' && <>
+              {plannerView === 'calendar' && (
+              <>
               <div className="flex justify-between items-center mb-5">
-                <button onClick={() => {
-                  if (currentMonth === 0) {
-                    setCurrentMonth(11);
-                    setCurrentYear(currentYear - 1);
-                  } else {
-                    setCurrentMonth(currentMonth - 1);
-                  }
-                }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-200 border border-gray-600/30 font-fantasy text-sm">← Prev</button>
-                <h3 className="text-xl font-fantasy-decorative text-green-300 tracking-wider">{new Date(currentYear, currentMonth).toLocaleString('default', {
-                    month: 'long'
-                  })} {currentYear}</h3>
-                <button onClick={() => {
-                  if (currentMonth === 11) {
-                    setCurrentMonth(0);
-                    setCurrentYear(currentYear + 1);
-                  } else {
-                    setCurrentMonth(currentMonth + 1);
-                  }
-                }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-200 border border-gray-600/30 font-fantasy text-sm">Next →</button>
+                <button onClick={() => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } else { setCurrentMonth(currentMonth - 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-200 border border-gray-600/30 font-fantasy text-sm">← Prev</button>
+                <h3 className="text-xl font-fantasy-decorative text-green-300 tracking-wider">{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}</h3>
+                <button onClick={() => { if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); } else { setCurrentMonth(currentMonth + 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-200 border border-gray-600/30 font-fantasy text-sm">Next →</button>
               </div>
               
               <div className="bg-black/30 rounded-lg p-4 border border-green-900/20">
                 <div className="grid grid-cols-7 gap-2 mb-2">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => <div key={day} className="text-center text-gray-400 font-fantasy text-xs tracking-wide py-2">{day}</div>)}
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-gray-400 font-fantasy text-xs tracking-wide py-2">{day}</div>))}
                 </div>
                 
                 <div className="grid grid-cols-7 gap-2">
@@ -3726,9 +3888,7 @@ const FantasyStudyQuest = () => {
                     const today = new Date();
                     const isCurrentMonth = today.getMonth() === currentMonth && today.getFullYear() === currentYear;
                     const days = [];
-                    for (let i = 0; i < firstDay; i++) {
-                      days.push(<div key={`empty-${i}`} className="aspect-square"></div>);
-                    }
+                    for (let i = 0; i < firstDay; i++) { days.push(<div key={`empty-${i}`} className="aspect-square"></div>); }
                     for (let day = 1; day <= daysInMonth; day++) {
                       const dateKey = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                       const dayTasks = calendarTasks[dateKey] || [];
@@ -3736,14 +3896,13 @@ const FantasyStudyQuest = () => {
                       const hasTasks = dayTasks.length > 0;
                       const completedTasks = dayTasks.filter(t => t.done).length;
                       const allDone = hasTasks && completedTasks === dayTasks.length;
-                      days.push(<button key={day} onClick={() => {
-                        setSelectedDate(dateKey);
-                        setShowCalendarModal(true);
-                      }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-800/50 border border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-gray-700/40 hover:bg-gray-600/40 border border-gray-600/20 hover:border-gray-500/30'}`}>
+                      days.push(
+                        <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-amber-800/50 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-gray-700/40 hover:bg-gray-600/40 border border-gray-600/20 hover:border-gray-500/30'}`}>
                           <div className="text-sm font-bold text-white/90">{day}</div>
-                          {hasTasks && <div className="text-[10px] text-white/70 mt-0.5">{completedTasks}/{dayTasks.length}</div>}
-                          {isToday && <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-pulse"></div>}
-                        </button>);
+                          {hasTasks && (<div className="text-[10px] text-white/70 mt-0.5">{completedTasks}/{dayTasks.length}</div>)}
+                          {isToday && (<div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-pulse"></div>)}
+                        </button>
+                      );
                     }
                     return days;
                   })()}
@@ -3751,20 +3910,23 @@ const FantasyStudyQuest = () => {
               </div>
               
               <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs">
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-800/50 border border-blue-500/40 rounded"></div><span className="text-gray-400 font-fantasy">Today</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-400 font-fantasy">In Progress</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-400 font-fantasy">Complete</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-400 font-fantasy">Empty</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-800/50 border border-amber-500/40 rounded"></div><span className="text-gray-200 font-fantasy">Today</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-200 font-fantasy">In Progress</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-200 font-fantasy">Complete</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-200 font-fantasy">Empty</span></div>
               </div>
-              </>}
+              </>
+              )}
               </div>
-            </div>}
+            </div>
+          )}
 
-          {activeTab === 'study' && <div className="bg-black/50 rounded-xl overflow-hidden border border-purple-900/40">
+          {activeTab === 'study' && (
+  <div className="bg-black/50 rounded-xl overflow-hidden border border-purple-900/40">
     {/* Header */}
     <div className="px-6 pt-6 pb-4 text-center">
       <h2 className="text-2xl font-fantasy-decorative text-purple-400 tracking-wider drop-shadow-[0_0_12px_rgba(168,85,247,0.3)]">Knowledge Forge</h2>
-      <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
+      <p className="text-gray-200 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
     </div>
     
     {/* Divider */}
@@ -3778,95 +3940,124 @@ const FantasyStudyQuest = () => {
       <div className="flex justify-between items-center mb-5">
         <div>
           <p className="text-sm text-gray-300 font-fantasy tracking-wide">Your Decks: <span className="font-bold text-purple-400">{flashcardDecks.length}</span></p>
-          <p className="text-xs text-gray-400">Study to earn XP and loot!</p>
+          <p className="text-xs text-gray-200">Study to earn XP and loot!</p>
         </div>
-        <button onClick={() => setShowDeckModal(true)} className="bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-fantasy tracking-wide text-purple-200 border border-purple-700/30 text-sm">
-          <Plus size={16} /> New Deck
+        <button 
+          onClick={() => setShowDeckModal(true)}
+          className="bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 px-4 py-2 rounded-lg transition-all flex items-center gap-2 font-fantasy tracking-wide text-purple-200 border border-purple-700/30 text-sm"
+        >
+          <Plus size={16}/> New Deck
         </button>
       </div>
     
-      {flashcardDecks.length === 0 ? <div className="text-center py-12 bg-black/30 rounded-lg border border-purple-900/20">
-          <p className="text-gray-400 mb-2 font-fantasy">The forge stands empty...</p>
-          <p className="text-xs text-gray-500 font-fantasy">Create your first deck to begin forging knowledge</p>
-        </div> : <div className="space-y-3">
-          {flashcardDecks.map((deck, idx) => <div key={idx} className="bg-black/30 rounded-lg p-4 border border-purple-800/25 hover:border-purple-700/35 transition-all">
+      {flashcardDecks.length === 0 ? (
+        <div className="text-center py-12 bg-black/30 rounded-lg border border-purple-900/20">
+          <p className="text-gray-200 mb-2 font-fantasy">The forge stands empty...</p>
+          <p className="text-xs text-gray-300 font-fantasy">Create your first deck to begin forging knowledge</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {flashcardDecks.map((deck, idx) => (
+            <div key={idx} className="bg-black/30 rounded-lg p-4 border border-purple-800/25 hover:border-purple-700/35 transition-all">
               <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
                   <h3 className="text-lg font-fantasy tracking-wide text-purple-300">{deck.name}</h3>
-                  <p className="text-xs text-gray-400 font-fantasy">
+                  <p className="text-xs text-gray-200 font-fantasy">
                     {deck.cards.length} card{deck.cards.length !== 1 ? 's' : ''} • 
                     {deck.cards.filter(c => c.mastered).length} mastered
                   </p>
                 </div>
-                <button onClick={() => {
+                <button
+                  onClick={() => {
                     if (window.confirm(`Delete deck "${deck.name}"?`)) {
                       setFlashcardDecks(prev => prev.filter((_, i) => i !== idx));
-                      addLog(`🗑️ Deleted deck: ${deck.name}`);
+                      addLog(`Deleted deck: ${deck.name}`);
                     }
-                  }} className="text-red-400 hover:text-red-300 transition-all">
-                  <X size={16} />
+                  }}
+                  className="text-red-400 hover:text-red-300 transition-all"
+                >
+                  <X size={16}/>
                 </button>
               </div>
               
               <div className="flex gap-2">
-                <button onClick={() => {
+                <button
+                  onClick={() => {
                     if (deck.cards.length === 0) {
                       alert('Add some cards first!');
                       return;
                     }
                     setSelectedDeck(idx);
                     setCurrentCardIndex(0);
-                    const allCardIndices = Array.from({
-                      length: deck.cards.length
-                    }, (_, i) => i);
+                    const allCardIndices = Array.from({length: deck.cards.length}, (_, i) => i);
                     setStudyQueue(allCardIndices);
                     setIsFlipped(false);
                     setShowStudyModal(true);
-                  }} disabled={deck.cards.length === 0} className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200 text-sm border border-purple-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed">
+                  }}
+                  disabled={deck.cards.length === 0}
+                  className="flex-1 bg-gradient-to-b from-purple-800/50 to-purple-950/50 hover:from-purple-700/60 hover:to-purple-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-purple-200 text-sm border border-purple-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
                   Study Deck
                 </button>
-                <button onClick={() => {
+                <button
+                  onClick={() => {
                     if (deck.cards.length < 4) {
                       alert('Need at least 4 cards for a quiz!');
                       return;
                     }
                     setSelectedDeck(idx);
                     generateQuiz(idx);
-                  }} disabled={deck.cards.length < 4} className="flex-1 bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-blue-200 text-sm border border-blue-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed">
+                  }}
+                  disabled={deck.cards.length < 4}
+                  className="flex-1 bg-gradient-to-b from-amber-800/50 to-amber-950/50 hover:from-amber-700/60 hover:to-amber-900/60 py-2 rounded-lg transition-all font-fantasy tracking-wide text-amber-200 text-sm border border-amber-700/25 disabled:from-gray-800/30 disabled:to-gray-900/30 disabled:text-gray-400 disabled:cursor-not-allowed"
+                >
                   Practice Quiz
                 </button>
-                <button onClick={() => {
+                <button
+                  onClick={() => {
                     setSelectedDeck(idx);
                     setShowCardModal(true);
-                  }} className="bg-gradient-to-b from-green-800/50 to-green-950/50 hover:from-green-700/60 hover:to-green-900/60 px-4 py-2 rounded-lg transition-all font-fantasy tracking-wide text-green-200 text-sm border border-green-700/25">
+                  }}
+                  className="bg-gradient-to-b from-green-800/50 to-green-950/50 hover:from-green-700/60 hover:to-green-900/60 px-4 py-2 rounded-lg transition-all font-fantasy tracking-wide text-green-200 text-sm border border-green-700/25"
+                >
                   Add Card
                 </button>
               </div>
               
-              {deck.cards.length > 0 && <div className="mt-3 pt-3 border-t border-purple-900/15">
+              {deck.cards.length > 0 && (
+                <div className="mt-3 pt-3 border-t border-purple-900/15">
                   <p className="text-[10px] text-gray-400 mb-2 font-fantasy tracking-wide uppercase">Cards in this deck:</p>
                   <div className="space-y-1 max-h-32 overflow-y-auto">
-                    {deck.cards.map((card, cardIdx) => <div key={cardIdx} className="flex justify-between items-center text-sm bg-black/30 rounded-lg p-2 border border-purple-900/10">
+                    {deck.cards.map((card, cardIdx) => (
+                      <div key={cardIdx} className="flex justify-between items-center text-sm bg-black/30 rounded-lg p-2 border border-purple-900/10">
                         <span className="text-gray-300 flex-1 truncate text-xs">
                           {card.mastered && <span className="text-green-400">✓ </span>}{card.front}
                         </span>
-                        <button onClick={() => {
-                        setFlashcardDecks(prev => prev.map((d, i) => i === idx ? {
-                          ...d,
-                          cards: d.cards.filter((_, ci) => ci !== cardIdx)
-                        } : d));
-                      }} className="text-red-400 hover:text-red-300 ml-2 transition-all">
-                          <X size={12} />
+                        <button
+                          onClick={() => {
+                            setFlashcardDecks(prev => prev.map((d, i) => 
+                              i === idx ? {...d, cards: d.cards.filter((_, ci) => ci !== cardIdx)} : d
+                            ));
+                          }}
+                          className="text-red-400 hover:text-red-300 ml-2 transition-all"
+                        >
+                          <X size={12}/>
                         </button>
-                      </div>)}
+                      </div>
+                    ))}
                   </div>
-                </div>}
-            </div>)}
-        </div>}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
-  </div>}
+  </div>
+)}
 
-          {activeTab === 'progress' && <div className="bg-black/50 rounded-xl overflow-hidden border border-yellow-900/40">
+          {activeTab === 'progress' && (
+            <div className="bg-black/50 rounded-xl overflow-hidden border border-yellow-900/40">
               {/* Header */}
               <div className="px-6 pt-6 pb-4 text-center">
                 <h2 className="text-2xl font-fantasy-decorative text-yellow-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">Chronicles of the Cursed</h2>
@@ -3907,40 +4098,36 @@ const FantasyStudyQuest = () => {
                   <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Trials Today</p>
                     <p className="text-2xl font-bold text-cyan-400 font-mono">{tasks.filter(t => t.done).length}/{tasks.length}</p>
-                    <p className="text-[10px] text-gray-400">{tasks.length > 0 ? `${Math.floor(tasks.filter(t => t.done).length / tasks.length * 100)}%` : 'None'}</p>
+                    <p className="text-[10px] text-gray-400">{tasks.length > 0 ? `${Math.floor((tasks.filter(t => t.done).length / tasks.length) * 100)}%` : 'None'}</p>
                   </div>
                 </div>
               </div>
               
               {/* Combat Power */}
-              <div className="bg-gradient-to-br from-blue-950/40 to-purple-950/30 rounded-xl p-5 border border-blue-800/25 stat-card-runes">
+              <div className="bg-gradient-to-br from-red-950/40 to-orange-950/30 rounded-xl p-5 border border-red-800/25 stat-card-runes">
                 <div className="flex items-center justify-center gap-2 mb-4">
-                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-blue-600/20"></div>
-                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-blue-400 uppercase">Combat Power</h3>
-                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-blue-600/20"></div>
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-red-600/20"></div>
+                  <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Combat Power</h3>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-red-600/20"></div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   <div className="bg-black/30 rounded-lg p-3 border border-red-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Health</p>
                     <p className="text-2xl font-bold text-red-400 font-mono">{hp}/{getMaxHp()}</p>
                     <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-red-900/10">
-                      <div className="bg-gradient-to-r from-red-700 to-red-500 h-1.5 rounded-full transition-all duration-500" style={{
-                      width: `${hp / getMaxHp() * 100}%`
-                    }}></div>
+                      <div className="bg-gradient-to-r from-red-700 to-red-500 h-1.5 rounded-full transition-all duration-500" style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
                     </div>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-cyan-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Stamina</p>
                     <p className="text-2xl font-bold text-cyan-400 font-mono">{stamina}/{getMaxStamina()}</p>
                     <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-cyan-900/10">
-                      <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-1.5 rounded-full transition-all duration-500" style={{
-                      width: `${stamina / getMaxStamina() * 100}%`
-                    }}></div>
+                      <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-1.5 rounded-full transition-all duration-500" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                     </div>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-orange-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Attack</p>
-                    <p className="text-2xl font-bold text-orange-400 font-mono">{GAME_CONSTANTS.BASE_ATTACK + level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY + weapon}</p>
+                    <p className="text-2xl font-bold text-orange-400 font-mono">{GAME_CONSTANTS.BASE_ATTACK + (level * GAME_CONSTANTS.PLAYER_ATK_PER_DAY) + weapon}</p>
                     <p className="text-[10px] text-gray-400">Base: {GAME_CONSTANTS.BASE_ATTACK} + Wep: {weapon}</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-green-800/15">
@@ -3963,9 +4150,7 @@ const FantasyStudyQuest = () => {
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Level</p>
                     <p className="text-2xl font-bold text-yellow-400 font-mono">{level}</p>
                     <div className="w-full bg-black/40 rounded-full h-1.5 mt-2 border border-yellow-900/10">
-                      <div className="bg-gradient-to-r from-yellow-700 to-yellow-400 h-1.5 rounded-full transition-all duration-500" style={{
-                      width: `${xp % GAME_CONSTANTS.XP_PER_LEVEL / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`
-                    }}></div>
+                      <div className="bg-gradient-to-r from-yellow-700 to-yellow-400 h-1.5 rounded-full transition-all duration-500" style={{width: `${(xp % GAME_CONSTANTS.XP_PER_LEVEL) / GAME_CONSTANTS.XP_PER_LEVEL * 100}%`}}></div>
                     </div>
                     <p className="text-[10px] text-gray-400 mt-1">{xp % GAME_CONSTANTS.XP_PER_LEVEL}/{GAME_CONSTANTS.XP_PER_LEVEL} XP</p>
                   </div>
@@ -4003,7 +4188,7 @@ const FantasyStudyQuest = () => {
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Survival Rate</p>
                     <p className="text-2xl font-bold text-yellow-400 font-mono">
-                      {heroes.length + graveyard.length > 0 ? Math.floor(heroes.length / (heroes.length + graveyard.length) * 100) : 0}%
+                      {heroes.length + graveyard.length > 0 ? Math.floor((heroes.length / (heroes.length + graveyard.length)) * 100) : 0}%
                     </p>
                     <p className="text-[10px] text-gray-400">{heroes.length + graveyard.length} total cycles</p>
                   </div>
@@ -4016,7 +4201,7 @@ const FantasyStudyQuest = () => {
               </div>
               
               {/* Study Stats */}
-              <div className="bg-gradient-to-br from-cyan-950/40 to-blue-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
+              <div className="bg-gradient-to-br from-cyan-950/40 to-emerald-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-cyan-400 uppercase">Study Stats</h3>
@@ -4028,9 +4213,9 @@ const FantasyStudyQuest = () => {
                     <p className="text-2xl font-bold text-cyan-400 font-mono">{studyStats.sessionsToday}</p>
                     <p className="text-[10px] text-gray-400">tasks started</p>
                   </div>
-                  <div className="bg-black/30 rounded-lg p-3 border border-blue-800/15">
+                  <div className="bg-black/30 rounded-lg p-3 border border-purple-800/15">
                     <p className="text-[10px] text-gray-400 uppercase tracking-wider font-fantasy">Deep Work</p>
-                    <p className="text-2xl font-bold text-blue-400 font-mono">{studyStats.deepWorkSessions}</p>
+                    <p className="text-2xl font-bold text-purple-400 font-mono">{studyStats.deepWorkSessions}</p>
                     <p className="text-[10px] text-gray-400">25+ min sessions</p>
                   </div>
                   <div className="bg-black/30 rounded-lg p-3 border border-yellow-800/15">
@@ -4044,18 +4229,34 @@ const FantasyStudyQuest = () => {
                     <p className="text-[10px] text-gray-400">all tasks done</p>
                   </div>
                 </div>
-                {studyStats.longestStreak > 0 && <div className="mt-3 text-center">
+                {studyStats.longestStreak > 0 && (
+                  <div className="mt-3 text-center">
                     <span className="text-[10px] text-gray-400 font-fantasy tracking-wide">Longest Streak: </span>
                     <span className="text-sm font-bold text-orange-400 font-mono">{studyStats.longestStreak} days</span>
-                  </div>}
+                  </div>
+                )}
               </div>
 
               {/* Achievements */}
-              <AchievementsPanel heroes={heroes} graveyard={graveyard} level={level} xp={xp} essence={essence} consecutiveDays={consecutiveDays} studyStats={studyStats} miniBossCount={miniBossCount} weapon={weapon} armor={armor} gauntletUnlocked={gauntletUnlocked} />
+              <AchievementsPanel
+                heroes={heroes}
+                graveyard={graveyard}
+                level={level}
+                xp={xp}
+                essence={essence}
+                consecutiveDays={consecutiveDays}
+                studyStats={studyStats}
+                miniBossCount={miniBossCount}
+                weapon={weapon}
+                armor={armor}
+                gauntletUnlocked={gauntletUnlocked}
+              />
               </div>
-            </div>}
+            </div>
+          )}
 
-          {activeTab === 'legacy' && <div className="space-y-5">
+          {activeTab === 'legacy' && (
+            <div className="space-y-5">
               {/* The Liberated Section */}
               <div className="bg-black/50 rounded-xl overflow-hidden border border-yellow-900/40">
                 <div className="px-6 pt-6 pb-4 text-center">
@@ -4070,23 +4271,31 @@ const FantasyStudyQuest = () => {
                 </div>
                 
                 <div className="px-6 py-5">
-                {heroes.length === 0 ? <div className="text-center py-12">
-                    <Trophy size={56} className="mx-auto mb-4 text-gray-800" />
+                {heroes.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Trophy size={56} className="mx-auto mb-4 text-gray-800"/>
                     <p className="text-gray-400 font-fantasy">None have escaped the curse... yet.</p>
                     <p className="text-xs text-gray-500 mt-2 font-fantasy">Survive all 7 days to break free!</p>
-                  </div> : <div className="space-y-3">
-                    {heroes.slice().reverse().map((hero, i) => <div key={i} className="bg-gradient-to-r from-yellow-950/40 to-black/30 rounded-lg overflow-hidden border border-yellow-700/30 shadow-[0_0_20px_rgba(234,179,8,0.08)] hover:shadow-[0_0_30px_rgba(234,179,8,0.15)] transition-all">
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {heroes.slice().reverse().map((hero, i) => (
+                      <div key={i} className="bg-gradient-to-r from-yellow-950/40 to-black/30 rounded-lg overflow-hidden border border-yellow-700/30 shadow-[0_0_20px_rgba(234,179,8,0.08)] hover:shadow-[0_0_30px_rgba(234,179,8,0.15)] transition-all">
                         {/* Decorative top edge */}
                         <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"></div>
                         <div className="p-5">
                           <div className="flex items-center gap-4">
-                            <div className="text-5xl drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{hero.class ? hero.class.emblem : '✨'}</div>
+                            <div className="drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]">{hero.class ? <ClassEmblem heroClass={hero.class.name} size={56} /> : '✨'}</div>
                             <div className="flex-1">
                               <h3 className="text-xl font-fantasy-decorative text-yellow-300/90 tracking-wider">{hero.name}</h3>
                               <p className="text-sm text-white/80 font-fantasy">{hero.title} {hero.class ? hero.class.name : ''}</p>
                               <p className="text-xs text-white/60 font-mono mt-1">Level {hero.lvl} • {hero.xp} XP</p>
-                              {hero.skipCount !== undefined && hero.skipCount === 0 && <p className="text-green-400 text-xs font-fantasy mt-1.5">✨ Flawless Run — No skips!</p>}
-                              {hero.skipCount > 0 && <p className="text-yellow-400 text-xs mt-1.5 font-fantasy">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>}
+                              {hero.skipCount !== undefined && hero.skipCount === 0 && (
+                                <p className="text-green-400 text-xs font-fantasy mt-1.5">Flawless Run — No skips!</p>
+                              )}
+                              {hero.skipCount > 0 && (
+                                <p className="text-yellow-400 text-xs mt-1.5 font-fantasy">Overcame {hero.skipCount} skip{hero.skipCount > 1 ? 's' : ''}</p>
+                              )}
                               <div className="flex items-center gap-2 mt-2">
                                 <div className="h-px flex-1 bg-gradient-to-r from-yellow-600/20 to-transparent"></div>
                                 <p className="text-yellow-400 text-[10px] font-fantasy tracking-[0.2em] uppercase">Curse Broken</p>
@@ -4095,8 +4304,10 @@ const FantasyStudyQuest = () => {
                             </div>
                           </div>
                         </div>
-                      </div>)}
-                  </div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 </div>
               </div>
               
@@ -4114,49 +4325,72 @@ const FantasyStudyQuest = () => {
                 </div>
                 
                 <div className="px-6 py-5">
-                {graveyard.length === 0 ? <div className="text-center py-12">
-                    <Skull size={56} className="mx-auto mb-4 text-gray-800" />
+                {graveyard.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Skull size={56} className="mx-auto mb-4 text-gray-800"/>
                     <p className="text-gray-500 font-fantasy">No fallen heroes... yet.</p>
-                  </div> : <div className="space-y-2.5">
-                    {graveyard.slice().reverse().map((fallen, i) => <div key={i} className="bg-black/30 rounded-lg p-4 border border-red-900/20 opacity-60 hover:opacity-85 transition-all">
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {graveyard.slice().reverse().map((fallen, i) => (
+                      <div key={i} className="bg-black/30 rounded-lg p-4 border border-red-900/20 opacity-60 hover:opacity-85 transition-all">
                         <div className="flex items-center gap-4">
-                          <div className="text-3xl opacity-40">{fallen.class ? fallen.class.emblem : '☠️'}</div>
+                          <div className="opacity-40">{fallen.class ? <ClassEmblem heroClass={fallen.class.name} size={36} /> : '☠️'}</div>
                           <div className="flex-1">
                             <h3 className="text-base font-fantasy tracking-wide text-red-400">{fallen.name}</h3>
                             <p className="text-xs text-gray-400 font-fantasy">{fallen.title} {fallen.class ? fallen.class.name : ''} • Level {fallen.lvl}</p>
                             <p className="text-xs text-red-400 mt-0.5">Fell on {fallen.day ? GAME_CONSTANTS.DAY_NAMES[fallen.day - 1]?.name || `Day ${fallen.day}` : 'Day 1'} • {fallen.xp} XP</p>
                             <p className="text-xs text-gray-400">Trials: {fallen.tasks}/{fallen.total}</p>
-                            {fallen.skipCount > 0 && <p className="text-red-400 text-[10px] mt-1">💀 Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>}
-                            {fallen.cursed && <p className="text-purple-400 text-[10px]">🌑 Died while cursed</p>}
+                            {fallen.skipCount > 0 && (<p className="text-red-400 text-[10px] mt-1">Skipped {fallen.skipCount} day{fallen.skipCount > 1 ? 's' : ''}</p>)}
+                            {fallen.cursed && (<p className="text-purple-400 text-[10px]">Died while cursed</p>)}
                           </div>
                         </div>
-                      </div>)}
-                  </div>}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 </div>
               </div>
-            </div>}
+            </div>
+          )}
 
-          {showInventoryModal && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowInventoryModal(false)}>
-              <div className="bg-gray-900 rounded-xl p-6 max-w-lg w-full border-2 border-red-500 relative" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setShowInventoryModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24} /></button>
+          {showInventoryModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-85 flex items-start justify-center p-4 z-50" onClick={() => setShowInventoryModal(false)}>
+              <div className="bg-gradient-to-b from-red-950 via-gray-950 to-black rounded-xl max-w-lg w-full border border-red-700/40 relative overflow-hidden shadow-[0_0_60px_rgba(220,38,38,0.15)]" onClick={e => e.stopPropagation()}>
+                {/* Decorative top edge */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent"></div>
                 
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-red-400">SUPPLIES</h2>
-                  <p className="text-gray-400 text-sm mt-1 italic">"What keeps you alive in the darkness..."</p>
+                <button onClick={() => setShowInventoryModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white z-10"><X size={24}/></button>
+                
+                {/* Header */}
+                <div className="px-6 pt-8 pb-4 text-center">
+                  <h2 className="text-2xl font-fantasy-decorative text-red-400 tracking-wider drop-shadow-[0_0_12px_rgba(220,38,38,0.3)]">Supplies</h2>
+                  <p className="text-gray-400 text-sm italic font-fantasy mt-1">"What keeps you alive in the darkness..."</p>
                 </div>
                 
-                <div className="space-y-4">
+                {/* Divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/25 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-red-600/30"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/25 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-5 space-y-3">
                   {/* Health Potions */}
-                  <div className="bg-red-900 bg-opacity-50 rounded-lg p-4 border-2 border-red-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-gradient-to-r from-red-950/60 to-black/40 rounded-lg p-4 border border-red-700/30 hover:border-red-600/40 transition-all">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white text-lg">Health Potion</p>
-                        <p className="text-sm text-red-300 mb-1">Restores 30 HP</p>
-                        <p className="text-xs text-gray-400 italic">"Crimson elixir. Mends wounds."</p>
+                        <p className="font-fantasy tracking-wide text-red-200 text-lg">Health Potion</p>
+                        <p className="text-sm text-red-300/80 mb-1 font-fantasy">Restores 30 HP</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Crimson elixir. Mends wounds."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-red-400 font-bold mb-2">{healthPots}</p>
-                        <button onClick={useHealth} disabled={healthPots === 0 || hp >= getMaxHp()} className="bg-red-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-red-500 transition-all text-sm text-white font-medium">
+                        <p className="text-3xl text-red-400 font-bold font-mono mb-2">{healthPots}</p>
+                        <button 
+                          onClick={useHealth} 
+                          disabled={healthPots === 0 || hp >= getMaxHp()}
+                          className="bg-gradient-to-b from-red-700/80 to-red-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-red-600/80 hover:to-red-800/80 transition-all text-sm text-red-100 font-fantasy tracking-wide border border-red-600/30 disabled:border-gray-600/20"
+                        >
                           Use
                         </button>
                       </div>
@@ -4164,22 +4398,26 @@ const FantasyStudyQuest = () => {
                   </div>
                   
                   {/* Stamina Potions */}
-                  <div className="bg-blue-900 bg-opacity-50 rounded-lg p-4 border-2 border-blue-700">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="bg-gradient-to-r from-cyan-950/60 to-black/40 rounded-lg p-4 border border-cyan-700/30 hover:border-cyan-600/40 transition-all">
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white text-lg">Stamina Potion</p>
-                        <p className="text-sm text-cyan-300 mb-1">Restores 50 SP</p>
-                        <p className="text-xs text-gray-400 italic">"Azure draught. Vigor renewed."</p>
+                        <p className="font-fantasy tracking-wide text-cyan-200 text-lg">Stamina Potion</p>
+                        <p className="text-sm text-cyan-300/80 mb-1 font-fantasy">Restores 50 SP</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Azure draught. Vigor renewed."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-blue-400 font-bold mb-2">{staminaPots}</p>
-                        <button onClick={() => {
-                      if (staminaPots > 0 && stamina < getMaxStamina()) {
-                        setStaminaPots(s => s - 1);
-                        setStamina(s => Math.min(getMaxStamina(), s + GAME_CONSTANTS.STAMINA_POTION_RESTORE));
-                        addLog(`⚡ Used Stamina Potion! +${GAME_CONSTANTS.STAMINA_POTION_RESTORE} SP`);
-                      }
-                    }} disabled={staminaPots === 0 || stamina >= getMaxStamina()} className="bg-blue-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-500 transition-all text-sm text-white font-medium">
+                        <p className="text-3xl text-cyan-400 font-bold font-mono mb-2">{staminaPots}</p>
+                        <button 
+                          onClick={() => { 
+                            if (staminaPots > 0 && stamina < getMaxStamina()) { 
+                              setStaminaPots(s => s - 1); 
+                              setStamina(s => Math.min(getMaxStamina(), s + GAME_CONSTANTS.STAMINA_POTION_RESTORE)); 
+                              addLog(`⚡ Used Stamina Potion! +${GAME_CONSTANTS.STAMINA_POTION_RESTORE} SP`); 
+                            } 
+                          }} 
+                          disabled={staminaPots === 0 || stamina >= getMaxStamina()}
+                          className="bg-gradient-to-b from-cyan-700/80 to-cyan-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-cyan-600/80 hover:to-cyan-800/80 transition-all text-sm text-cyan-100 font-fantasy tracking-wide border border-cyan-600/30 disabled:border-gray-600/20"
+                        >
                           Use
                         </button>
                       </div>
@@ -4187,16 +4425,20 @@ const FantasyStudyQuest = () => {
                   </div>
                   
                   {/* Cleanse Potions */}
-                  <div className={`bg-purple-900 bg-opacity-50 rounded-lg p-4 border-2 ${curseLevel > 0 ? 'border-purple-400 ring-2 ring-purple-500 animate-pulse' : 'border-purple-700'}`}>
-                    <div className="flex justify-between items-center mb-2">
+                  <div className={`bg-gradient-to-r from-purple-950/60 to-black/40 rounded-lg p-4 border ${curseLevel > 0 ? 'border-purple-400/60 ring-1 ring-purple-500/40 animate-pulse' : 'border-purple-700/30'} hover:border-purple-600/40 transition-all`}>
+                    <div className="flex justify-between items-center">
                       <div>
-                        <p className="font-bold text-white text-lg">Cleanse Potion</p>
-                        <p className="text-sm text-purple-300 mb-1">Removes curse</p>
-                        <p className="text-xs text-gray-400 italic">"Purifying brew. Breaks the hold."</p>
+                        <p className="font-fantasy tracking-wide text-purple-200 text-lg">Cleanse Potion</p>
+                        <p className="text-sm text-purple-300/80 mb-1 font-fantasy">Removes curse</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Purifying brew. Breaks the hold."</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-3xl text-purple-400 font-bold mb-2">{cleansePots}</p>
-                        <button onClick={useCleanse} disabled={cleansePots === 0 || curseLevel === 0} className="bg-purple-600 px-4 py-2 rounded disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-purple-500 transition-all text-sm text-white font-medium">
+                        <p className="text-3xl text-purple-400 font-bold font-mono mb-2">{cleansePots}</p>
+                        <button 
+                          onClick={useCleanse} 
+                          disabled={cleansePots === 0 || curseLevel === 0}
+                          className="bg-gradient-to-b from-purple-700/80 to-purple-900/80 px-5 py-2 rounded-lg disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed hover:from-purple-600/80 hover:to-purple-800/80 transition-all text-sm text-purple-100 font-fantasy tracking-wide border border-purple-600/30 disabled:border-gray-600/20"
+                        >
                           Use
                         </button>
                       </div>
@@ -4204,271 +4446,480 @@ const FantasyStudyQuest = () => {
                   </div>
                   
                   {/* Lucky Charm (if active) */}
-                  {luckyCharmActive && <div className="bg-green-900 bg-opacity-50 rounded-lg p-4 border-2 border-green-500">
+                  {luckyCharmActive && (
+                    <div className="bg-gradient-to-r from-green-950/60 to-black/40 rounded-lg p-4 border border-green-500/40 hover:border-green-400/50 transition-all">
                       <div>
-                        <p className="font-bold text-white text-lg mb-1">Lucky Charm</p>
-                        <p className="text-sm text-green-300 mb-1">2x loot from next elite boss</p>
-                        <p className="text-xs text-gray-400 italic">"Fortune favors the bold."</p>
-                        <p className="text-xs text-green-400 mt-2">✓ Active</p>
+                        <p className="font-fantasy tracking-wide text-green-200 text-lg mb-1">Lucky Charm</p>
+                        <p className="text-sm text-green-300/80 mb-1 font-fantasy">2x loot from next elite boss</p>
+                        <p className="text-xs text-gray-400 italic font-fantasy">"Fortune favors the bold."</p>
+                        <p className="text-xs text-green-400 mt-2 font-fantasy tracking-wide">✓ Active</p>
                       </div>
-                    </div>}
+                    </div>
+                  )}
                 </div>
                 
-                <button onClick={() => setShowInventoryModal(false)} className="w-full mt-6 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
-                  Close
-                </button>
+                {/* Bottom divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                  <div className="w-1 h-1 rotate-45 bg-red-600/20"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-4">
+                  <button 
+                    onClick={() => setShowInventoryModal(false)} 
+                    className="w-full bg-gradient-to-b from-gray-700/60 to-gray-800/60 py-2.5 rounded-lg hover:from-gray-600/60 hover:to-gray-700/60 transition-all text-gray-200 font-fantasy tracking-wide border border-gray-600/30 hover:border-gray-500/30"
+                  >
+                    Close
+                  </button>
+                </div>
+                
+                {/* Decorative bottom edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
               </div>
-            </div>}
+            </div>
+          )}
 
-          {showCraftingModal && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50 overflow-y-auto" onClick={() => setShowCraftingModal(false)}>
-              <div className="bg-gray-900 rounded-xl p-6 max-w-2xl w-full border-2 border-orange-500 my-8 relative" onClick={e => e.stopPropagation()}>
-                <button onClick={() => setShowCraftingModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24} /></button>
+          {showCraftingModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-85 flex items-start justify-center p-4 z-50 overflow-y-auto" onClick={() => setShowCraftingModal(false)}>
+              <div className="bg-gradient-to-b from-orange-950 via-gray-950 to-black rounded-xl max-w-2xl w-full border border-orange-700/40 my-8 relative overflow-hidden shadow-[0_0_60px_rgba(234,88,12,0.15)]" onClick={e => e.stopPropagation()}>
+                {/* Decorative top edge */}
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent"></div>
                 
-                <div className="text-center mb-6">
-                  <h2 className="text-2xl font-bold text-orange-400">
-                    THE MERCHANT
-                  </h2>
-                  <p className="text-gray-400 text-sm mt-1 italic">"{getMerchantDialogue()}"</p>
+                <button onClick={() => setShowCraftingModal(false)} className="absolute top-4 right-4 text-gray-300 hover:text-white z-10"><X size={24}/></button>
+                
+                {/* Header */}
+                <div className="px-6 pt-8 pb-4 text-center">
+                  <h2 className="text-2xl font-fantasy-decorative text-orange-400 tracking-wider drop-shadow-[0_0_12px_rgba(234,88,12,0.3)]">The Merchant</h2>
+                  <p className="text-gray-400 text-sm italic font-fantasy mt-1">"{getMerchantDialogue()}"</p>
                 </div>
                 
-                <div className="bg-black bg-opacity-50 rounded-lg p-4 mb-6 border border-purple-600">
-                  <p className="text-center text-lg">
-                    <span className="text-gray-400">Current Essence:</span> 
-                    <span className="text-purple-400 font-bold text-2xl ml-2">{essence}</span>
-                  </p>
+                {/* Divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/25 to-transparent"></div>
+                  <div className="w-1.5 h-1.5 rotate-45 bg-orange-600/30"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/25 to-transparent"></div>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <button onClick={() => craftItem('healthPotion')} disabled={essence < 25} className={`p-4 rounded-lg border-2 transition-all ${essence >= 25 ? 'bg-red-900 bg-opacity-50 border-red-700 hover:bg-red-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Health Potion</p>
-                      <p className="text-sm text-red-300 mb-2">Restores 30 HP</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">25 Essence</p>
-                      <p className="text-xs text-gray-400 italic">"Crimson elixir. Mends wounds, not souls."</p>
+                {/* Essence Display */}
+                <div className="px-6 pt-5 pb-3">
+                  <div className="bg-black/40 rounded-lg p-4 border border-purple-700/30">
+                    <div className="flex items-center justify-center gap-2 mb-2">
+                      <div className="h-px flex-1 bg-gradient-to-r from-transparent to-purple-600/20"></div>
+                      <p className="text-[10px] font-fantasy tracking-[0.2em] text-purple-400 uppercase">Soul Currency</p>
+                      <div className="h-px flex-1 bg-gradient-to-l from-transparent to-purple-600/20"></div>
                     </div>
+                    <p className="text-center">
+                      <span className="text-gray-300 font-fantasy tracking-wide">Current Essence:</span> 
+                      <span className="text-purple-400 font-bold text-3xl ml-3 font-mono drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{essence}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="px-6 pb-5 grid grid-cols-2 gap-3">
+                  <button 
+                    onClick={() => craftItem('healthPotion')} 
+                    disabled={essence < 25}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 25 ? 'bg-gradient-to-br from-red-950/60 to-black/40 border-red-700/30 hover:border-red-500/50 hover:shadow-[0_0_20px_rgba(220,38,38,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <p className="font-fantasy tracking-wide text-red-200 text-lg mb-1">Health Potion</p>
+                    <p className="text-sm text-red-300/70 mb-1.5 font-fantasy">Restores 30 HP</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">25 Essence</p>
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Crimson elixir. Mends wounds, not souls."</p>
                   </button>
                   
-                  <button onClick={() => craftItem('staminaPotion')} disabled={essence < 20} className={`p-4 rounded-lg border-2 transition-all ${essence >= 20 ? 'bg-blue-900 bg-opacity-50 border-blue-700 hover:bg-blue-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Stamina Potion</p>
-                      <p className="text-sm text-cyan-300 mb-2">Restores 50 SP</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">20 Essence</p>
-                      <p className="text-xs text-gray-400 italic">"Azure draught. Vigor renewed."</p>
-                    </div>
+                  <button 
+                    onClick={() => craftItem('staminaPotion')} 
+                    disabled={essence < 20}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 20 ? 'bg-gradient-to-br from-cyan-950/60 to-black/40 border-cyan-700/30 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <p className="font-fantasy tracking-wide text-cyan-200 text-lg mb-1">Stamina Potion</p>
+                    <p className="text-sm text-cyan-300/70 mb-1.5 font-fantasy">Restores 50 SP</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">20 Essence</p>
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Azure draught. Vigor renewed."</p>
                   </button>
                   
-                  <button onClick={() => craftItem('cleansePotion')} disabled={essence < 50} className={`p-4 rounded-lg border-2 transition-all ${essence >= 50 ? 'bg-purple-900 bg-opacity-50 border-purple-700 hover:bg-purple-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Cleanse Potion</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">50 Essence</p>
-                      <p className="text-sm text-purple-300 mb-2">Removes curse</p>
-                      <p className="text-xs text-gray-400 italic">"Purifying brew. Breaks the curse's hold."</p>
-                    </div>
+                  <button 
+                    onClick={() => craftItem('cleansePotion')} 
+                    disabled={essence < 50}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 50 ? 'bg-gradient-to-br from-purple-950/60 to-black/40 border-purple-700/30 hover:border-purple-500/50 hover:shadow-[0_0_20px_rgba(168,85,247,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <p className="font-fantasy tracking-wide text-purple-200 text-lg mb-1">Cleanse Potion</p>
+                    <p className="text-sm text-purple-300/70 mb-1.5 font-fantasy">Removes curse</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">50 Essence</p>
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Purifying brew. Breaks the curse's hold."</p>
                   </button>
                   
-                  <button onClick={() => craftItem('weaponOil')} disabled={essence < 40 || weaponOilActive} className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !weaponOilActive ? 'bg-orange-900 bg-opacity-50 border-orange-700 hover:bg-orange-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Weapon Oil</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">40 Essence</p>
-                      <p className="text-sm text-orange-300 mb-1">+5 weapon until dawn</p>
-                      {weaponOilActive && <p className="text-xs text-green-400 mb-2">✓ Active</p>}
-                      <p className="text-xs text-gray-400 italic">"Darkened oil. Edges sharpen, strikes deepen."</p>
-                    </div>
+                  <button 
+                    onClick={() => craftItem('weaponOil')} 
+                    disabled={essence < 40 || weaponOilActive}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 40 && !weaponOilActive ? 'bg-gradient-to-br from-orange-950/60 to-black/40 border-orange-700/30 hover:border-orange-500/50 hover:shadow-[0_0_20px_rgba(234,88,12,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <p className="font-fantasy tracking-wide text-orange-200 text-lg mb-1">Weapon Oil</p>
+                    <p className="text-sm text-orange-300/70 mb-1.5 font-fantasy">+5 weapon until dawn</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">40 Essence</p>
+                    {weaponOilActive && <p className="text-xs text-green-400 mb-1.5 font-fantasy tracking-wide">✓ Active</p>}
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Darkened oil. Edges sharpen, strikes deepen."</p>
                   </button>
                   
-                  <button onClick={() => craftItem('armorPolish')} disabled={essence < 40 || armorPolishActive} className={`p-4 rounded-lg border-2 transition-all ${essence >= 40 && !armorPolishActive ? 'bg-cyan-900 bg-opacity-50 border-cyan-700 hover:bg-cyan-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Armor Polish</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">40 Essence</p>
-                      <p className="text-sm text-cyan-300 mb-1">+5 armor until dawn</p>
-                      {armorPolishActive && <p className="text-xs text-green-400 mb-2">✓ Active</p>}
-                      <p className="text-xs text-gray-400 italic">"Protective salve. Steel hardens, flesh endures."</p>
-                    </div>
+                  <button 
+                    onClick={() => craftItem('armorPolish')} 
+                    disabled={essence < 40 || armorPolishActive}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 40 && !armorPolishActive ? 'bg-gradient-to-br from-cyan-950/60 to-black/40 border-cyan-700/30 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <p className="font-fantasy tracking-wide text-cyan-200 text-lg mb-1">Armor Polish</p>
+                    <p className="text-sm text-cyan-300/70 mb-1.5 font-fantasy">+5 armor until dawn</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">40 Essence</p>
+                    {armorPolishActive && <p className="text-xs text-green-400 mb-1.5 font-fantasy tracking-wide">✓ Active</p>}
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Protective salve. Steel hardens, flesh endures."</p>
                   </button>
                   
-                  <button onClick={() => craftItem('luckyCharm')} disabled={essence < 80 || luckyCharmActive} className={`p-4 rounded-lg border-2 transition-all ${essence >= 80 && !luckyCharmActive ? 'bg-green-900 bg-opacity-50 border-green-700 hover:bg-green-800' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
-                    <div className="mb-2">
-                      <p className="font-bold text-white text-lg mb-2">Lucky Charm</p>
-                      <p className="text-sm text-purple-400 font-bold mb-2">80 Essence</p>
-                      <p className="text-sm text-green-300 mb-1">2x loot from next elite boss</p>
-                      {luckyCharmActive && <p className="text-xs text-green-400 mb-2">✓ Active</p>}
-                      <p className="text-xs text-gray-400 italic">"Blessed talisman. Fortune favors the bold."</p>
-                    </div>
+                  <button 
+                    onClick={() => craftItem('luckyCharm')} 
+                    disabled={essence < 80 || luckyCharmActive}
+                    className={`p-4 rounded-lg border transition-all text-left ${essence >= 80 && !luckyCharmActive ? 'bg-gradient-to-br from-green-950/60 to-black/40 border-green-700/30 hover:border-green-500/50 hover:shadow-[0_0_20px_rgba(34,197,94,0.1)]' : 'bg-black/30 border-gray-700/20 opacity-50 cursor-not-allowed'}`}
+                  >
+                    <p className="font-fantasy tracking-wide text-green-200 text-lg mb-1">Lucky Charm</p>
+                    <p className="text-sm text-green-300/70 mb-1.5 font-fantasy">2x loot from next elite boss</p>
+                    <p className="text-sm text-purple-400 font-bold font-mono mb-1.5">80 Essence</p>
+                    {luckyCharmActive && <p className="text-xs text-green-400 mb-1.5 font-fantasy tracking-wide">✓ Active</p>}
+                    <p className="text-xs text-gray-400 italic font-fantasy">"Blessed talisman. Fortune favors the bold."</p>
                   </button>
                 </div>
                 
-                <button onClick={() => setShowCraftingModal(false)} className="w-full mt-6 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
-                  Close
-                </button>
+                {/* Bottom divider */}
+                <div className="flex items-center gap-3 px-6">
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/15 to-transparent"></div>
+                  <div className="w-1 h-1 rotate-45 bg-orange-600/20"></div>
+                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-orange-600/15 to-transparent"></div>
+                </div>
+                
+                <div className="px-6 py-4">
+                  <button 
+                    onClick={() => setShowCraftingModal(false)} 
+                    className="w-full bg-gradient-to-b from-gray-700/60 to-gray-800/60 py-2.5 rounded-lg hover:from-gray-600/60 hover:to-gray-700/60 transition-all text-gray-200 font-fantasy tracking-wide border border-gray-600/30 hover:border-gray-500/30"
+                  >
+                    Close
+                  </button>
+                </div>
+                
+                {/* Decorative bottom edge */}
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-orange-500/30 to-transparent"></div>
               </div>
-            </div>}
+            </div>
+          )}
 
-          {showCustomizeModal && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowCustomizeModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-blue-400">CUSTOMIZE YOUR HERO</h3>
-        <button onClick={() => setShowCustomizeModal(false)} className="text-gray-400 hover:text-white">
-          <X size={24} />
+          {showCustomizeModal && (
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50" onClick={() => setShowCustomizeModal(false)}>
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-amber-600/50 rounded-tl-xl"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-amber-600/50 rounded-tr-xl"></div>
+
+      <div className="flex justify-between items-center mb-5">
+        <h3 className="text-xl font-fantasy font-bold text-amber-200 tracking-wider uppercase">Customize Your Hero</h3>
+        <button onClick={() => setShowCustomizeModal(false)} className="text-gray-500 hover:text-amber-300 transition-colors">
+          <X size={24}/>
         </button>
       </div>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-5"></div>
       
-      <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Hero Name</label>
-        <input type="text" placeholder="Enter your hero's name" value={customName} onChange={e => setCustomName(e.target.value)} className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none" autoFocus />
+      <div className="mb-5">
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Hero Name</label>
+        <input 
+          type="text" 
+          placeholder="Enter your hero's name" 
+          value={customName}
+          onChange={e => setCustomName(e.target.value)}
+          className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg border border-amber-900/40 focus:border-amber-500/60 focus:outline-none focus:shadow-[0_0_10px_rgba(245,158,11,0.1)] placeholder-gray-600 font-fantasy" 
+          autoFocus 
+        />
       </div>
       
-      <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Choose Your Class</label>
+      <div className="mb-5">
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Choose Your Class</label>
         <div className="grid grid-cols-2 gap-2">
-          {classes.map(cls => <button key={cls.name} type="button" onClick={() => setCustomClass(cls)} className={`p-4 rounded-lg border-2 transition-all ${customClass?.name === cls.name ? `bg-${cls.color}-900 border-${cls.color}-500` : 'bg-gray-800 border-gray-700 hover:border-gray-500'}`}>
-              <div className="text-4xl mb-2">{cls.emblem}</div>
-              <div className="font-bold text-white">{cls.name}</div>
-            </button>)}
+          {classes.map(cls => (
+            <button
+              key={cls.name}
+              type="button"
+              onClick={() => setCustomClass(cls)}
+              className={`p-4 rounded-lg border-2 transition-all duration-300 ${
+                customClass?.name === cls.name 
+                  ? 'bg-amber-950/50 border-amber-500/70 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
+                  : 'bg-gray-800/60 border-gray-700/50 hover:border-amber-700/40 hover:bg-gray-800'
+              }`}
+            >
+              <div className="mb-2 flex justify-center"><ClassEmblem heroClass={cls.name} size={44} /></div>
+              <div className="font-fantasy font-bold text-amber-100 tracking-wide">{cls.name}</div>
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-4"></div>
       
       <div className="flex gap-2">
-        <button onClick={() => {
-                if (customName.trim() || customClass) {
-                  setHero(prev => ({
-                    ...prev,
-                    name: customName.trim() || prev.name,
-                    class: customClass || prev.class
-                  }));
-                  setCustomName('');
-                  setCustomClass(null);
-                  setShowCustomizeModal(false);
-                  addLog(`✨ Hero customized! ${customName.trim() ? `Name: ${customName.trim()}` : ''} ${customClass ? `Class: ${customClass.name}` : ''}`);
-                }
-              }} className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium">
-          Confirm
+        <button 
+          onClick={() => {
+            if (customName.trim() || customClass) {
+              setHero(prev => ({
+                ...prev,
+                name: customName.trim() || prev.name,
+                class: customClass || prev.class
+              }));
+              setCustomName('');
+              setCustomClass(null);
+              setShowCustomizeModal(false);
+              addLog(`✨ Hero customized! ${customName.trim() ? `Name: ${customName.trim()}` : ''} ${customClass ? `Class: ${customClass.name}` : ''}`);
+            }
+          }}
+          className="flex-1 bg-gradient-to-b from-amber-700 to-amber-900 py-2.5 rounded-lg hover:from-amber-600 hover:to-amber-800 transition-all text-amber-100 font-fantasy font-medium tracking-wide border border-amber-600/30 shadow-[0_0_10px_rgba(180,83,9,0.2)]"
+        >
+          ⚔ Confirm
         </button>
-        <button onClick={() => {
-                setCustomName('');
-                setCustomClass(null);
-                setShowCustomizeModal(false);
-              }} className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
+        <button 
+          onClick={() => {
+            setCustomName('');
+            setCustomClass(null);
+            setShowCustomizeModal(false);
+          }} 
+          className="flex-1 bg-gray-800/80 py-2.5 rounded-lg hover:bg-gray-700/80 transition-all text-gray-400 font-fantasy font-medium tracking-wide border border-gray-700/40"
+        >
           Cancel
         </button>
       </div>
     </div>
-  </div>}
+  </div>
+)}
 
-        {showDeckModal && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowDeckModal(false)}>
+{showDeckModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowDeckModal(false)}>
     <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-purple-500" onClick={e => e.stopPropagation()}>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-bold text-purple-400">Create New Deck</h3>
         <button onClick={() => setShowDeckModal(false)} className="text-gray-400 hover:text-white">
-          <X size={24} />
+          <X size={24}/>
         </button>
       </div>
       
-      <input type="text" placeholder="Deck name (e.g., Spanish Vocabulary)" value={newDeck.name} onChange={e => setNewDeck({
-              name: e.target.value
-            })} className="w-full p-3 bg-gray-800 text-white rounded-lg mb-4 border border-gray-700 focus:border-purple-500 focus:outline-none" autoFocus />
+      <input 
+        type="text" 
+        placeholder="Deck name (e.g., Spanish Vocabulary)" 
+        value={newDeck.name} 
+        onChange={e => setNewDeck({name: e.target.value})} 
+        className="w-full p-3 bg-gray-800 text-white rounded-lg mb-4 border border-gray-700 focus:border-purple-500 focus:outline-none" 
+        autoFocus 
+      />
       
       <div className="flex gap-2">
-        <button onClick={() => {
-                if (newDeck.name.trim()) {
-                  setFlashcardDecks(prev => [...prev, {
-                    name: newDeck.name,
-                    cards: []
-                  }]);
-                  addLog(`📚 Created deck: ${newDeck.name}`);
-                  setNewDeck({
-                    name: ''
-                  });
-                  setShowDeckModal(false);
-                }
-              }} disabled={!newDeck.name.trim()} className="flex-1 bg-purple-600 py-2 rounded-lg hover:bg-purple-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <button 
+          onClick={() => {
+            if (newDeck.name.trim()) {
+              setFlashcardDecks(prev => [...prev, { name: newDeck.name, cards: [] }]);
+              addLog(`📚 Created deck: ${newDeck.name}`);
+              setNewDeck({name: ''});
+              setShowDeckModal(false);
+            }
+          }}
+          disabled={!newDeck.name.trim()} 
+          className="flex-1 bg-purple-600 py-2 rounded-lg hover:bg-purple-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+        >
           Create Deck
         </button>
-        <button onClick={() => {
-                setShowDeckModal(false);
-                setNewDeck({
-                  name: ''
-                });
-              }} className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
+        <button 
+          onClick={() => { setShowDeckModal(false); setNewDeck({name: ''}); }} 
+          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
+        >
           Cancel
         </button>
       </div>
     </div>
-  </div>}
+  </div>
+)}
 
-        {showCardModal && selectedDeck !== null && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowCardModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500" onClick={e => e.stopPropagation()}>
+{showCardModal && selectedDeck !== null && (
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50" onClick={() => setShowCardModal(false)}>
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-blue-400">Add Card to {flashcardDecks[selectedDeck]?.name}</h3>
-        <button onClick={() => setShowCardModal(false)} className="text-gray-400 hover:text-white">
-          <X size={24} />
+        <h3 className="text-xl font-fantasy font-bold text-amber-200 tracking-wide">Add Card to {flashcardDecks[selectedDeck]?.name}</h3>
+        <button onClick={() => setShowCardModal(false)} className="text-gray-500 hover:text-amber-300 transition-colors">
+          <X size={24}/>
         </button>
       </div>
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-4"></div>
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Front (Question)</label>
-        <textarea placeholder="e.g., What is the capital of France?" value={newCard.front} onChange={e => setNewCard({
-                ...newCard,
-                front: e.target.value
-              })} className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none resize-none" rows="3" autoFocus />
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Front (Question)</label>
+        <textarea 
+          placeholder="e.g., What is the capital of France?" 
+          value={newCard.front} 
+          onChange={e => setNewCard({...newCard, front: e.target.value})} 
+          className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg border border-amber-900/40 focus:border-amber-500/60 focus:outline-none focus:shadow-[0_0_10px_rgba(245,158,11,0.1)] resize-none placeholder-gray-600 font-fantasy" 
+          rows="3"
+          autoFocus 
+        />
       </div>
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Back (Answer)</label>
-        <textarea placeholder="e.g., Paris" value={newCard.back} onChange={e => setNewCard({
-                ...newCard,
-                back: e.target.value
-              })} className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none resize-none" rows="3" />
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Back (Answer)</label>
+        <textarea 
+          placeholder="e.g., Paris" 
+          value={newCard.back} 
+          onChange={e => setNewCard({...newCard, back: e.target.value})} 
+          className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg border border-amber-900/40 focus:border-amber-500/60 focus:outline-none focus:shadow-[0_0_10px_rgba(245,158,11,0.1)] resize-none placeholder-gray-600 font-fantasy" 
+          rows="3"
+        />
       </div>
       
       <div className="flex gap-2">
-        <button onClick={() => {
-                if (newCard.front.trim() && newCard.back.trim()) {
-                  setFlashcardDecks(prev => prev.map((deck, idx) => idx === selectedDeck ? {
-                    ...deck,
-                    cards: [...deck.cards, {
-                      ...newCard,
-                      mastered: false
-                    }]
-                  } : deck));
-                  addLog(`📝 Added card to ${flashcardDecks[selectedDeck].name}`);
-                  setNewCard({
-                    front: '',
-                    back: ''
-                  });
-                  setShowCardModal(false);
-                }
-              }} disabled={!newCard.front.trim() || !newCard.back.trim()} className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed">
-          Add Card
+        <button 
+          onClick={() => {
+            if (newCard.front.trim() && newCard.back.trim()) {
+              setFlashcardDecks(prev => prev.map((deck, idx) => 
+                idx === selectedDeck 
+                  ? {...deck, cards: [...deck.cards, {...newCard, mastered: false}]}
+                  : deck
+              ));
+              addLog(`📝 Added card to ${flashcardDecks[selectedDeck].name}`);
+              setNewCard({front: '', back: ''});
+              setShowCardModal(false);
+            }
+          }}
+          disabled={!newCard.front.trim() || !newCard.back.trim()} 
+          className="flex-1 bg-gradient-to-b from-amber-700 to-amber-900 py-2 rounded-lg hover:from-amber-600 hover:to-amber-800 transition-all text-amber-100 font-fantasy font-medium tracking-wide border border-amber-600/30 disabled:from-gray-700/40 disabled:to-gray-800/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/20"
+        >
+          ⚔ Add Card
         </button>
-        <button onClick={() => {
-                setShowCardModal(false);
-                setNewCard({
-                  front: '',
-                  back: ''
-                });
-              }} className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
+        <button 
+          onClick={() => { setShowCardModal(false); setNewCard({front: '', back: ''}); }} 
+          className="flex-1 bg-gray-800/80 py-2 rounded-lg hover:bg-gray-700/80 transition-all text-gray-400 font-fantasy font-medium tracking-wide border border-gray-700/40"
+        >
           Cancel
         </button>
       </div>
     </div>
-  </div>}
+  </div>
+)}
 
-        {showStudyModal && selectedDeck !== null && flashcardDecks[selectedDeck] && <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
+{showStudyModal && selectedDeck !== null && flashcardDecks[selectedDeck] && (
+  <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
     <div className="bg-gradient-to-b from-purple-900 to-black rounded-xl p-8 max-w-2xl w-full border-4 border-purple-600 shadow-2xl">
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-purple-400">{flashcardDecks[selectedDeck].name}</h2>
           <p className="text-gray-400">Cards remaining: {studyQueue.length} | Total studied: {flashcardDecks[selectedDeck].cards.length - studyQueue.length + 1}</p>
         </div>
-        <button onClick={() => {
+        <button 
+          onClick={() => {
+            if (reviewingMistakes) {
+              // Return to quiz results without marking as reviewed
+              setShowStudyModal(false);
+              setReviewingMistakes(false);
+              setStudyQueue([]);
+              setIsFlipped(false);
+              setShowQuizModal(true);
+              setShowQuizResults(true);
+            } else {
+              setShowStudyModal(false);
+              setSelectedDeck(null);
+              setCurrentCardIndex(0);
+              setStudyQueue([]);
+              setIsFlipped(false);
+            }
+          }}
+          className="text-gray-400 hover:text-white"
+        >
+          <X size={32}/>
+        </button>
+      </div>
+      
+      <div 
+        onClick={() => setIsFlipped(!isFlipped)}
+        className="bg-gray-800 rounded-xl p-12 mb-6 min-h-[300px] flex items-center justify-center cursor-pointer hover:bg-gray-750 transition-all border-2 border-purple-500"
+      >
+        <div className="text-center">
+          <p className="text-sm text-gray-400 mb-4">{isFlipped ? 'ANSWER' : 'QUESTION'}</p>
+          <p className="text-2xl text-white whitespace-pre-wrap">
+            {isFlipped 
+              ? flashcardDecks[selectedDeck].cards[studyQueue[0]].back 
+              : flashcardDecks[selectedDeck].cards[studyQueue[0]].front}
+          </p>
+          <p className="text-sm text-gray-400 mt-6 italic">Click to flip</p>
+        </div>
+      </div>
+      
+      <div className="bg-gray-800 rounded-full h-2 mb-6">
+        <div 
+          className="bg-purple-500 h-2 rounded-full transition-all" 
+          style={{width: `${((flashcardDecks[selectedDeck].cards.length - studyQueue.length) / flashcardDecks[selectedDeck].cards.length) * 100}%`}}
+        />
+      </div>
+      
+      {isFlipped && (
+        <div className="flex gap-4">
+          <button
+            onClick={() => {
+              // Add current card to end of queue, remove from front
+              const currentCard = studyQueue[0];
+              const newQueue = [...studyQueue.slice(1), currentCard];
+              setStudyQueue(newQueue);
+              setIsFlipped(false);
+            }}
+            className="flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
+          >
+            ❌ Review Again
+          </button>
+          
+          <button
+            onClick={() => {
+              // Mark as mastered, give XP
+              const currentCard = studyQueue[0];
+              setFlashcardDecks(prev => prev.map((deck, idx) => 
+                idx === selectedDeck 
+                  ? {...deck, cards: deck.cards.map((card, cardIdx) => 
+                      cardIdx === currentCard ? {...card, mastered: true} : card
+                    )}
+                  : deck
+              ));
+              
+              setXp(x => x + 5);
+              
+              // Remove from queue
+              const newQueue = studyQueue.slice(1);
+              
+              if (newQueue.length === 0) {
+                // Deck complete
+                const cardsStudied = flashcardDecks[selectedDeck].cards.length;
+                const xpGain = 25;
+                setXp(x => x + xpGain);
+                addLog(`🎓 Completed deck! +${xpGain} bonus XP`);
+                
+                // Loot chance
+                const roll = Math.random();
+                if (roll < 0.3) {
+                  setHealthPots(h => h + 1);
+                  addLog('💊 Found Health Potion!');
+                } else if (roll < 0.5) {
+                  setStaminaPots(s => s + 1);
+                  addLog('⚡ Found Stamina Potion!');
+                }
+                
+                // If we were reviewing mistakes, mark as reviewed and return to quiz results
                 if (reviewingMistakes) {
-                  // Return to quiz results without marking as reviewed
-                  setShowStudyModal(false);
+                  setMistakesReviewed(true);
                   setReviewingMistakes(false);
-                  setStudyQueue([]);
-                  setIsFlipped(false);
+                  setShowStudyModal(false);
                   setShowQuizModal(true);
                   setShowQuizResults(true);
+                  setIsFlipped(false);
+                  addLog('✅ Mistakes reviewed! Retake unlocked.');
                 } else {
                   setShowStudyModal(false);
                   setSelectedDeck(null);
@@ -4476,142 +4927,93 @@ const FantasyStudyQuest = () => {
                   setStudyQueue([]);
                   setIsFlipped(false);
                 }
-              }} className="text-gray-400 hover:text-white">
-          <X size={32} />
-        </button>
-      </div>
-      
-      <div onClick={() => setIsFlipped(!isFlipped)} className="bg-gray-800 rounded-xl p-12 mb-6 min-h-[300px] flex items-center justify-center cursor-pointer hover:bg-gray-750 transition-all border-2 border-purple-500">
-        <div className="text-center">
-          <p className="text-sm text-gray-400 mb-4">{isFlipped ? 'ANSWER' : 'QUESTION'}</p>
-          <p className="text-2xl text-white whitespace-pre-wrap">
-            {isFlipped ? flashcardDecks[selectedDeck].cards[studyQueue[0]].back : flashcardDecks[selectedDeck].cards[studyQueue[0]].front}
-          </p>
-          <p className="text-sm text-gray-400 mt-6 italic">Click to flip</p>
-        </div>
-      </div>
-      
-      <div className="bg-gray-800 rounded-full h-2 mb-6">
-        <div className="bg-purple-500 h-2 rounded-full transition-all" style={{
-                width: `${(flashcardDecks[selectedDeck].cards.length - studyQueue.length) / flashcardDecks[selectedDeck].cards.length * 100}%`
-              }} />
-      </div>
-      
-      {isFlipped && <div className="flex gap-4">
-          <button onClick={() => {
-                // Add current card to end of queue, remove from front
-                const currentCard = studyQueue[0];
-                const newQueue = [...studyQueue.slice(1), currentCard];
+              } else {
                 setStudyQueue(newQueue);
                 setIsFlipped(false);
-              }} className="flex-1 bg-red-600 hover:bg-red-500 py-4 rounded-lg font-bold text-lg transition-all text-white">
-            ❌ Review Again
-          </button>
-          
-          <button onClick={() => {
-                // Mark as mastered, give XP
-                const currentCard = studyQueue[0];
-                setFlashcardDecks(prev => prev.map((deck, idx) => idx === selectedDeck ? {
-                  ...deck,
-                  cards: deck.cards.map((card, cardIdx) => cardIdx === currentCard ? {
-                    ...card,
-                    mastered: true
-                  } : card)
-                } : deck));
-                setXp(x => x + 5);
-
-                // Remove from queue
-                const newQueue = studyQueue.slice(1);
-                if (newQueue.length === 0) {
-                  // Deck complete
-                  const cardsStudied = flashcardDecks[selectedDeck].cards.length;
-                  const xpGain = 25;
-                  setXp(x => x + xpGain);
-                  addLog(`🎓 Completed deck! +${xpGain} bonus XP`);
-
-                  // Loot chance
-                  const roll = Math.random();
-                  if (roll < 0.3) {
-                    setHealthPots(h => h + 1);
-                    addLog('💊 Found Health Potion!');
-                  } else if (roll < 0.5) {
-                    setStaminaPots(s => s + 1);
-                    addLog('⚡ Found Stamina Potion!');
-                  }
-
-                  // If we were reviewing mistakes, mark as reviewed and return to quiz results
-                  if (reviewingMistakes) {
-                    setMistakesReviewed(true);
-                    setReviewingMistakes(false);
-                    setShowStudyModal(false);
-                    setShowQuizModal(true);
-                    setShowQuizResults(true);
-                    setIsFlipped(false);
-                    addLog('✅ Mistakes reviewed! Retake unlocked.');
-                  } else {
-                    setShowStudyModal(false);
-                    setSelectedDeck(null);
-                    setCurrentCardIndex(0);
-                    setStudyQueue([]);
-                    setIsFlipped(false);
-                  }
-                } else {
-                  setStudyQueue(newQueue);
-                  setIsFlipped(false);
-                }
-              }} className="flex-1 bg-green-600 hover:bg-green-500 py-4 rounded-lg font-bold text-lg transition-all text-white">
+              }
+            }}
+            className="flex-1 bg-green-600 hover:bg-green-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
+          >
             ✓ Got It! (+5 XP)
           </button>
-        </div>}
+        </div>
+      )}
     </div>
-  </div>}
+  </div>
+)}
 
-        {showQuizModal && selectedDeck !== null && flashcardDecks[selectedDeck] && <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
-    <div className="bg-gradient-to-b from-blue-900 to-black rounded-xl p-8 max-w-2xl w-full border-4 border-blue-600 shadow-2xl">
-      {!showQuizResults ? <>
+{showQuizModal && selectedDeck !== null && flashcardDecks[selectedDeck] && (
+  <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
+     <div className="bg-gradient-to-b from-gray-900 via-purple-950/30 to-gray-950 rounded-xl p-8 max-w-2xl w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]">
+      {!showQuizResults ? (
+        <>
           <div className="mb-6 flex justify-between items-center">
             <div>
-              <h2 className="text-2xl font-bold text-blue-400">📝 {flashcardDecks[selectedDeck].name} - Quiz</h2>
+              <h2 className="text-2xl font-fantasy font-bold text-amber-200 tracking-wide">📝 {flashcardDecks[selectedDeck].name} - Quiz</h2>
               <p className="text-gray-400">Question {currentQuizIndex + 1} of {quizQuestions.length} | Score: {quizScore}/{quizQuestions.length}</p>
             </div>
-            <button onClick={() => {
-                  setShowQuizModal(false);
-                  setSelectedDeck(null);
-                  setQuizQuestions([]);
-                  setCurrentQuizIndex(0);
-                  setQuizScore(0);
-                  setSelectedAnswer(null);
-                  setShowQuizResults(false);
-                  setWrongCardIndices([]);
-                  setIsRetakeQuiz(false);
-                  setMistakesReviewed(false);
-                  setReviewingMistakes(false);
-                }} className="text-gray-400 hover:text-white">
-              <X size={32} />
+            <button 
+              onClick={() => {
+                setShowQuizModal(false);
+                setSelectedDeck(null);
+                setQuizQuestions([]);
+                setCurrentQuizIndex(0);
+                setQuizScore(0);
+                setSelectedAnswer(null);
+                setShowQuizResults(false);
+                setWrongCardIndices([]);
+                setIsRetakeQuiz(false);
+                setMistakesReviewed(false);
+                setReviewingMistakes(false);
+              }}
+              className="text-gray-400 hover:text-white"
+            >
+              <X size={32}/>
             </button>
           </div>
           
-          <div className="bg-gray-800 rounded-xl p-8 mb-6 min-h-[200px] border-2 border-blue-500">
+          <div className="bg-gray-800/80 rounded-xl p-8 mb-6 min-h-[200px] border border-amber-800/40">
             <p className="text-sm text-gray-400 mb-4">QUESTION</p>
             <p className="text-2xl text-white mb-8">{quizQuestions[currentQuizIndex]?.question}</p>
             
             <div className="space-y-3">
-              {quizQuestions[currentQuizIndex]?.choices.map((choice, idx) => <button key={idx} onClick={() => setSelectedAnswer(choice)} disabled={selectedAnswer !== null} className={`w-full text-left p-4 rounded-lg border-2 transition-all ${selectedAnswer === null ? 'bg-gray-600 border-gray-500 hover:bg-gray-500 hover:border-blue-400 text-white' : selectedAnswer === choice ? choice === quizQuestions[currentQuizIndex].correctAnswer ? 'bg-green-600 border-green-400 text-white' : 'bg-red-600 border-red-400 text-white' : choice === quizQuestions[currentQuizIndex].correctAnswer ? 'bg-green-600 border-green-400 text-white' : 'bg-gray-600 border-gray-500 text-gray-300'} disabled:cursor-not-allowed`}>
+              {quizQuestions[currentQuizIndex]?.choices.map((choice, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedAnswer(choice)}
+                  disabled={selectedAnswer !== null}
+                  className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                    selectedAnswer === null
+                      ? 'bg-gray-600 border-gray-500 hover:bg-gray-500 hover:border-blue-400 text-white'
+                      : selectedAnswer === choice
+                        ? choice === quizQuestions[currentQuizIndex].correctAnswer
+                          ? 'bg-green-600 border-green-400 text-white'
+                          : 'bg-red-600 border-red-400 text-white'
+                        : choice === quizQuestions[currentQuizIndex].correctAnswer
+                          ? 'bg-green-600 border-green-400 text-white'
+                          : 'bg-gray-600 border-gray-500 text-gray-300'
+                  } disabled:cursor-not-allowed`}
+                >
                   <span className="font-bold mr-3">{String.fromCharCode(65 + idx)}.</span>
                   {choice}
-                </button>)}
+                </button>
+              ))}
             </div>
           </div>
           
           <div className="bg-gray-800 rounded-full h-2 mb-6">
-            <div className="bg-blue-500 h-2 rounded-full transition-all" style={{
-                  width: `${(currentQuizIndex + 1) / quizQuestions.length * 100}%`
-                }} />
+            <div 
+              className="bg-blue-500 h-2 rounded-full transition-all" 
+              style={{width: `${((currentQuizIndex + 1) / quizQuestions.length) * 100}%`}}
+            />
           </div>
           
-          {selectedAnswer && <button onClick={() => {
+          {selectedAnswer && (
+            <button
+              onClick={() => {
                 let finalScore = quizScore;
                 const isCorrect = selectedAnswer === quizQuestions[currentQuizIndex].correctAnswer;
+                
                 if (isCorrect) {
                   finalScore = quizScore + 1;
                   setQuizScore(finalScore);
@@ -4619,6 +5021,7 @@ const FantasyStudyQuest = () => {
                   // Track wrong answer
                   setWrongCardIndices(prev => [...prev, quizQuestions[currentQuizIndex].cardIndex]);
                 }
+                
                 const nextIndex = currentQuizIndex + 1;
                 if (nextIndex >= quizQuestions.length) {
                   // Quiz complete - award XP and loot
@@ -4626,7 +5029,7 @@ const FantasyStudyQuest = () => {
                   const xpGain = isRetakeQuiz ? Math.floor(baseXP * 0.5) : baseXP;
                   setXp(x => x + xpGain);
                   addLog(`📝 Quiz complete! +${xpGain} XP${isRetakeQuiz ? ' (retake)' : ''}`);
-
+                  
                   // Loot for good performance (70%+) - only on first attempt
                   if (!isRetakeQuiz && finalScore >= quizQuestions.length * 0.7) {
                     const roll = Math.random();
@@ -4638,36 +5041,48 @@ const FantasyStudyQuest = () => {
                       addLog('⚡ Found Stamina Potion!');
                     }
                   }
+                  
                   setShowQuizResults(true);
                 } else {
                   setCurrentQuizIndex(nextIndex);
                   setSelectedAnswer(null);
                 }
-              }} className="w-full bg-blue-600 hover:bg-blue-500 py-4 rounded-lg font-bold text-lg transition-all text-white">
+              }}
+              className="w-full bg-gradient-to-b from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 py-4 rounded-lg font-fantasy font-bold text-lg transition-all text-amber-100 border border-amber-600/30"
+            >
               {currentQuizIndex + 1 === quizQuestions.length ? 'See Results' : 'Next Question →'}
-            </button>}
-        </> : <div className="text-center">
+            </button>
+          )}
+        </>
+      ) : (
+        <div className="text-center">
           <div className="mb-8">
             <div className="text-8xl mb-4">
               {quizScore === quizQuestions.length ? '🏆' : quizScore >= quizQuestions.length * 0.7 ? '⭐' : '📖'}
             </div>
-            <h2 className="text-3xl font-bold text-blue-400 mb-2">Quiz Complete!</h2>
+            <h2 className="text-3xl font-fantasy font-bold text-amber-300 mb-2">Quiz Complete!</h2>
             <p className="text-5xl font-bold text-white mb-4">{quizScore} / {quizQuestions.length}</p>
             <p className="text-xl text-gray-300">
               {quizScore === quizQuestions.length && 'Perfect Score! 🎉'}
               {quizScore >= quizQuestions.length * 0.7 && quizScore < quizQuestions.length && 'Great Job! 💪'}
               {quizScore < quizQuestions.length * 0.7 && 'Keep Studying! 📚'}
             </p>
-            {wrongCardIndices.length > 0 && <p className="text-red-400 mt-2">Missed {wrongCardIndices.length} question{wrongCardIndices.length !== 1 ? 's' : ''}</p>}
+            {wrongCardIndices.length > 0 && (
+              <p className="text-red-400 mt-2">Missed {wrongCardIndices.length} question{wrongCardIndices.length !== 1 ? 's' : ''}</p>
+            )}
           </div>
           
           <div className="bg-gray-800 rounded-lg p-6 mb-6">
             <p className="text-yellow-400 text-xl mb-2">+{isRetakeQuiz ? Math.floor(quizScore * 10 * 0.5) : quizScore * 10} XP Earned{isRetakeQuiz ? ' (Retake - 50%)' : ''}</p>
-            {!isRetakeQuiz && quizScore >= quizQuestions.length * 0.7 && <p className="text-gray-400">Bonus loot awarded! Check your inventory.</p>}
+            {!isRetakeQuiz && quizScore >= quizQuestions.length * 0.7 && (
+              <p className="text-gray-400">Bonus loot awarded! Check your inventory.</p>
+            )}
           </div>
           
           <div className="space-y-3">
-            {wrongCardIndices.length > 0 && <button onClick={() => {
+            {wrongCardIndices.length > 0 && (
+              <button
+                onClick={() => {
                   // Open study modal with only wrong cards
                   setStudyQueue([...wrongCardIndices]);
                   setReviewingMistakes(true);
@@ -4675,327 +5090,491 @@ const FantasyStudyQuest = () => {
                   setShowQuizResults(false);
                   setIsFlipped(false);
                   setShowStudyModal(true);
-                }} className="w-full bg-purple-600 hover:bg-purple-500 py-4 rounded-lg font-bold text-lg transition-all text-white">
+                }}
+                className="w-full bg-purple-600 hover:bg-purple-500 py-4 rounded-lg font-bold text-lg transition-all text-white"
+              >
                 📖 Review Mistakes ({wrongCardIndices.length} card{wrongCardIndices.length !== 1 ? 's' : ''})
-              </button>}
+              </button>
+            )}
             
-            <button onClick={() => {
-                  // Retake quiz with reduced XP
-                  setShowQuizModal(false);
-                  setShowQuizResults(false);
-                  generateQuiz(selectedDeck, true);
-                }} disabled={wrongCardIndices.length > 0 && !mistakesReviewed} className={`w-full py-4 rounded-lg font-bold text-lg transition-all ${wrongCardIndices.length > 0 && !mistakesReviewed ? 'bg-gray-600 text-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-500 text-white'}`}>
+            <button
+              onClick={() => {
+                // Retake quiz with reduced XP
+                setShowQuizModal(false);
+                setShowQuizResults(false);
+                generateQuiz(selectedDeck, true);
+              }}
+              disabled={wrongCardIndices.length > 0 && !mistakesReviewed}
+              className={`w-full py-4 rounded-lg font-fantasy font-bold text-lg transition-all ${
+                wrongCardIndices.length > 0 && !mistakesReviewed
+                  ? 'bg-gray-700/60 text-gray-400 cursor-not-allowed border border-gray-600/30'
+                  : 'bg-gradient-to-b from-amber-700 to-amber-900 hover:from-amber-600 hover:to-amber-800 text-amber-100 border border-amber-600/30'
+              }`}
+            >
               {wrongCardIndices.length > 0 && !mistakesReviewed ? '🔒 Review Mistakes First' : '🔄 Retake Quiz (50% XP)'}
             </button>
             
-            <button onClick={() => {
-                  setShowQuizModal(false);
-                  setSelectedDeck(null);
-                  setQuizQuestions([]);
-                  setCurrentQuizIndex(0);
-                  setQuizScore(0);
-                  setSelectedAnswer(null);
-                  setShowQuizResults(false);
-                  setWrongCardIndices([]);
-                  setIsRetakeQuiz(false);
-                  setMistakesReviewed(false);
-                  setReviewingMistakes(false);
-                }} className="w-full bg-gray-600 hover:bg-gray-500 py-4 rounded-lg font-bold text-lg transition-all text-gray-200">
+            <button
+              onClick={() => {
+                setShowQuizModal(false);
+                setSelectedDeck(null);
+                setQuizQuestions([]);
+                setCurrentQuizIndex(0);
+                setQuizScore(0);
+                setSelectedAnswer(null);
+                setShowQuizResults(false);
+                setWrongCardIndices([]);
+                setIsRetakeQuiz(false);
+                setMistakesReviewed(false);
+                setReviewingMistakes(false);
+              }}
+              className="w-full bg-gray-600 hover:bg-gray-500 py-4 rounded-lg font-bold text-lg transition-all text-gray-200"
+            >
               Close
             </button>
           </div>
-        </div>}
+        </div>
+      )}
     </div>
-  </div>}
+  </div>
+)}
 
-         {showModal && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-red-500 relative" onClick={e => e.stopPropagation()}>
-      <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24} /></button>
+         {showModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowModal(false)}>
+    <div className="bg-gradient-to-b from-gray-900 via-red-950/30 to-gray-950 rounded-xl p-6 max-w-md w-full border border-red-700/40 relative shadow-[0_0_40px_rgba(220,38,38,0.15)]" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/50 to-transparent"></div>
+      
+      <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-red-300 transition-colors"><X size={24}/></button>
       
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-red-400">ACCEPT NEW TRIAL</h3>
-        <p className="text-gray-400 text-sm mt-1 italic">"The darkness demands sacrifice..."</p>
+        <h3 className="text-2xl font-fantasy-decorative tracking-wider text-red-400">ACCEPT NEW TRIAL</h3>
+        {/* Decorative divider */}
+        <div className="flex items-center justify-center gap-2 my-3">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent"></div>
+          <div className="w-1.5 h-1.5 rotate-45 bg-red-500/50"></div>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/30 to-transparent"></div>
+        </div>
+        <p className="text-gray-400 text-sm font-fantasy italic">"The darkness demands sacrifice..."</p>
       </div>
       
-      <input type="text" placeholder="Name your trial" value={newTask.title} onChange={e => setNewTask({
-              ...newTask,
-              title: e.target.value
-            })} className="w-full p-3 bg-gray-800 text-white rounded-lg mb-4 border border-gray-700 focus:border-red-500 focus:outline-none" autoFocus />
+      <input 
+        type="text" 
+        placeholder="Name your trial" 
+        value={newTask.title} 
+        onChange={e => setNewTask({...newTask, title: e.target.value})} 
+        className="w-full p-3 bg-gray-800/80 text-white rounded-lg mb-4 border border-red-800/30 focus:border-red-500/60 focus:outline-none font-fantasy placeholder:font-sans placeholder:text-gray-500" 
+        autoFocus 
+      />
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Trial Difficulty</label>
+        <label className="block text-sm text-gray-400 mb-2 font-fantasy tracking-wide">Trial Difficulty</label>
         <div className="grid grid-cols-2 gap-3">
-          <button type="button" onClick={() => setNewTask({
-                  ...newTask,
-                  priority: 'important'
-                })} className={`p-4 rounded-lg border-2 transition-all ${newTask.priority === 'important' ? 'bg-yellow-900 border-yellow-500 text-yellow-200 shadow-lg shadow-yellow-500/50' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-yellow-700'}`}>
-            <div className="font-bold mb-1">IMPORTANT</div>
+          <button 
+            type="button" 
+            onClick={() => setNewTask({...newTask, priority: 'important'})} 
+            className={`p-4 rounded-lg border-2 transition-all ${
+              newTask.priority === 'important' 
+                ? 'bg-yellow-900/60 border-yellow-500/70 text-yellow-200 shadow-lg shadow-yellow-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-yellow-700/50'
+            }`}
+          >
+            <div className="font-fantasy font-bold mb-1">IMPORTANT</div>
             <div className="text-xs">1.25x XP</div>
             <div className="text-xs text-gray-500 mt-1 italic">Greater reward</div>
           </button>
           
-          <button type="button" onClick={() => setNewTask({
-                  ...newTask,
-                  priority: 'routine'
-                })} className={`p-4 rounded-lg border-2 transition-all ${newTask.priority === 'routine' ? 'bg-blue-900 border-blue-500 text-blue-200 shadow-lg shadow-blue-500/50' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-blue-700'}`}>
-            <div className="font-bold mb-1">ROUTINE</div>
+          <button 
+            type="button" 
+            onClick={() => setNewTask({...newTask, priority: 'routine'})} 
+            className={`p-4 rounded-lg border-2 transition-all ${
+              newTask.priority === 'routine' 
+                ? 'bg-amber-900/60 border-amber-500/70 text-amber-200 shadow-lg shadow-amber-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-amber-700/50'
+            }`}
+          >
+            <div className="font-fantasy font-bold mb-1">ROUTINE</div>
             <div className="text-xs">1.0x XP</div>
             <div className="text-xs text-gray-500 mt-1 italic">Standard trial</div>
           </button>
         </div>
       </div>
       
+      {/* Bottom divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/20 to-transparent"></div>
+      </div>
+      
       <div className="flex gap-2">
-        <button onClick={() => {
-                sfx.playClick();
-                addTask();
-              }} disabled={!newTask.title} className="flex-1 bg-red-600 py-2 rounded-lg hover:bg-red-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <button 
+          onClick={() => { sfx.playClick(); addTask(); }} 
+          disabled={!newTask.title} 
+          className="flex-1 bg-gradient-to-b from-red-700/80 to-red-900/80 py-2 rounded-lg hover:from-red-600/80 hover:to-red-800/80 transition-all text-white font-fantasy font-medium tracking-wide border border-red-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
+        >
           Accept Trial
         </button>
-        <button onClick={() => setShowModal(false)} className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
+        <button 
+          onClick={() => setShowModal(false)} 
+          className="flex-1 bg-gray-700/60 py-2 rounded-lg hover:bg-gray-600/60 transition-all text-gray-300 font-fantasy font-medium tracking-wide border border-gray-600/30"
+        >
           Cancel
         </button>
       </div>
+      
+      {/* Decorative bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
     </div>
-  </div>}
+  </div>
+)}
 
-        {showImportModal && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowImportModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500 relative" onClick={e => e.stopPropagation()}>
-      <button onClick={() => setShowImportModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white"><X size={24} /></button>
+{showImportModal && (
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50" onClick={() => setShowImportModal(false)}>
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+      <button onClick={() => setShowImportModal(false)} className="absolute top-4 right-4 text-gray-500 hover:text-amber-300 transition-colors"><X size={24}/></button>
       
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-blue-400">IMPORT FROM PLANNER</h3>
-        <p className="text-gray-400 text-sm mt-1 italic">"Draw upon your prepared plans..."</p>
+        <h3 className="text-2xl font-fantasy font-bold text-amber-200 tracking-wider uppercase">Import from Planner</h3>
+        <p className="text-gray-500 text-sm mt-1 italic font-fantasy">"Draw upon your prepared plans..."</p>
       </div>
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-4"></div>
       
       <div className="space-y-2">
         {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, idx) => {
-                const taskCount = weeklyPlan[day]?.length || 0;
-                // Highlight real-world current day, not game day
-                const today = new Date();
-                const todayDayIndex = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-                const realWorldDayIndex = todayDayIndex === 0 ? 6 : todayDayIndex - 1; // Convert to 0=Monday, 6=Sunday
-                const isRealWorldToday = idx === realWorldDayIndex;
-                return <button key={day} onClick={() => importFromPlanner(day)} disabled={taskCount === 0} className={`w-full p-4 rounded-lg border-2 transition-all text-left ${isRealWorldToday ? 'bg-blue-900 border-blue-500 hover:bg-blue-800' : taskCount > 0 ? 'bg-gray-800 border-gray-700 hover:border-blue-500 hover:bg-gray-750' : 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed'}`}>
+          const taskCount = weeklyPlan[day]?.length || 0;
+          // Highlight real-world current day, not game day
+          const today = new Date();
+          const todayDayIndex = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+          const realWorldDayIndex = todayDayIndex === 0 ? 6 : todayDayIndex - 1; // Convert to 0=Monday, 6=Sunday
+          const isRealWorldToday = idx === realWorldDayIndex;
+          
+          return (
+            <button
+              key={day}
+              onClick={() => importFromPlanner(day)}
+              disabled={taskCount === 0}
+              className={`w-full p-4 rounded-lg border transition-all text-left ${
+                isRealWorldToday
+                  ? 'bg-amber-900/50 border-amber-600/60 hover:bg-amber-900/70'
+                  : taskCount > 0
+                    ? 'bg-gray-800/60 border-gray-700/40 hover:border-amber-700/40 hover:bg-gray-800'
+                    : 'bg-gray-800/40 border-gray-700/30 opacity-50 cursor-not-allowed'
+              }`}
+            >
               <div className="flex justify-between items-center">
                 <div>
-                  <span className="font-bold text-white">{day}</span>
-                  {isRealWorldToday && <span className="ml-2 text-xs text-blue-400">(Today)</span>}
+                  <span className="font-fantasy font-bold text-amber-100">{day}</span>
+                  {isRealWorldToday && <span className="ml-2 text-xs text-amber-400 font-fantasy">(Today)</span>}
                 </div>
                 <span className={`text-sm ${taskCount > 0 ? 'text-green-400' : 'text-gray-500'}`}>
                   {taskCount} task{taskCount !== 1 ? 's' : ''}
                 </span>
               </div>
-            </button>;
-              })}
+            </button>
+          );
+        })}
       </div>
       
-      <button onClick={() => setShowImportModal(false)} className="w-full mt-4 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
+      <button 
+        onClick={() => setShowImportModal(false)} 
+        className="w-full mt-4 bg-gray-800/80 py-2 rounded-lg hover:bg-gray-700/80 transition-all text-gray-400 font-fantasy font-medium tracking-wide border border-gray-700/40"
+      >
         Cancel
       </button>
     </div>
-  </div>}
+  </div>
+)}
 
-         {showPlanModal && selectedDay && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowPlanModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-blue-400">Plan for {selectedDay}</h3>
-        <button onClick={() => setShowPlanModal(false)} className="text-gray-400 hover:text-white"><X size={24} /></button>
+         {showPlanModal && selectedDay && (
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowPlanModal(false)}>
+    <div className="bg-gradient-to-b from-gray-900 via-amber-950/10 to-gray-950 rounded-xl p-6 max-w-md w-full border border-amber-700/40 shadow-[0_0_40px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+      
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-xl font-fantasy-decorative tracking-wider text-amber-300">Plan for {selectedDay}</h3>
+        <button onClick={() => setShowPlanModal(false)} className="text-gray-500 hover:text-amber-300 transition-colors"><X size={24}/></button>
       </div>
       
-      <input type="text" placeholder="What do you need to do?" value={newPlanItem.title} onChange={e => setNewPlanItem({
-              ...newPlanItem,
-              title: e.target.value
-            })} className="w-full p-3 bg-gray-800 text-white rounded-lg mb-4 border border-gray-700 focus:border-blue-500 focus:outline-none" autoFocus />
+      {/* Decorative divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/30 to-transparent"></div>
+        <div className="w-1.5 h-1.5 rotate-45 bg-amber-500/50"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/30 to-transparent"></div>
+      </div>
+      
+      <input 
+        type="text" 
+        placeholder="What do you need to do?" 
+        value={newPlanItem.title} 
+        onChange={e => setNewPlanItem({...newPlanItem, title: e.target.value})} 
+        className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg mb-4 border border-amber-800/30 focus:border-amber-500/60 focus:outline-none font-fantasy placeholder:font-sans placeholder:text-gray-600" 
+        autoFocus 
+      />
       
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Priority Level</label>
+        <label className="block text-sm text-gray-400 mb-2 font-fantasy tracking-wide">Priority Level</label>
         <div className="grid grid-cols-2 gap-3">
-          <button type="button" onClick={() => setNewPlanItem({
-                  ...newPlanItem,
-                  priority: 'important'
-                })} className={`p-4 rounded-lg border-2 transition-all ${newPlanItem.priority === 'important' ? 'bg-yellow-900 border-yellow-500 text-yellow-200 shadow-lg shadow-yellow-500/50' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-yellow-700'}`}>
+          <button 
+            type="button" 
+            onClick={() => setNewPlanItem({...newPlanItem, priority: 'important'})} 
+            className={`p-4 rounded-lg border-2 transition-all ${
+              newPlanItem.priority === 'important' 
+                ? 'bg-yellow-900/60 border-yellow-500/70 text-yellow-200 shadow-lg shadow-yellow-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-yellow-700/50'
+            }`}
+          >
             <div className="text-2xl mb-1">⭐</div>
-            <div className="font-bold">IMPORTANT</div>
+            <div className="font-fantasy font-bold">IMPORTANT</div>
             <div className="text-xs mt-1">1.25x XP</div>
           </button>
           
-          <button type="button" onClick={() => setNewPlanItem({
-                  ...newPlanItem,
-                  priority: 'routine'
-                })} className={`p-4 rounded-lg border-2 transition-all ${newPlanItem.priority === 'routine' ? 'bg-blue-900 border-blue-500 text-blue-200 shadow-lg shadow-blue-500/50' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-blue-700'}`}>
+          <button 
+            type="button" 
+            onClick={() => setNewPlanItem({...newPlanItem, priority: 'routine'})} 
+            className={`p-4 rounded-lg border-2 transition-all ${
+              newPlanItem.priority === 'routine' 
+                ? 'bg-amber-900/60 border-amber-500/70 text-amber-200 shadow-lg shadow-amber-500/30' 
+                : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-amber-700/50'
+            }`}
+          >
             <div className="text-2xl mb-1">📋</div>
-            <div className="font-bold">ROUTINE</div>
+            <div className="font-fantasy font-bold">ROUTINE</div>
             <div className="text-xs mt-1">1.0x XP</div>
           </button>
         </div>
       </div>
       
+      {/* Bottom divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-amber-600/20 to-transparent"></div>
+      </div>
+      
       <div className="flex gap-2">
-        <button onClick={() => {
-                if (newPlanItem.title) {
-                  setWeeklyPlan(prev => ({
-                    ...prev,
-                    [selectedDay]: [...prev[selectedDay], {
-                      ...newPlanItem,
-                      completed: false
-                    }]
-                  }));
-                  const targetDate = getNextDayOfWeek(selectedDay);
-                  const dateKey = getDateKey(targetDate);
-                  setCalendarTasks(prev => ({
-                    ...prev,
-                    [dateKey]: [...(prev[dateKey] || []), {
-                      title: newPlanItem.title,
-                      priority: newPlanItem.priority || 'routine',
-                      done: false,
-                      fromPlanner: true
-                    }]
-                  }));
-                  setNewPlanItem({
-                    title: '',
-                    priority: 'routine'
-                  });
-                  setShowPlanModal(false);
-                  addLog(`📅 Added "${newPlanItem.title}" to ${selectedDay}`);
-                }
-              }} disabled={!newPlanItem.title} className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <button 
+          onClick={() => { 
+            if (newPlanItem.title) { 
+              setWeeklyPlan(prev => ({ 
+                ...prev, 
+                [selectedDay]: [...prev[selectedDay], {
+                  ...newPlanItem, 
+                  completed: false
+                }] 
+              })); 
+              const targetDate = getNextDayOfWeek(selectedDay);
+              const dateKey = getDateKey(targetDate);
+              setCalendarTasks(prev => ({ 
+                ...prev, 
+                [dateKey]: [...(prev[dateKey] || []), { 
+                  title: newPlanItem.title,
+                  priority: newPlanItem.priority || 'routine',
+                  done: false, 
+                  fromPlanner: true 
+                }] 
+              })); 
+              setNewPlanItem({ title: '', priority: 'routine' }); 
+              setShowPlanModal(false); 
+              addLog(`📅 Added "${newPlanItem.title}" to ${selectedDay}`); 
+            } 
+          }}
+          disabled={!newPlanItem.title} 
+          className="flex-1 bg-gradient-to-b from-amber-700/80 to-amber-900/80 py-2 rounded-lg hover:from-amber-600/80 hover:to-amber-800/80 transition-all text-amber-100 font-fantasy font-medium tracking-wide border border-amber-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
+        >
           Add Task
         </button>
-        <button onClick={() => {
-                setShowPlanModal(false);
-                setNewPlanItem({
-                  title: '',
-                  priority: 'routine'
-                });
-              }} className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium">
+        <button 
+          onClick={() => { 
+            setShowPlanModal(false); 
+            setNewPlanItem({ title: '', priority: 'routine' }); 
+          }} 
+          className="flex-1 bg-gray-700/60 py-2 rounded-lg hover:bg-gray-600/60 transition-all text-gray-300 font-fantasy font-medium tracking-wide border border-gray-600/30"
+        >
           Cancel
         </button>
       </div>
+      
+      {/* Decorative bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent"></div>
     </div>
-  </div>}
-          {showCalendarModal && selectedDate && <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowCalendarModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-green-500" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-green-400">
+  </div>
+)}
+          {showCalendarModal && selectedDate && (
+  <div className="fixed inset-0 bg-black bg-opacity-80 flex items-start justify-center p-4 z-50" onClick={() => setShowCalendarModal(false)}>
+    <div className="bg-gradient-to-b from-gray-900 via-emerald-950/20 to-gray-950 rounded-xl p-6 max-w-md w-full border border-emerald-700/40 shadow-[0_0_40px_rgba(16,185,129,0.15)] relative" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
+      
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="text-lg font-fantasy-decorative tracking-wider text-emerald-400">
   {(() => {
-                  const [year, month, day] = selectedDate.split('-').map(Number);
-                  const date = new Date(year, month - 1, day);
-                  return date.toLocaleDateString('default', {
-                    weekday: 'long',
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                  });
-                })()}
-              </h3>
-        <button onClick={() => setShowCalendarModal(false)} className="text-gray-400 hover:text-white">
-          <X size={24} />
+    const [year, month, day] = selectedDate.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('default', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  })()}
+</h3>
+        <button onClick={() => setShowCalendarModal(false)} className="text-gray-400 hover:text-emerald-300 transition-colors">
+          <X size={24}/>
         </button>
       </div>
       
+      {/* Decorative divider */}
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-600/30 to-transparent"></div>
+        <div className="w-1.5 h-1.5 rotate-45 bg-emerald-500/50"></div>
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-600/30 to-transparent"></div>
+      </div>
+      
       <div className="mb-4">
-        <input type="text" placeholder="Add new task..." value={newCalendarTask.title} onChange={e => setNewCalendarTask({
-                ...newCalendarTask,
-                title: e.target.value
-              })} className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-green-500 focus:outline-none mb-3" autoFocus />
+        <input 
+          type="text" 
+          placeholder="Add new task..." 
+          value={newCalendarTask.title} 
+          onChange={e => setNewCalendarTask({...newCalendarTask, title: e.target.value})} 
+          className="w-full p-3 bg-gray-800/80 text-white rounded-lg border border-emerald-800/30 focus:border-emerald-500/60 focus:outline-none mb-3 font-fantasy placeholder:font-sans placeholder:text-gray-500" 
+          autoFocus 
+        />
         
         <div className="mb-3">
-          <label className="block text-sm text-gray-400 mb-2">Priority Level</label>
+          <label className="block text-sm text-gray-400 mb-2 font-fantasy tracking-wide">Priority Level</label>
           <div className="grid grid-cols-2 gap-2">
-            <button type="button" onClick={() => setNewCalendarTask({
-                    ...newCalendarTask,
-                    priority: 'important'
-                  })} className={`p-3 rounded-lg border-2 transition-all ${newCalendarTask.priority === 'important' ? 'bg-yellow-900 border-yellow-500 text-yellow-200' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-yellow-700'}`}>
+            <button 
+              type="button" 
+              onClick={() => setNewCalendarTask({...newCalendarTask, priority: 'important'})} 
+              className={`p-3 rounded-lg border-2 transition-all ${
+                newCalendarTask.priority === 'important' 
+                  ? 'bg-yellow-900/60 border-yellow-500/70 text-yellow-200 shadow-lg shadow-yellow-500/30' 
+                  : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-yellow-700/50'
+              }`}
+            >
               <div className="text-xl mb-1">⭐</div>
-              <div className="font-bold text-sm">IMPORTANT</div>
+              <div className="font-fantasy font-bold text-sm">IMPORTANT</div>
             </button>
             
-            <button type="button" onClick={() => setNewCalendarTask({
-                    ...newCalendarTask,
-                    priority: 'routine'
-                  })} className={`p-3 rounded-lg border-2 transition-all ${newCalendarTask.priority === 'routine' ? 'bg-blue-900 border-blue-500 text-blue-200' : 'bg-gray-800 border-gray-700 text-gray-400 hover:border-blue-700'}`}>
+            <button 
+              type="button" 
+              onClick={() => setNewCalendarTask({...newCalendarTask, priority: 'routine'})} 
+              className={`p-3 rounded-lg border-2 transition-all ${
+                newCalendarTask.priority === 'routine' 
+                  ? 'bg-amber-900/60 border-amber-500/70 text-amber-200 shadow-lg shadow-amber-500/30' 
+                  : 'bg-gray-800/60 border-gray-700/50 text-gray-400 hover:border-amber-700/50'
+              }`}
+            >
               <div className="text-xl mb-1">📋</div>
-              <div className="font-bold text-sm">ROUTINE</div>
+              <div className="font-fantasy font-bold text-sm">ROUTINE</div>
             </button>
           </div>
         </div>
         
-        <button onClick={() => {
-                if (newCalendarTask.title.trim()) {
-                  // Parse date in local timezone (not UTC)
-                  const [year, month, day] = selectedDate.split('-').map(Number);
-                  const date = new Date(year, month - 1, day);
-                  const dayName = date.toLocaleDateString('en-US', {
-                    weekday: 'long'
-                  });
-
-                  // Add to calendar
-                  setCalendarTasks(prev => ({
-                    ...prev,
-                    [selectedDate]: [...(prev[selectedDate] || []), {
-                      title: newCalendarTask.title,
-                      priority: newCalendarTask.priority,
-                      done: false
-                    }]
-                  }));
-
-                  // Add to planner for that day
-                  setWeeklyPlan(prev => ({
-                    ...prev,
-                    [dayName]: [...prev[dayName], {
-                      title: newCalendarTask.title,
-                      priority: newCalendarTask.priority,
-                      completed: false
-                    }]
-                  }));
-                  setNewCalendarTask({
-                    title: '',
-                    priority: 'routine'
-                  });
-                }
-              }} disabled={!newCalendarTask.title.trim()} className="w-full bg-green-600 py-2 rounded-lg hover:bg-green-500 transition-all text-white font-medium disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed">
+        <button 
+          onClick={() => { 
+            if (newCalendarTask.title.trim()) { 
+              // Parse date in local timezone (not UTC)
+              const [year, month, day] = selectedDate.split('-').map(Number);
+              const date = new Date(year, month - 1, day);
+              const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+              
+              // Add to calendar
+              setCalendarTasks(prev => ({ 
+                ...prev, 
+                [selectedDate]: [...(prev[selectedDate] || []), { 
+                  title: newCalendarTask.title,
+                  priority: newCalendarTask.priority,
+                  done: false 
+                }] 
+              }));
+              
+              // Add to planner for that day
+              setWeeklyPlan(prev => ({
+                ...prev,
+                [dayName]: [...prev[dayName], {
+                  title: newCalendarTask.title,
+                  priority: newCalendarTask.priority,
+                  completed: false
+                }]
+              }));
+              
+              setNewCalendarTask({ title: '', priority: 'routine' }); 
+            } 
+          }} 
+          disabled={!newCalendarTask.title.trim()} 
+          className="w-full bg-gradient-to-b from-emerald-700/80 to-emerald-900/80 py-2 rounded-lg hover:from-emerald-600/80 hover:to-emerald-800/80 transition-all text-white font-fantasy font-medium tracking-wide border border-emerald-600/30 disabled:from-gray-700 disabled:to-gray-800 disabled:text-gray-400 disabled:cursor-not-allowed disabled:border-gray-600/30"
+        >
           Add Task
         </button>
       </div>
       
+      {/* Task list divider */}
+      <div className="flex items-center justify-center gap-2 mb-3">
+        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-600/20 to-transparent"></div>
+      </div>
+      
       <div className="space-y-2 max-h-96 overflow-y-auto">
-        {!calendarTasks[selectedDate] || calendarTasks[selectedDate].length === 0 ? <p className="text-gray-500 text-center py-4 italic">No tasks for this day</p> : [...calendarTasks[selectedDate]].sort((a, b) => {
-                if (a.priority === 'important' && b.priority !== 'important') return -1;
-                if (a.priority !== 'important' && b.priority === 'important') return 1;
-                return 0;
-              }).map((task, idx) => {
-                const originalIdx = calendarTasks[selectedDate].indexOf(task);
-                return <div key={originalIdx} className={`rounded-lg p-3 flex items-center gap-3 ${task.priority === 'important' && !task.done ? 'bg-gradient-to-r from-yellow-900/30 to-gray-800 border border-yellow-500' : 'bg-gray-800'}`}>
-                {task.priority === 'important' && !task.done && <span className="text-xl">⭐</span>}
-                <input type="checkbox" checked={task.done} onChange={() => {
-                    setCalendarTasks(prev => ({
-                      ...prev,
-                      [selectedDate]: prev[selectedDate].map((t, i) => i === originalIdx ? {
-                        ...t,
-                        done: !t.done
-                      } : t)
-                    }));
-                  }} className="w-5 h-5 cursor-pointer" />
-                <span className={`flex-1 ${task.done ? 'line-through text-gray-500' : 'text-white'}`}>
+        {(!calendarTasks[selectedDate] || calendarTasks[selectedDate].length === 0) ? (
+          <p className="text-gray-500 text-center py-4 italic font-fantasy">No tasks for this day</p>
+        ) : (
+          [...calendarTasks[selectedDate]].sort((a, b) => {
+            if (a.priority === 'important' && b.priority !== 'important') return -1;
+            if (a.priority !== 'important' && b.priority === 'important') return 1;
+            return 0;
+          }).map((task, idx) => {
+            const originalIdx = calendarTasks[selectedDate].indexOf(task);
+            return (
+              <div 
+                key={originalIdx} 
+                className={`rounded-lg p-3 flex items-center gap-3 ${
+                  task.priority === 'important' && !task.done
+                    ? 'bg-gradient-to-r from-yellow-900/30 to-gray-800/80 border border-yellow-500/50'
+                    : 'bg-gray-800/60 border border-gray-700/30'
+                }`}
+              >
+                {task.priority === 'important' && !task.done && (
+                  <span className="text-xl">⭐</span>
+                )}
+                <input 
+                  type="checkbox" 
+                  checked={task.done} 
+                  onChange={() => { 
+                    setCalendarTasks(prev => ({ 
+                      ...prev, 
+                      [selectedDate]: prev[selectedDate].map((t, i) => 
+                        i === originalIdx ? { ...t, done: !t.done } : t
+                      ) 
+                    })); 
+                  }} 
+                  className="w-5 h-5 cursor-pointer" 
+                />
+                <span className={`flex-1 font-fantasy ${task.done ? 'line-through text-gray-500' : 'text-white'}`}>
                   {task.title}
                 </span>
-                <button onClick={() => {
-                    setCalendarTasks(prev => ({
-                      ...prev,
-                      [selectedDate]: prev[selectedDate].filter((_, i) => i !== originalIdx)
-                    }));
-                  }} className="text-red-400 hover:text-red-300">
-                  <X size={18} />
+                <button 
+                  onClick={() => { 
+                    setCalendarTasks(prev => ({ 
+                      ...prev, 
+                      [selectedDate]: prev[selectedDate].filter((_, i) => i !== originalIdx) 
+                    })); 
+                  }} 
+                  className="text-red-400 hover:text-red-300"
+                >
+                  <X size={18}/>
                 </button>
-              </div>;
-              })}
+              </div>
+            );
+          })
+        )}
       </div>
+      
+      {/* Decorative bottom edge */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent"></div>
     </div>
-  </div>}
+  </div>
+)}
 
-          {showBoss && <div className={`fixed inset-0 ${isFinalBoss && gauntletPhase === 3 ? 'bg-purple-950 bg-opacity-95' : isFinalBoss && gauntletPhase === 2 ? 'bg-orange-950 bg-opacity-95' : 'bg-black bg-opacity-95'} flex items-start justify-center p-4 z-50 overflow-y-auto transition-colors duration-1000`}>
-              <div className={`rounded-xl max-w-2xl w-full border-2 boss-enter my-8 relative overflow-hidden ${bossFlash ? 'damage-flash-boss' : ''} ${isFinalBoss ? gauntletPhase === 3 ? 'gauntlet-phase-3' : gauntletPhase === 2 ? 'gauntlet-phase-2' : 'gauntlet-phase-1' : 'bg-gradient-to-b from-red-950 via-red-950/80 to-black border-red-800/60 shadow-[0_0_40px_rgba(220,38,38,0.3)]'}`}>
+          {showBoss && (
+             <div className={`fixed inset-0 ${isFinalBoss && gauntletPhase === 3 ? 'bg-purple-950 bg-opacity-95' : isFinalBoss && gauntletPhase === 2 ? 'bg-orange-950 bg-opacity-95' : 'bg-black bg-opacity-95'} flex items-start justify-center p-4 z-50 overflow-y-auto transition-colors duration-1000`}>
+              <div className={`rounded-xl max-w-2xl w-full border-2 boss-enter my-8 relative overflow-hidden ${bossFlash ? 'damage-flash-boss' : ''} ${isFinalBoss ? (gauntletPhase === 3 ? 'gauntlet-phase-3' : gauntletPhase === 2 ? 'gauntlet-phase-2' : 'gauntlet-phase-1') : 'bg-gradient-to-b from-red-950 via-red-950/80 to-black border-red-800/60 shadow-[0_0_40px_rgba(220,38,38,0.3)]'}`}>
+                
+                {/* Parchment texture & corner rune ornaments */}
+                <HeroCardDecorations colorClass={isFinalBoss ? (gauntletPhase === 3 ? 'purple' : gauntletPhase === 2 ? 'orange' : 'red') : battleType === 'elite' ? 'orange' : battleType === 'wave' ? 'cyan' : 'red'} />
                 
                 {/* Decorative top edge */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
@@ -5005,28 +5584,39 @@ const FantasyStudyQuest = () => {
                   {/* Battle type label */}
                   <div className="flex items-center justify-center gap-3 mb-3">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/30 to-transparent"></div>
-                    <p className={`text-xs font-fantasy tracking-[0.3em] uppercase ${isFinalBoss ? gauntletPhase === 3 ? 'text-purple-400/80' : gauntletPhase === 2 ? 'text-orange-400/80' : 'text-red-400/80' : battleType === 'elite' ? 'text-orange-400/80' : battleType === 'wave' ? 'text-cyan-400/80' : 'text-red-400/80'}`}>
-                      {isFinalBoss ? 'The Gauntlet' : battleType === 'elite' ? 'Tormented Champion' : battleType === 'wave' ? `Wave Assault — ${currentWaveEnemy}/${totalWaveEnemies}` : 'Enemy Encounter'}
+                    <p className={`text-xs font-fantasy tracking-[0.3em] uppercase ${isFinalBoss ? (gauntletPhase === 3 ? 'text-purple-400/80' : gauntletPhase === 2 ? 'text-orange-400/80' : 'text-red-400/80') : battleType === 'elite' ? 'text-orange-400/80' : battleType === 'wave' ? 'text-cyan-400/80' : 'text-red-400/80'}`}>
+                      {isFinalBoss ? 'The Gauntlet' : 
+                       battleType === 'elite' ? 'Tormented Champion' : 
+                       battleType === 'wave' ? `Wave Assault — ${currentWaveEnemy}/${totalWaveEnemies}` : 
+                       'Enemy Encounter'}
                     </p>
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/30 to-transparent"></div>
                   </div>
 
                   {/* Boss name */}
-                  {bossName && <h2 className="text-4xl md:text-5xl text-center text-yellow-400 mb-1 font-fantasy-decorative tracking-wider drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]">
-                      {isFinalBoss ? gauntletPhase === 1 ? bossName : gauntletPhase === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls` : bossName}
-                    </h2>}
+                  {bossName && (
+                    <h2 className="text-4xl md:text-5xl text-center text-yellow-400 mb-1 font-fantasy-decorative tracking-wider drop-shadow-[0_0_20px_rgba(234,179,8,0.3)]">
+                      {isFinalBoss ? (gauntletPhase === 1 ? bossName : gauntletPhase === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`) : bossName}
+                    </h2>
+                  )}
                   
                   {/* Status effects */}
-                  {(bossDebuffs.poisonTurns > 0 || bossDebuffs.marked || bossDebuffs.stunned) && <div className="flex items-center justify-center gap-3 mt-2">
-                      {bossDebuffs.poisonTurns > 0 && <span className="text-sm text-green-400 animate-pulse bg-green-900/30 px-2 py-0.5 rounded-full border border-green-700/40 font-fantasy">☠️ Poisoned ({bossDebuffs.poisonTurns})</span>}
-                      {bossDebuffs.marked && <span className="text-sm text-cyan-400 animate-pulse bg-cyan-900/30 px-2 py-0.5 rounded-full border border-cyan-700/40 font-fantasy">🎯 Marked</span>}
-                      {bossDebuffs.stunned && <span className="text-sm text-purple-400 animate-pulse bg-purple-900/30 px-2 py-0.5 rounded-full border border-purple-700/40 font-fantasy">✨ Stunned</span>}
-                    </div>}
+                  {(bossDebuffs.poisonTurns > 0 || bossDebuffs.marked || bossDebuffs.stunned) && (
+                    <div className="flex items-center justify-center gap-3 mt-2">
+                      {bossDebuffs.poisonTurns > 0 && (<span className="text-sm text-green-400 animate-pulse bg-green-900/30 px-2 py-0.5 rounded-full border border-green-700/40 font-fantasy">☠️ Poisoned ({bossDebuffs.poisonTurns})</span>)}
+                      {bossDebuffs.marked && (<span className="text-sm text-cyan-400 animate-pulse bg-cyan-900/30 px-2 py-0.5 rounded-full border border-cyan-700/40 font-fantasy">🎯 Marked</span>)}
+                      {bossDebuffs.stunned && (<span className="text-sm text-purple-400 animate-pulse bg-purple-900/30 px-2 py-0.5 rounded-full border border-purple-700/40 font-fantasy">✨ Stunned</span>)}
+                    </div>
+                  )}
                   
                   {/* Gauntlet flavor text */}
-                  {isFinalBoss && <p className="text-sm text-center text-gray-500 italic mt-2 font-fantasy">
-                      {gauntletPhase === 1 ? '"Prove your worth against the cursed guardian..."' : gauntletPhase === 2 ? '"The curse tightens its grip. Each blow hits harder..."' : '"Shadows swarm. The abyss hungers for your soul..."'}
-                    </p>}
+                  {isFinalBoss && (
+                    <p className="text-sm text-center text-gray-500 italic mt-2 font-fantasy">
+                      {gauntletPhase === 1 ? '"Prove your worth against the cursed guardian..."' :
+                       gauntletPhase === 2 ? '"The curse tightens its grip. Each blow hits harder..."' :
+                       '"Shadows swarm. The abyss hungers for your soul..."'}
+                    </p>
+                  )}
                 </div>
                 
                 {/* Divider */}
@@ -5043,73 +5633,92 @@ const FantasyStudyQuest = () => {
                     <div className="flex justify-between mb-2">
                       <span className="text-red-400 font-fantasy text-sm tracking-wide">
                         {bossName || 'Boss'}
-                        {enragedTurns > 0 && <span className="ml-3 text-orange-400 font-bold animate-pulse">⚡ ENRAGED ({enragedTurns})</span>}
+                        {enragedTurns > 0 && (<span className="ml-3 text-orange-400 font-bold animate-pulse">⚡ ENRAGED ({enragedTurns})</span>)}
                       </span>
                       <span className="text-red-400/70 text-sm font-mono">{bossHp}/{bossMax}</span>
                     </div>
                     <div className="bg-black/60 rounded-full h-5 overflow-hidden border border-red-900/20">
-                      <div className={`h-5 rounded-full transition-all duration-500 ${bossFlash ? 'hp-pulse' : ''} ${bossHp / bossMax > 0.5 ? 'bg-gradient-to-r from-red-700 to-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)]' : bossHp / bossMax > 0.25 ? 'bg-gradient-to-r from-orange-700 to-orange-500 shadow-[0_0_12px_rgba(234,88,12,0.4)]' : 'bg-gradient-to-r from-yellow-700 to-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.4)] animate-pulse'}`} style={{
-                    width: `${bossHp / bossMax * 100}%`
-                  }}></div>
+                      <div className={`h-5 rounded-full transition-all duration-500 ${bossFlash ? 'hp-pulse' : ''} ${
+                        (bossHp / bossMax) > 0.5 ? 'bg-gradient-to-r from-red-700 to-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)]' :
+                        (bossHp / bossMax) > 0.25 ? 'bg-gradient-to-r from-orange-700 to-orange-500 shadow-[0_0_12px_rgba(234,88,12,0.4)]' :
+                        'bg-gradient-to-r from-yellow-700 to-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.4)] animate-pulse'
+                      }`} style={{width: `${(bossHp / bossMax) * 100}%`}}></div>
                     </div>
                   </div>
                   
                   {/* Phase 2 Ramping Damage Indicator */}
-                  {gauntletPhase === 2 && phase2DamageStacks > 0 && <div className="bg-orange-950/40 rounded-lg p-3 border border-orange-700/40">
+                  {gauntletPhase === 2 && phase2DamageStacks > 0 && (
+                    <div className="bg-orange-950/40 rounded-lg p-3 border border-orange-700/40">
                       <div className="flex items-center justify-center gap-2 mb-1">
                         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-orange-600/30"></div>
                         <p className="text-orange-400 font-fantasy text-xs tracking-[0.2em] uppercase">Ramping Pressure</p>
                         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-orange-600/30"></div>
                       </div>
                       <p className="text-white text-center text-sm">Boss damage: +{phase2DamageStacks * 5}% <span className="text-orange-400/60">({phase2DamageStacks} stacks)</span></p>
-                    </div>}
+                    </div>
+                  )}
                   
                   {/* Shadow Adds (Phase 2 & 3) */}
-                  {(gauntletPhase === 2 || gauntletPhase === 3) && shadowAdds.length > 0 && <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-700/40">
+                  {(gauntletPhase === 2 || gauntletPhase === 3) && shadowAdds.length > 0 && (
+                    <div className="bg-purple-950/30 rounded-lg p-4 border border-purple-700/40">
                       <div className="flex items-center justify-center gap-2 mb-3">
                         <div className="h-px flex-1 bg-gradient-to-r from-transparent to-purple-600/30"></div>
                         <p className="text-purple-400 font-fantasy text-xs tracking-[0.2em] uppercase">Shadow Adds ({shadowAdds.length}/3)</p>
                         <div className="h-px flex-1 bg-gradient-to-l from-transparent to-purple-600/30"></div>
                       </div>
                       <div className="space-y-2">
-                        {shadowAdds.map((add, idx) => <div key={add.id} className="flex items-center justify-between bg-black/40 rounded-lg p-2 border border-purple-900/20">
+                        {shadowAdds.map((add, idx) => (
+                          <div key={add.id} className="flex items-center justify-between bg-black/40 rounded-lg p-2 border border-purple-900/20">
                             <span className="text-gray-400 text-sm font-fantasy">Shadow #{idx + 1}</span>
                             <div className="flex-1 mx-4">
                               <div className="bg-black/60 rounded-full h-3 overflow-hidden border border-purple-900/20">
-                                <div className="bg-gradient-to-r from-purple-700 to-purple-500 h-3 rounded-full transition-all duration-300" style={{
-                          width: `${add.hp / add.maxHp * 100}%`
-                        }}></div>
+                                <div className="bg-gradient-to-r from-purple-700 to-purple-500 h-3 rounded-full transition-all duration-300" style={{width: `${(add.hp / add.maxHp) * 100}%`}}></div>
                               </div>
                             </div>
                             <span className="text-purple-400/70 text-xs font-mono">{add.hp}/{add.maxHp}</span>
-                          </div>)}
+                          </div>
+                        ))}
                       </div>
-                      <button onClick={() => setTargetingAdds(!targetingAdds)} className={`w-full mt-3 py-2 rounded-lg font-fantasy text-sm tracking-wide transition-all ${targetingAdds ? 'bg-purple-600/30 border border-purple-400/50 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.2)] animate-pulse' : 'bg-black/40 border border-gray-700/50 text-gray-400 hover:text-gray-300 hover:border-gray-600/50'}`}>
+                      <button 
+                        onClick={() => setTargetingAdds(!targetingAdds)}
+                        className={`w-full mt-3 py-2 rounded-lg font-fantasy text-sm tracking-wide transition-all ${
+                          targetingAdds 
+                            ? 'bg-purple-600/30 border border-purple-400/50 text-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.2)] animate-pulse' 
+                            : 'bg-black/40 border border-gray-700/50 text-gray-400 hover:text-gray-300 hover:border-gray-600/50'
+                        }`}
+                      >
                         {targetingAdds ? '🎯 Targeting Adds — click to switch to boss' : '⚔️ Targeting Boss — click to switch to adds'}
                       </button>
                       <p className="text-xs text-purple-400 mt-2 text-center italic">
                         {gauntletPhase === 3 ? 'Each add heals boss for 8 HP per turn. Max 3 adds.' : 'Kill it before Phase 3!'}
                       </p>
-                    </div>}
+                    </div>
+                  )}
                   
                   {/* AOE Warning */}
-                  {aoeWarning && gauntletPhase === 3 && <div className="bg-red-950/60 rounded-lg p-4 border-2 border-yellow-500/60 animate-pulse">
+                  {aoeWarning && gauntletPhase === 3 && (
+                    <div className="bg-red-950/60 rounded-lg p-4 border-2 border-yellow-500/60 animate-pulse">
                       <p className="text-yellow-400 font-fantasy-decorative text-center text-lg tracking-wider mb-2">⚠️ Devastating AOE Incoming</p>
                       <p className="text-white/80 text-center text-sm">Next turn: 35 damage slam!</p>
                       <div className="mt-3 pt-3 border-t border-yellow-700/30">
                         <p className="text-cyan-300/80 text-center text-sm">🛡️ <span className="font-fantasy">Dodge</span> — Avoid damage completely</p>
                         <p className="text-red-300/80 text-center text-sm mt-1">⚔️ <span className="font-fantasy">Attack</span> — +50% damage but take counter + AOE</p>
                       </div>
-                    </div>}
+                    </div>
+                  )}
                   
                   {/* Enemy Dialogue Box */}
-                  {showTauntBoxes ? <div className="bg-black/50 rounded-lg p-3 border border-red-800/30 relative">
+                  {showTauntBoxes ? (
+                    <div className="bg-black/50 rounded-lg p-3 border border-red-800/30 relative">
                       <div className="absolute -top-2 left-4 px-2 bg-red-950 text-red-400 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
                       <p className="text-gray-300 text-sm italic leading-relaxed">{enemyTauntResponse ? `"${enemyTauntResponse}"` : '...'}</p>
-                    </div> : enemyDialogue ? <div className="bg-black/50 rounded-lg p-3 border border-gray-800/30 relative">
+                    </div>
+                  ) : enemyDialogue ? (
+                    <div className="bg-black/50 rounded-lg p-3 border border-gray-800/30 relative">
                       <div className="absolute -top-2 left-4 px-2 bg-red-950 text-gray-400 text-[10px] font-fantasy tracking-widest uppercase">Enemy</div>
                       <p className="text-gray-300 text-center italic text-sm leading-relaxed">"{enemyDialogue}"</p>
-                    </div> : null}
+                    </div>
+                  ) : null}
 
                   {/* Divider between enemy and player */}
                   <div className="flex items-center gap-3">
@@ -5125,25 +5734,28 @@ const FantasyStudyQuest = () => {
                       <span className="text-green-400 text-xs font-mono">HP: {hp}/{getMaxHp()} | SP: {stamina}/{getMaxStamina()}</span>
                     </div>
                     <div className="bg-black/60 rounded-full h-5 overflow-hidden mb-2 border border-green-900/20">
-                      <div className={`h-5 rounded-full transition-all duration-500 ${playerFlash ? 'hp-pulse' : ''} ${hp / getMaxHp() > 0.5 ? 'bg-gradient-to-r from-green-700 to-green-500 shadow-[0_0_12px_rgba(34,197,94,0.3)]' : hp / getMaxHp() > 0.25 ? 'bg-gradient-to-r from-yellow-700 to-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.3)]' : 'bg-gradient-to-r from-red-700 to-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)] animate-pulse'}`} style={{
-                    width: `${hp / getMaxHp() * 100}%`
-                  }}></div>
+                      <div className={`h-5 rounded-full transition-all duration-500 ${playerFlash ? 'hp-pulse' : ''} ${
+                        (hp / getMaxHp()) > 0.5 ? 'bg-gradient-to-r from-green-700 to-green-500 shadow-[0_0_12px_rgba(34,197,94,0.3)]' :
+                        (hp / getMaxHp()) > 0.25 ? 'bg-gradient-to-r from-yellow-700 to-yellow-500 shadow-[0_0_12px_rgba(234,179,8,0.3)]' :
+                        'bg-gradient-to-r from-red-700 to-red-500 shadow-[0_0_12px_rgba(220,38,38,0.4)] animate-pulse'
+                      }`} style={{width: `${(hp / getMaxHp()) * 100}%`}}></div>
                     </div>
                     <div className="bg-black/60 rounded-full h-3 overflow-hidden border border-cyan-900/20">
-                      <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-3 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(34,211,238,0.2)]" style={{
-                    width: `${stamina / getMaxStamina() * 100}%`
-                  }}></div>
+                      <div className="bg-gradient-to-r from-cyan-700 to-cyan-400 h-3 rounded-full transition-all duration-500 shadow-[0_0_8px_rgba(34,211,238,0.2)]" style={{width: `${(stamina / getMaxStamina()) * 100}%`}}></div>
                     </div>
                   </div>
                   
                   {/* Player Dialogue Box */}
-                  {showTauntBoxes && <div className="bg-black/50 rounded-lg p-3 border border-blue-800/30 relative">
-                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-blue-400 text-[10px] font-fantasy tracking-widest uppercase">You</div>
+                  {showTauntBoxes && (
+                    <div className="bg-black/50 rounded-lg p-3 border border-amber-800/30 relative">
+                      <div className="absolute -top-2 left-4 px-2 bg-red-950 text-amber-400 text-[10px] font-fantasy tracking-widest uppercase">You</div>
                       <p className="text-white/80 text-sm leading-relaxed">"{playerTaunt}"</p>
-                    </div>}
+                    </div>
+                  )}
                   
                   {/* Battle Actions */}
-                  {battling && bossHp > 0 && hp > 0 && <>
+                  {battling && bossHp > 0 && hp > 0 && (
+                    <>
                       {/* Action divider */}
                       <div className="flex items-center gap-3">
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-yellow-600/20 to-transparent"></div>
@@ -5156,77 +5768,95 @@ const FantasyStudyQuest = () => {
                           ⚔️ Attack
                         </button>
                         
-                        {isTauntAvailable && <button onClick={taunt} className="flex-1 bg-gradient-to-b from-orange-800/80 to-orange-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-orange-200 hover:from-orange-700/80 hover:to-orange-900/80 transition-all shadow-[0_0_15px_rgba(234,88,12,0.15)] hover:shadow-[0_0_25px_rgba(234,88,12,0.3)] hover:scale-105 active:scale-95 border border-orange-600/40 animate-pulse">
+                        {isTauntAvailable && (
+                          <button onClick={taunt} className="flex-1 bg-gradient-to-b from-orange-800/80 to-orange-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-orange-200 hover:from-orange-700/80 hover:to-orange-900/80 transition-all shadow-[0_0_15px_rgba(234,88,12,0.15)] hover:shadow-[0_0_25px_rgba(234,88,12,0.3)] hover:scale-105 active:scale-95 border border-orange-600/40 animate-pulse">
                             <div>🔥 Taunt</div>
                             <div className="text-xs text-orange-300 mt-0.5">Enrage Enemy</div>
-                          </button>}
+                          </button>
+                        )}
                         
-                        {hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && <button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost || hero.class.name === 'Ranger' && bossDebuffs.marked} className="flex-1 bg-gradient-to-b from-cyan-800/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-700/80 hover:to-cyan-900/80 transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] hover:scale-105 active:scale-95 border border-cyan-700/30 disabled:from-gray-800/60 disabled:to-gray-900/60 disabled:text-gray-400 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none disabled:border-gray-600/20">
+                        {hero && hero.class && GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name] && (
+                          <button onClick={specialAttack} disabled={stamina < GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost || (GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && hp <= GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost) || (hero.class.name === 'Ranger' && bossDebuffs.marked)} className="flex-1 bg-gradient-to-b from-cyan-800/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-700/80 hover:to-cyan-900/80 transition-all shadow-[0_0_15px_rgba(34,211,238,0.15)] hover:shadow-[0_0_25px_rgba(34,211,238,0.3)] hover:scale-105 active:scale-95 border border-cyan-700/30 disabled:from-gray-800/60 disabled:to-gray-900/60 disabled:text-gray-400 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none disabled:border-gray-600/20">
                             <div>✨ {GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].name}</div>
-                            <div className="text-xs text-cyan-300 mt-0.5">{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + recklessStacks * 10} HP`}</div>
-                          </button>}
+                            <div className="text-xs text-cyan-300 mt-0.5">{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].cost} SP{GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost && ` • ${GAME_CONSTANTS.SPECIAL_ATTACKS[hero.class.name].hpCost + (recklessStacks * 10)} HP`}</div>
+                          </button>
+                        )}
                         
-                        {healthPots > 0 && <button onClick={useHealth} className="bg-gradient-to-b from-green-800/80 to-green-950/80 px-5 py-4 rounded-lg font-fantasy tracking-wide text-green-200 hover:from-green-700/80 hover:to-green-900/80 transition-all hover:scale-105 active:scale-95 border border-green-700/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
+                        {healthPots > 0 && (
+                          <button onClick={useHealth} className="bg-gradient-to-b from-green-800/80 to-green-950/80 px-5 py-4 rounded-lg font-fantasy tracking-wide text-green-200 hover:from-green-700/80 hover:to-green-900/80 transition-all hover:scale-105 active:scale-95 border border-green-700/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]">
                             💚 Heal
-                          </button>}
+                          </button>
+                        )}
                         
-                        {canFlee && <button onClick={flee} disabled={stamina < 25} className="bg-gradient-to-b from-yellow-800/60 to-yellow-950/60 px-5 py-4 rounded-lg font-fantasy tracking-wide text-yellow-200/80 hover:from-yellow-700/60 hover:to-yellow-900/60 transition-all hover:scale-105 active:scale-95 border border-yellow-700/20 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">
+                        {canFlee && (
+                          <button onClick={flee} disabled={stamina < 25} className="bg-gradient-to-b from-yellow-800/60 to-yellow-950/60 px-5 py-4 rounded-lg font-fantasy tracking-wide text-yellow-200/80 hover:from-yellow-700/60 hover:to-yellow-900/60 transition-all hover:scale-105 active:scale-95 border border-yellow-700/20 disabled:from-gray-800/40 disabled:to-gray-900/40 disabled:text-gray-400 disabled:cursor-not-allowed disabled:opacity-50" title="Lose 25 Stamina to escape">
                             🏃 Flee
-                          </button>}
+                          </button>
+                        )}
                       </div>
                       
-                      {showDodgeButton && <button onClick={dodge} className="w-full bg-gradient-to-b from-blue-700/80 to-blue-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-blue-200 hover:from-blue-600/80 hover:to-blue-900/80 transition-all shadow-[0_0_20px_rgba(59,130,246,0.2)] hover:shadow-[0_0_30px_rgba(59,130,246,0.4)] hover:scale-105 active:scale-95 animate-pulse border border-cyan-500/40 mt-1">
+                      {showDodgeButton && (
+                        <button onClick={dodge} className="w-full bg-gradient-to-b from-cyan-700/80 to-cyan-950/80 px-6 py-4 rounded-lg font-fantasy text-lg tracking-wide text-cyan-200 hover:from-cyan-600/80 hover:to-cyan-900/80 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)] hover:shadow-[0_0_30px_rgba(34,211,238,0.4)] hover:scale-105 active:scale-95 animate-pulse border border-cyan-500/40 mt-1">
                           <div>🛡️ Dodge</div>
                           <div className="text-xs text-cyan-300 mt-0.5">Avoid the AOE</div>
-                        </button>}
+                        </button>
+                      )}
                       
-                      {canFlee && <p className="text-xs text-gray-400 text-center italic font-fantasy">Fleeing costs 25 Stamina but lets you escape</p>}
+                      {canFlee && (
+                        <p className="text-xs text-gray-400 text-center italic font-fantasy">Fleeing costs 25 Stamina but lets you escape</p>
+                      )}
                       
-                      {showDebug && <>
-                          <button onClick={() => {
-                    setBossHp(1);
-                    addLog('DEBUG: Boss HP set to 1 - one more hit!');
-                  }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">DEBUG: Boss HP → 1</button>
-                          <button onClick={() => {
-                    setIsTauntAvailable(true);
-                  }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">DEBUG: Force Taunt Available</button>
-                        </>}
-                    </>}
+                      {showDebug && (
+                        <>
+                          <button onClick={() => { setBossHp(1); addLog('DEBUG: Boss HP set to 1 - one more hit!'); }} className="w-full bg-purple-700 px-4 py-2 rounded-lg text-sm hover:bg-purple-600 transition-all mt-2 border-2 border-purple-400">DEBUG: Boss HP → 1</button>
+                          <button onClick={() => { setIsTauntAvailable(true); }} className="w-full bg-orange-700 px-4 py-2 rounded-lg text-sm hover:bg-orange-600 transition-all mt-2 border-2 border-yellow-400">DEBUG: Force Taunt Available</button>
+                        </>
+                      )}
+                    </>
+                  )}
                   
                   {/* Victory / Defeat / Phase Transition */}
-                  {bossHp <= 0 && !phaseTransitioning && <div className="text-center py-4">
-                      {hasFled ? <>
+                  {bossHp <= 0 && !phaseTransitioning && (
+                    <div className="text-center py-4">
+                      {hasFled ? (
+                        <>
                           <p className="text-4xl font-fantasy-decorative text-yellow-400 mb-4 animate-pulse drop-shadow-[0_0_20px_rgba(250,204,21,0.4)] tracking-widest">FLED</p>
                           <p className="text-gray-500 text-sm mb-6 italic font-fantasy">"Cowardice is also a strategy..."</p>
-                        </> : <>
+                        </>
+                      ) : (
+                        <>
                           <p className="text-3xl font-fantasy-decorative tracking-widest mb-2 drop-shadow-[0_0_20px_rgba(34,197,94,0.4)] text-green-400">{isFinalBoss ? 'Curse Broken' : 'Victory'}</p>
                           <p className="text-gray-500 text-sm mb-4 italic font-fantasy">{isFinalBoss ? '"You are finally free..."' : '"The beast falls. You are healed and rewarded."'}</p>
-                        </>}
+                        </>
+                      )}
                       
-                      {!hasFled && victoryLoot.length > 0 && <div className="bg-black/50 rounded-lg p-4 mb-5 border border-yellow-700/30">
+                      {!hasFled && victoryLoot.length > 0 && (
+                        <div className="bg-black/50 rounded-lg p-4 mb-5 border border-yellow-700/30">
                           <div className="flex items-center justify-center gap-2 mb-3">
                             <div className="h-px flex-1 bg-gradient-to-r from-transparent to-yellow-600/30"></div>
                             <p className="text-yellow-500/80 font-fantasy text-xs tracking-[0.3em] uppercase">Spoils of Battle</p>
                             <div className="h-px flex-1 bg-gradient-to-l from-transparent to-yellow-600/30"></div>
                           </div>
                           <div className="space-y-1">
-                            {victoryLoot.map((loot, idx) => <p key={idx} className="text-white/80 text-sm">{loot}</p>)}
+                            {victoryLoot.map((loot, idx) => (
+                              <p key={idx} className="text-white/80 text-sm">{loot}</p>
+                            ))}
                           </div>
-                        </div>}
+                        </div>
+                      )}
                       
-                      {(battleType === 'elite' || isFinalBoss) && <button onClick={() => {
-                  sfx.playClick();
-                  advance();
-                }} className="bg-gradient-to-b from-yellow-600/80 to-yellow-800/80 text-yellow-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-yellow-500/80 hover:to-yellow-700/80 transition-all shadow-[0_0_25px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)] border border-yellow-500/40">{isFinalBoss ? '✨ Claim Freedom' : 'Continue'}</button>}
-                      {(battleType === 'regular' || battleType === 'wave') && <button onClick={() => {
-                  setShowBoss(false);
-                  setHasFled(false);
-                  addLog('⚔️ Ready for your next trial...');
-                }} className="bg-gradient-to-b from-green-700/80 to-green-900/80 text-green-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-green-600/80 hover:to-green-800/80 transition-all shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] border border-green-600/40">Continue</button>}
-                    </div>}
+                      {(battleType === 'elite' || isFinalBoss) && (
+                        <button onClick={() => { sfx.playClick(); advance(); }} className="bg-gradient-to-b from-yellow-600/80 to-yellow-800/80 text-yellow-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-yellow-500/80 hover:to-yellow-700/80 transition-all shadow-[0_0_25px_rgba(234,179,8,0.2)] hover:shadow-[0_0_35px_rgba(234,179,8,0.4)] border border-yellow-500/40">{isFinalBoss ? '✨ Claim Freedom' : 'Continue'}</button>
+                      )}
+                      {(battleType === 'regular' || battleType === 'wave') && (
+                        <button onClick={() => { setShowBoss(false); setHasFled(false); addLog('⚔️ Ready for your next trial...'); }} className="bg-gradient-to-b from-green-700/80 to-green-900/80 text-green-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-green-600/80 hover:to-green-800/80 transition-all shadow-[0_0_20px_rgba(34,197,94,0.2)] hover:shadow-[0_0_30px_rgba(34,197,94,0.3)] border border-green-600/40">Continue</button>
+                      )}
+                    </div>
+                  )}
                   
                   {/* Phase Transition Screen */}
-                  {phaseTransitioning && <div className="text-center py-4">
+                  {phaseTransitioning && (
+                    <div className="text-center py-4">
                       <div className="mb-6">
                         <p className="text-2xl font-fantasy-decorative text-orange-400 mb-2 animate-pulse tracking-widest drop-shadow-[0_0_15px_rgba(234,88,12,0.4)]">
                           💀 {gauntletPhase === 1 ? bossName : `${bossName.split(' ')[0]}, The Accursed`} Defeated 💀
@@ -5241,7 +5871,9 @@ const FantasyStudyQuest = () => {
                           <p className="text-yellow-400 font-fantasy-decorative text-lg mb-3 tracking-wider">
                             ⚠️ {gauntletPhase + 1 === 2 ? `${bossName.split(' ')[0]}, The Accursed` : `${bossName.split(' ')[0]}, Devourer of Souls`} Awakens
                           </p>
-                          {victoryLoot.map((line, idx) => <p key={idx} className="text-white/70 text-sm">{line}</p>)}
+                          {victoryLoot.map((line, idx) => (
+                            <p key={idx} className="text-white/70 text-sm">{line}</p>
+                          ))}
                           <div className="mt-3 pt-3 border-t border-red-800/30">
                             <p className="text-green-400/80 text-sm">❤️ HP fully restored</p>
                             <p className="text-cyan-400/80 text-sm">⚡ Stamina fully restored</p>
@@ -5249,29 +5881,31 @@ const FantasyStudyQuest = () => {
                           </div>
                         </div>
                       </div>
-                      <button onClick={() => {
-                  sfx.playClick();
-                  beginNextGauntletPhase();
-                }} className="bg-gradient-to-b from-red-700/80 to-red-950/80 text-red-100 px-10 py-4 rounded-lg font-fantasy-decorative text-xl tracking-widest hover:from-red-600/80 hover:to-red-900/80 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_40px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95 animate-pulse border border-yellow-500/40">
+                      <button 
+                        onClick={() => { sfx.playClick(); beginNextGauntletPhase(); }}
+                        className="bg-gradient-to-b from-red-700/80 to-red-950/80 text-red-100 px-10 py-4 rounded-lg font-fantasy-decorative text-xl tracking-widest hover:from-red-600/80 hover:to-red-900/80 transition-all shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_40px_rgba(220,38,38,0.5)] hover:scale-105 active:scale-95 animate-pulse border border-yellow-500/40"
+                      >
                         ⚔️ Face {gauntletPhase + 1 === 2 ? 'The Accursed' : 'The Devourer'} ⚔️
                       </button>
-                    </div>}
+                    </div>
+                  )}
                   
-                  {hp <= 0 && <div className="text-center py-4">
+                  {hp <= 0 && (
+                    <div className="text-center py-4">
                       <p className="text-3xl font-fantasy-decorative text-red-400 mb-2 tracking-widest drop-shadow-[0_0_15px_rgba(220,38,38,0.4)]">Defeated</p>
                       <p className="text-gray-500 text-sm mb-4 italic font-fantasy">"The curse claims another victim..."</p>
-                      <button onClick={() => {
-                  setShowBoss(false);
-                  die();
-                }} className="bg-gradient-to-b from-red-700/80 to-red-950/80 text-red-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-red-600/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.2)] border border-red-600/30">Continue</button>
-                    </div>}
+                      <button onClick={() => { setShowBoss(false); die(); }} className="bg-gradient-to-b from-red-700/80 to-red-950/80 text-red-100 px-8 py-3 rounded-lg font-fantasy text-xl tracking-wider hover:from-red-600/80 hover:to-red-900/80 transition-all shadow-[0_0_20px_rgba(220,38,38,0.2)] border border-red-600/30">Continue</button>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Decorative bottom edge */}
-                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"> Attack</div>
+                <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent"></div>
               </div>
-            </div>}
-          {showPomodoro && pomodoroTask && <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
+            </div>
+          )}
+          {showPomodoro && pomodoroTask && (
+  <div className="fixed inset-0 bg-black bg-opacity-95 flex items-start justify-center p-4 z-50">
     <div className="bg-gradient-to-b from-purple-900 to-black rounded-xl p-12 max-w-2xl w-full border-4 border-purple-600 shadow-2xl">
       <div className="text-center">
         <h2 className="text-3xl font-bold text-purple-400 mb-2">
@@ -5293,38 +5927,51 @@ const FantasyStudyQuest = () => {
             <span className="text-white text-xl">Pomodoros Completed: {pomodorosCompleted}</span>
           </div>
           <div className="bg-gray-800 rounded-full h-3 overflow-hidden">
-            <div className={`h-3 rounded-full transition-all ${isBreak ? 'bg-green-500' : 'bg-purple-500'}`} style={{
-                    width: `${((isBreak ? 5 * 60 : 25 * 60) - pomodoroTimer) / (isBreak ? 5 * 60 : 25 * 60) * 100}%`
-                  }}></div>
+            <div 
+              className={`h-3 rounded-full transition-all ${isBreak ? 'bg-green-500' : 'bg-purple-500'}`} 
+              style={{width: `${((isBreak ? 5 * 60 : 25 * 60) - pomodoroTimer) / (isBreak ? 5 * 60 : 25 * 60) * 100}%`}}
+            ></div>
           </div>
         </div>
         
         <div className="flex gap-4 justify-center mb-6">
-          <button onClick={() => setPomodoroRunning(!pomodoroRunning)} className="bg-blue-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-blue-500 transition-all text-white">
+          <button 
+            onClick={() => setPomodoroRunning(!pomodoroRunning)}
+            className="bg-gradient-to-b from-amber-700 to-amber-900 px-8 py-3 rounded-lg font-fantasy font-bold text-xl hover:from-amber-600 hover:to-amber-800 transition-all text-amber-100 border border-amber-600/30"
+          >
             {pomodoroRunning ? 'Pause' : 'Resume'}
           </button>
           
-          {isBreak && <button onClick={() => {
-                  setIsBreak(false);
-                  setPomodoroTimer(25 * 60);
-                  setPomodoroRunning(true);
-                  addLog('Skipped break - back to work!');
-                }} className="bg-yellow-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-500 transition-all text-white">
+          {isBreak && (
+            <button 
+              onClick={() => {
+                setIsBreak(false);
+                setPomodoroTimer(25 * 60);
+                setPomodoroRunning(true);
+                addLog('Skipped break - back to work!');
+              }}
+              className="bg-yellow-600 px-8 py-3 rounded-lg font-bold text-xl hover:bg-yellow-500 transition-all text-white"
+            >
               Skip Break
-            </button>}
+            </button>
+          )}
         </div>
         
-        <button onClick={() => {
-                setShowPomodoro(false);
-                setPomodoroTask(null);
-                setPomodoroRunning(false);
-                addLog(`Focus session ended. Completed ${pomodorosCompleted} pomodoro${pomodorosCompleted !== 1 ? 's' : ''}.`);
-              }} className="bg-gray-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-500 transition-all text-gray-200">
+        <button 
+          onClick={() => {
+            setShowPomodoro(false);
+            setPomodoroTask(null);
+            setPomodoroRunning(false);
+            addLog(`Focus session ended. Completed ${pomodorosCompleted} pomodoro${pomodorosCompleted !== 1 ? 's' : ''}.`);
+          }}
+          className="bg-gray-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-500 transition-all text-gray-200"
+        >
           Finish Task & Return
         </button>
       </div>
     </div>
-  </div>}
+  </div>
+)}
         </div>
         
         <div className="flex justify-center mt-8 pb-6">
@@ -5334,7 +5981,10 @@ const FantasyStudyQuest = () => {
         <div className="text-center pb-4">
           <p className="text-xs text-gray-500">v4.2 - Multi-Phase Gauntlet</p>
         </div>
-      </div>}
-    </div>;
+      </div>
+      )}
+    </div>
+  );
 };
+
 export default FantasyStudyQuest;
