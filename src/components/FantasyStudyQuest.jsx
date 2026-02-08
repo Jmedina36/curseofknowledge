@@ -5573,6 +5573,9 @@ setMiniBossCount(0);
              <div className={`fixed inset-0 ${isFinalBoss && gauntletPhase === 3 ? 'bg-purple-950 bg-opacity-95' : isFinalBoss && gauntletPhase === 2 ? 'bg-orange-950 bg-opacity-95' : 'bg-black bg-opacity-95'} flex items-start justify-center p-4 z-50 overflow-y-auto transition-colors duration-1000`}>
               <div className={`rounded-xl max-w-2xl w-full border-2 boss-enter my-8 relative overflow-hidden ${bossFlash ? 'damage-flash-boss' : ''} ${isFinalBoss ? (gauntletPhase === 3 ? 'gauntlet-phase-3' : gauntletPhase === 2 ? 'gauntlet-phase-2' : 'gauntlet-phase-1') : 'bg-gradient-to-b from-red-950 via-red-950/80 to-black border-red-800/60 shadow-[0_0_40px_rgba(220,38,38,0.3)]'}`}>
                 
+                {/* Parchment texture & corner rune ornaments */}
+                <HeroCardDecorations colorClass={isFinalBoss ? (gauntletPhase === 3 ? 'purple' : gauntletPhase === 2 ? 'orange' : 'red') : battleType === 'elite' ? 'orange' : battleType === 'wave' ? 'cyan' : 'red'} />
+                
                 {/* Decorative top edge */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent"></div>
                 

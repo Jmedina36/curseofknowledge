@@ -12,6 +12,8 @@ const runeColors = {
   emerald: { stroke: 'rgba(16, 185, 129, 0.45)', fill: 'rgba(16, 185, 129, 0.12)' },
   yellow: { stroke: 'rgba(234, 179, 8, 0.45)', fill: 'rgba(234, 179, 8, 0.12)' },
   teal: { stroke: 'rgba(20, 184, 166, 0.45)', fill: 'rgba(20, 184, 166, 0.12)' },
+  orange: { stroke: 'rgba(249, 115, 22, 0.45)', fill: 'rgba(249, 115, 22, 0.12)' },
+  cyan: { stroke: 'rgba(34, 211, 238, 0.45)', fill: 'rgba(34, 211, 238, 0.12)' },
 };
 
 const CornerRune = ({ position, color }) => {
