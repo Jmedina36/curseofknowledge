@@ -95,17 +95,12 @@ const HeroCardDecorations = ({ colorClass = 'red' }) => {
         }}
       />
 
-      {/* Subtle horizontal grain lines */}
+      {/* Cinematic scanline texture overlay */}
       <div
-        className="absolute inset-0 pointer-events-none z-[1] rounded-xl opacity-[0.02]"
+        className="pointer-events-none absolute inset-0 z-0 rounded-xl opacity-[0.07] mix-blend-overlay"
         style={{
-          backgroundImage: `repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 2px,
-            rgba(255,255,255,0.15) 2px,
-            rgba(255,255,255,0.15) 3px
-          )`,
+          backgroundImage:
+            'repeating-linear-gradient(0deg, rgba(255,255,255,0.10) 0px, rgba(255,255,255,0.10) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 6px)',
         }}
       />
 
