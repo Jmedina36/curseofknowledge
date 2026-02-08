@@ -104,19 +104,6 @@ const HeroCardDecorations = ({ colorClass = 'red' }) => {
         }}
       />
 
-      {/* Subtle horizontal grain lines */}
-      <div
-        className="absolute inset-0 pointer-events-none z-[1] rounded-xl opacity-[0.008]"
-        style={{
-          backgroundImage: `repeating-linear-gradient(
-            0deg,
-            transparent,
-            transparent 3px,
-            rgba(255,255,255,0.08) 3px,
-            rgba(255,255,255,0.08) 4px
-          )`,
-        }}
-      />
 
       {/* Corner rune ornaments */}
       <CornerRune position="top-left" color={color} />
