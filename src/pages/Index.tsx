@@ -1,7 +1,12 @@
-import FantasyStudyQuest from "@/components/FantasyStudyQuest";
+import { GameStateProvider } from "@/contexts/GameStateContext";
+import AppShell from "@/components/layout/AppShell";
 
 const Index = () => {
-  return <FantasyStudyQuest />;
+  return (
+    <GameStateProvider>
+      <AppShell />
+    </GameStateProvider>
+  );
 };
 
 export default Index;
