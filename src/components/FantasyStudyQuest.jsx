@@ -3086,11 +3086,29 @@ setMiniBossCount(0);
       
       <div className="relative z-10 p-6">
         <div className={`max-w-6xl mx-auto rounded-xl transition-all`}>
-          <header className="text-center mb-8">
-            <h1 className="text-6xl font-black text-red-400 mb-2 tracking-wider font-fantasy-decorative title-reveal" style={{textShadow: '0 0 30px rgba(220, 38, 38, 0.8), 0 0 60px rgba(139, 0, 0, 0.5)', letterSpacing: '0.15em'}}>
+           <header className="text-center mb-8">
+            {/* Decorative top flourish */}
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <div className="h-px w-16 bg-gradient-to-r from-transparent to-amber-600/50"></div>
+              <span className="text-amber-500/60 text-xs font-fantasy tracking-[0.3em]">⚜ ━━━ ⚜</span>
+              <div className="h-px w-16 bg-gradient-to-l from-transparent to-amber-600/50"></div>
+            </div>
+            <h1 
+              className="text-5xl md:text-6xl font-black mb-2 tracking-wider font-fantasy-decorative title-reveal bg-gradient-to-b from-red-300 via-red-500 to-red-800 bg-clip-text text-transparent" 
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6)) drop-shadow(0 0 40px rgba(139, 0, 0, 0.3))',
+                letterSpacing: '0.15em'
+              }}
+            >
               CURSE OF KNOWLEDGE
             </h1>
-            <p className="text-gray-400 text-sm mb-4 italic font-fantasy">"Study or be consumed by the abyss..."</p>
+            {/* Decorative divider */}
+            <div className="flex items-center justify-center gap-3 mt-1 mb-3">
+              <div className="h-px w-20 bg-gradient-to-r from-transparent via-red-700/40 to-transparent"></div>
+              <span className="text-red-600/50 text-[10px]">◆</span>
+              <div className="h-px w-20 bg-gradient-to-r from-transparent via-red-700/40 to-transparent"></div>
+            </div>
+            <p className="text-gray-500 text-sm mb-4 italic font-fantasy tracking-wide">"Study or be consumed by the abyss..."</p>
             
             <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{border: getCardStyle(hero.class, currentDay).border}}>
               {/* Watermark emblem */}
