@@ -3072,7 +3072,7 @@ setMiniBossCount(0);
 
 
       <div className="absolute inset-0 bg-gradient-to-b from-red-950 via-black to-purple-950 opacity-60"></div>
-      <div className="absolute inset-0 bg-gradient-radial from-transparent via-black to-black opacity-80"></div>
+      <div className="absolute inset-0 opacity-80" style={{ background: 'radial-gradient(circle at center, transparent 0%, black 100%)' }}></div>
       <div className="absolute inset-0" style={{
         backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(139, 0, 0, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(75, 0, 130, 0.1) 0%, transparent 50%)',
         animation: 'pulse-glow 8s ease-in-out infinite'
