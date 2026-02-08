@@ -3082,7 +3082,7 @@ setMiniBossCount(0);
         <div className="relative z-10 p-6">
           <div className="max-w-6xl mx-auto text-center">
             <h1 className="text-5xl md:text-6xl font-black mb-4 tracking-wider font-fantasy-decorative bg-gradient-to-b from-red-300 via-red-500 to-red-800 bg-clip-text text-transparent" style={{filter: 'drop-shadow(0 0 20px rgba(220, 38, 38, 0.6))'}}>Loading...</h1>
-            <p className="text-gray-500 font-fantasy italic">Preparing your journey...</p>
+            <p className="text-gray-300 font-fantasy italic">Preparing your journey...</p>
           </div>
         </div>
       ) : (
@@ -3111,7 +3111,7 @@ setMiniBossCount(0);
               <span className="text-red-600/50 text-[10px]">◆</span>
               <div className="h-px w-20 bg-gradient-to-r from-transparent via-red-700/40 to-transparent"></div>
             </div>
-            <p className="text-gray-500 text-sm mb-4 italic font-fantasy tracking-wide">"Study or be consumed by the abyss..."</p>
+            <p className="text-gray-300 text-sm mb-4 italic font-fantasy tracking-wide">"Study or be consumed by the abyss..."</p>
             
             <div className={`bg-gradient-to-br ${getCardStyle(hero.class, currentDay).bg} rounded-xl max-w-2xl mx-auto relative overflow-hidden ${getCardStyle(hero.class, currentDay).glow}`} style={{border: getCardStyle(hero.class, currentDay).border}}>
               {/* Parchment texture & corner rune ornaments */}
@@ -3130,11 +3130,11 @@ setMiniBossCount(0);
                   <div className="flex items-center justify-between mb-3">
                     <div className="drop-shadow-[0_0_12px_rgba(234,179,8,0.3)]"><ClassEmblem heroClass={hero.class.name} size={56} /></div>
                     <div className="text-right">
-                      <p className="text-xs text-white/70 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
-                      <p className="text-sm text-white/85">
+                      <p className="text-xs text-white/90 uppercase tracking-[0.2em] font-fantasy">{GAME_CONSTANTS.DAY_NAMES[(new Date().getDay() + 6) % 7].name}</p>
+                      <p className="text-sm text-white/90">
                         {timeUntilMidnight && isDayActive && <span className="text-red-400">({timeUntilMidnight}) </span>}
-                        {!isDayActive && <span className="text-gray-400">💤 </span>}
-                        Day {currentDay} {!isDayActive && <span className="text-gray-400 text-xs">• Dormant</span>}
+                        {!isDayActive && <span className="text-gray-200">💤 </span>}
+                        Day {currentDay} {!isDayActive && <span className="text-gray-200 text-xs">• Dormant</span>}
                       </p>
                       <p className="text-2xl font-bold text-white font-fantasy tracking-wide">Lvl {level}</p>
                     </div>
@@ -3178,7 +3178,7 @@ setMiniBossCount(0);
                         return (currentLevelXp / xpNeeded) * 100;
                       })()}%`}}></div>
                     </div>
-                    <p className="text-[10px] text-white/50 mt-1.5 text-right font-fantasy">{(() => {
+                    <p className="text-[10px] text-white/70 mt-1.5 text-right font-fantasy">{(() => {
                       let xpSpent = 0;
                       for (let i = 1; i < level; i++) {
                         xpSpent += Math.floor(GAME_CONSTANTS.XP_PER_LEVEL * Math.pow(1.3, i - 1));
@@ -3252,7 +3252,7 @@ setMiniBossCount(0);
                 {/* Divider */}
                 <div className="flex items-center gap-3 px-6">
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                  <span className="text-white/40 text-[10px] font-fantasy tracking-[0.3em] uppercase">Combat Stats</span>
+                  <span className="text-white/60 text-[10px] font-fantasy tracking-[0.3em] uppercase">Combat Stats</span>
                   <div className="flex-1 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
                 </div>
                 
@@ -3288,7 +3288,7 @@ setMiniBossCount(0);
                         <Sword size={18} className="text-orange-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{getBaseAttack() + weapon + (level - 1) * 2}</p>
-                      <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage per hit</p>
+                      <p className="text-[10px] text-white/70 text-center font-fantasy tracking-wide">damage per hit</p>
                     </div>
                     
                     <div className="bg-black/30 rounded-lg p-3 border border-amber-800/20 hover:border-amber-700/30 transition-all">
@@ -3296,7 +3296,7 @@ setMiniBossCount(0);
                         <Shield size={18} className="text-amber-400/80"/>
                       </div>
                       <p className="text-lg font-bold text-white text-center font-mono">{Math.floor(((getBaseDefense() + armor) / ((getBaseDefense() + armor) + 50)) * 100)}%</p>
-                      <p className="text-[10px] text-white/50 text-center font-fantasy tracking-wide">damage resist</p>
+                      <p className="text-[10px] text-white/70 text-center font-fantasy tracking-wide">damage resist</p>
                     </div>
                   </div>
                 </div>
@@ -3538,7 +3538,7 @@ setMiniBossCount(0);
                       <h2 className="text-2xl md:text-3xl font-bold text-white mb-1 font-fantasy tracking-wide">
                         {hero.name}
                       </h2>
-                      <p className="text-sm text-gray-400 mb-6 font-fantasy">
+                      <p className="text-sm text-gray-200 mb-6 font-fantasy">
                         {hero.title} {hero.class.name} — Level {level}
                       </p>
                       
@@ -3547,7 +3547,7 @@ setMiniBossCount(0);
                         <p className="text-xl md:text-2xl font-semibold text-yellow-400/90 mb-1 font-fantasy">
                           {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </p>
-                        <p className="text-sm text-gray-400 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
+                        <p className="text-sm text-gray-200 mb-2">{new Date().toLocaleDateString('en-US', { year: 'numeric' })}</p>
                       </div>
                       
                       {/* Divider */}
@@ -3557,11 +3557,11 @@ setMiniBossCount(0);
                         <div className="h-px w-16 bg-gradient-to-l from-transparent to-red-600/50" />
                       </div>
                       
-                      <p className="text-sm text-gray-400 italic mb-6 subtitle-fade font-fantasy">
+                      <p className="text-sm text-gray-200 italic mb-6 subtitle-fade font-fantasy">
                         "The abyss awaits those who hesitate..."
                       </p>
                       
-                      <p className="mb-6 text-xs text-gray-400">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
+                      <p className="mb-6 text-xs text-gray-200">Start before {GAME_CONSTANTS.LATE_START_HOUR} AM or lose {GAME_CONSTANTS.LATE_START_PENALTY} HP</p>
                       
                       <button 
                         onClick={() => { sfx.playClick(); start(); }} 
@@ -3578,7 +3578,7 @@ setMiniBossCount(0);
                     {/* Header */}
                     <div className="px-6 pt-6 pb-4 text-center">
                       <h2 className="text-2xl font-fantasy-decorative text-red-400 mb-1 tracking-wider drop-shadow-[0_0_12px_rgba(220,38,38,0.3)]">Trials of the Cursed</h2>
-                      <p className="text-sm text-gray-400 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
+                      <p className="text-sm text-gray-200 font-fantasy tracking-wide">{GAME_CONSTANTS.DAY_NAMES[(currentDay - 1) % 7].name} • XP Rate: {Math.floor(GAME_CONSTANTS.XP_MULTIPLIERS[(currentDay - 1) % 7] * 100)}%</p>
                     </div>
                     
                     {/* Divider */}
@@ -3602,7 +3602,7 @@ setMiniBossCount(0);
                     <div className="px-6 pb-6">
                     {tasks.length === 0 ? (
                       <div className="text-center py-8">
-                        <p className="text-gray-400 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
+                        <p className="text-gray-200 font-fantasy italic">No trials yet. Accept your first trial to begin.</p>
                       </div>
                     ) : (
                       <div className="space-y-2.5">
@@ -3625,11 +3625,11 @@ setMiniBossCount(0);
         <span className="bg-red-700/60 text-red-200 text-[10px] font-fantasy tracking-wider px-2 py-0.5 rounded uppercase">Overdue</span>
       )}
       <div className="flex-1">
-        <p className={`${t.done ? 'line-through text-gray-500' : t.overdue ? 'text-red-300' : 'text-white/95'} font-medium text-base`}>
+        <p className={`${t.done ? 'line-through text-gray-300' : t.overdue ? 'text-red-300' : 'text-white/95'} font-medium text-base`}>
           {t.title}
         </p>
         <p className="text-xs mt-1">
-          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500' : 'text-gray-400'}`}>
+          <span className={`font-fantasy tracking-wide ${t.priority === 'important' ? 'text-yellow-500' : 'text-gray-200'}`}>
             {t.priority === 'important' ? '★ Important • 1.25x XP' : 'Routine • 1.0x XP'}
           </span>
           {t.overdue && !t.done && <span className="text-red-400 ml-2">• 50% XP Penalty</span>}
@@ -3697,7 +3697,7 @@ setMiniBossCount(0);
 >
   The Gauntlet
   {!gauntletUnlocked && (
-    <div className="text-xs font-normal mt-1 text-gray-400">{gauntletMilestone - xp} XP needed</div>
+    <div className="text-xs font-normal mt-1 text-gray-200">{gauntletMilestone - xp} XP needed</div>
   )}
 </button>
                   </div>
@@ -3710,7 +3710,7 @@ setMiniBossCount(0);
                         <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Chronicle of Events</h3>
                         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-red-600/15 to-transparent"></div>
                       </div>
-                      {log.length === 0 ? (<p className="text-sm text-gray-500 italic font-fantasy">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-300/80">{l}</p>))}</div>)}
+                      {log.length === 0 ? (<p className="text-sm text-gray-300 italic font-fantasy">The journey begins...</p>) : (<div className="space-y-1">{log.map((l, i) => (<p key={i} className="text-sm text-gray-100/90">{l}</p>))}</div>)}
                     </div>
                   </div>
                 </>
@@ -3723,7 +3723,7 @@ setMiniBossCount(0);
               {/* Header */}
               <div className="px-6 pt-6 pb-4 text-center">
                 <h2 className="text-2xl font-fantasy-decorative text-amber-300 tracking-wider drop-shadow-[0_0_12px_rgba(245,158,11,0.3)]">Battle Planner</h2>
-                <p className="text-gray-500 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
+                <p className="text-gray-300 text-sm italic font-fantasy mt-1">"Chart your path through the coming trials..."</p>
               </div>
               
               {/* Divider */}
@@ -3774,7 +3774,7 @@ setMiniBossCount(0);
     if (day === todayDayName) {
       return <span className="text-yellow-400/80 font-fantasy text-[10px] tracking-wider uppercase">Today</span>;
     } else {
-      return <span className="text-gray-400 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
+      return <span className="text-gray-200 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
     }
   })()}
 </p>
@@ -3785,7 +3785,7 @@ setMiniBossCount(0);
                     </div>
                     
                     {weeklyPlan[day].length === 0 ? (
-                      <p className="text-gray-500 text-sm italic font-fantasy">No tasks planned</p>
+                      <p className="text-gray-300 text-sm italic font-fantasy">No tasks planned</p>
                     ) : (
                       <div className="space-y-1.5">
                       {[...weeklyPlan[day]].sort((a, b) => {
@@ -3810,7 +3810,7 @@ setMiniBossCount(0);
           <span className="text-base">★</span>
         )}
         <div>
-          <p className={`font-medium text-sm ${item.completed ? 'line-through text-gray-600' : 'text-white/80'}`}>
+          <p className={`font-medium text-sm ${item.completed ? 'line-through text-gray-400' : 'text-white/90'}`}>
             {item.completed && '✓ '}{item.title}
           </p>
           {item.priority === 'important' && (
@@ -3910,10 +3910,10 @@ setMiniBossCount(0);
               </div>
               
               <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs">
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-800/50 border border-amber-500/40 rounded"></div><span className="text-gray-400 font-fantasy">Today</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-400 font-fantasy">In Progress</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-400 font-fantasy">Complete</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-400 font-fantasy">Empty</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-amber-800/50 border border-amber-500/40 rounded"></div><span className="text-gray-200 font-fantasy">Today</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-200 font-fantasy">In Progress</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-200 font-fantasy">Complete</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-200 font-fantasy">Empty</span></div>
               </div>
               </>
               )}
@@ -3926,7 +3926,7 @@ setMiniBossCount(0);
     {/* Header */}
     <div className="px-6 pt-6 pb-4 text-center">
       <h2 className="text-2xl font-fantasy-decorative text-purple-400 tracking-wider drop-shadow-[0_0_12px_rgba(168,85,247,0.3)]">Knowledge Forge</h2>
-      <p className="text-gray-400 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
+      <p className="text-gray-200 text-sm italic font-fantasy mt-1">"Sharpen your mind, temper your wisdom..."</p>
     </div>
     
     {/* Divider */}
@@ -3940,7 +3940,7 @@ setMiniBossCount(0);
       <div className="flex justify-between items-center mb-5">
         <div>
           <p className="text-sm text-gray-300 font-fantasy tracking-wide">Your Decks: <span className="font-bold text-purple-400">{flashcardDecks.length}</span></p>
-          <p className="text-xs text-gray-400">Study to earn XP and loot!</p>
+          <p className="text-xs text-gray-200">Study to earn XP and loot!</p>
         </div>
         <button 
           onClick={() => setShowDeckModal(true)}
@@ -3952,8 +3952,8 @@ setMiniBossCount(0);
     
       {flashcardDecks.length === 0 ? (
         <div className="text-center py-12 bg-black/30 rounded-lg border border-purple-900/20">
-          <p className="text-gray-400 mb-2 font-fantasy">The forge stands empty...</p>
-          <p className="text-xs text-gray-500 font-fantasy">Create your first deck to begin forging knowledge</p>
+          <p className="text-gray-200 mb-2 font-fantasy">The forge stands empty...</p>
+          <p className="text-xs text-gray-300 font-fantasy">Create your first deck to begin forging knowledge</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -3962,7 +3962,7 @@ setMiniBossCount(0);
               <div className="flex justify-between items-start mb-3">
                 <div className="flex-1">
                   <h3 className="text-lg font-fantasy tracking-wide text-purple-300">{deck.name}</h3>
-                  <p className="text-xs text-gray-400 font-fantasy">
+                  <p className="text-xs text-gray-200 font-fantasy">
                     {deck.cards.length} card{deck.cards.length !== 1 ? 's' : ''} • 
                     {deck.cards.filter(c => c.mastered).length} mastered
                   </p>
