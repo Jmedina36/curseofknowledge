@@ -4587,47 +4587,59 @@ setMiniBossCount(0);
           )}
 
           {showCustomizeModal && (
-  <div className="fixed inset-0 bg-black bg-opacity-75 flex items-start justify-center p-4 z-50" onClick={() => setShowCustomizeModal(false)}>
-    <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-blue-500" onClick={e => e.stopPropagation()}>
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-xl font-bold text-blue-400">CUSTOMIZE YOUR HERO</h3>
-        <button onClick={() => setShowCustomizeModal(false)} className="text-gray-400 hover:text-white">
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center p-4 z-50" onClick={() => setShowCustomizeModal(false)}>
+    <div className="relative bg-gradient-to-b from-gray-900 via-gray-950 to-gray-900 rounded-xl p-6 max-w-md w-full border-2 border-amber-700/60 shadow-[0_0_30px_rgba(180,83,9,0.15)]" onClick={e => e.stopPropagation()}>
+      {/* Decorative top edge */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent"></div>
+      {/* Corner accents */}
+      <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-amber-600/50 rounded-tl-xl"></div>
+      <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-amber-600/50 rounded-tr-xl"></div>
+
+      <div className="flex justify-between items-center mb-5">
+        <h3 className="text-xl font-fantasy font-bold text-amber-200 tracking-wider uppercase">Customize Your Hero</h3>
+        <button onClick={() => setShowCustomizeModal(false)} className="text-gray-500 hover:text-amber-300 transition-colors">
           <X size={24}/>
         </button>
       </div>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-5"></div>
       
-      <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Hero Name</label>
+      <div className="mb-5">
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Hero Name</label>
         <input 
           type="text" 
           placeholder="Enter your hero's name" 
           value={customName}
           onChange={e => setCustomName(e.target.value)}
-          className="w-full p-3 bg-gray-800 text-white rounded-lg border border-gray-700 focus:border-blue-500 focus:outline-none" 
+          className="w-full p-3 bg-gray-800/80 text-amber-100 rounded-lg border border-amber-900/40 focus:border-amber-500/60 focus:outline-none focus:shadow-[0_0_10px_rgba(245,158,11,0.1)] placeholder-gray-600 font-fantasy" 
           autoFocus 
         />
       </div>
       
-      <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Choose Your Class</label>
+      <div className="mb-5">
+        <label className="block text-sm text-amber-400/70 mb-2 font-fantasy tracking-wide">Choose Your Class</label>
         <div className="grid grid-cols-2 gap-2">
           {classes.map(cls => (
             <button
               key={cls.name}
               type="button"
               onClick={() => setCustomClass(cls)}
-              className={`p-4 rounded-lg border-2 transition-all ${
+              className={`p-4 rounded-lg border-2 transition-all duration-300 ${
                 customClass?.name === cls.name 
-                  ? `bg-${cls.color}-900 border-${cls.color}-500` 
-                  : 'bg-gray-800 border-gray-700 hover:border-gray-500'
+                  ? 'bg-amber-950/50 border-amber-500/70 shadow-[0_0_15px_rgba(245,158,11,0.15)]' 
+                  : 'bg-gray-800/60 border-gray-700/50 hover:border-amber-700/40 hover:bg-gray-800'
               }`}
             >
               <div className="mb-2 flex justify-center"><ClassEmblem heroClass={cls.name} size={44} /></div>
-              <div className="font-bold text-white">{cls.name}</div>
+              <div className="font-fantasy font-bold text-amber-100 tracking-wide">{cls.name}</div>
             </button>
           ))}
         </div>
       </div>
+
+      {/* Divider */}
+      <div className="h-px bg-gradient-to-r from-transparent via-amber-700/40 to-transparent mb-4"></div>
       
       <div className="flex gap-2">
         <button 
@@ -4644,9 +4656,9 @@ setMiniBossCount(0);
               addLog(`✨ Hero customized! ${customName.trim() ? `Name: ${customName.trim()}` : ''} ${customClass ? `Class: ${customClass.name}` : ''}`);
             }
           }}
-          className="flex-1 bg-blue-600 py-2 rounded-lg hover:bg-blue-500 transition-all text-white font-medium"
+          className="flex-1 bg-gradient-to-b from-amber-700 to-amber-900 py-2.5 rounded-lg hover:from-amber-600 hover:to-amber-800 transition-all text-amber-100 font-fantasy font-medium tracking-wide border border-amber-600/30 shadow-[0_0_10px_rgba(180,83,9,0.2)]"
         >
-          Confirm
+          ⚔ Confirm
         </button>
         <button 
           onClick={() => {
@@ -4654,7 +4666,7 @@ setMiniBossCount(0);
             setCustomClass(null);
             setShowCustomizeModal(false);
           }} 
-          className="flex-1 bg-gray-600 py-2 rounded-lg hover:bg-gray-500 transition-all text-gray-200 font-medium"
+          className="flex-1 bg-gray-800/80 py-2.5 rounded-lg hover:bg-gray-700/80 transition-all text-gray-400 font-fantasy font-medium tracking-wide border border-gray-700/40"
         >
           Cancel
         </button>
