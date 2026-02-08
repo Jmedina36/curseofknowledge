@@ -14,72 +14,55 @@ import React from 'react';
 const WarriorEmblem = ({ size = 48, className = '' }) => (
   <svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
     <defs>
-      <linearGradient id="w-steel" x1="0.2" y1="0" x2="0.8" y2="1">
-        <stop offset="0%" stopColor="#f0f0f0" />
-        <stop offset="30%" stopColor="#d4d4d8" />
-        <stop offset="60%" stopColor="#a1a1aa" />
-        <stop offset="100%" stopColor="#71717a" />
-      </linearGradient>
-      <linearGradient id="w-edge" x1="0" y1="0.3" x2="0" y2="0.7">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.9" />
-        <stop offset="100%" stopColor="#a1a1aa" stopOpacity="0.3" />
-      </linearGradient>
-      <linearGradient id="w-shaft" x1="0.5" y1="0" x2="0.5" y2="1">
-        <stop offset="0%" stopColor="#d4a574" />
-        <stop offset="30%" stopColor="#b8915a" />
-        <stop offset="70%" stopColor="#92703a" />
-        <stop offset="100%" stopColor="#6b4f2a" />
-      </linearGradient>
-      <linearGradient id="w-wrap" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#991b1b" />
+      <linearGradient id="w-shield" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stopColor="#dc2626" />
+        <stop offset="40%" stopColor="#b91c1c" />
         <stop offset="100%" stopColor="#7f1d1d" />
       </linearGradient>
+      <linearGradient id="w-trim" x1="0.5" y1="0" x2="0.5" y2="1">
+        <stop offset="0%" stopColor="#fcd34d" />
+        <stop offset="50%" stopColor="#f59e0b" />
+        <stop offset="100%" stopColor="#b45309" />
+      </linearGradient>
+      <radialGradient id="w-sheen" cx="0.35" cy="0.3" r="0.5">
+        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.15" />
+        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+      </radialGradient>
     </defs>
 
-    {/* === HAFT (wooden shaft) — slightly angled like the reference === */}
-    <path d="M34 18L30 60" stroke="url(#w-shaft)" strokeWidth="4" strokeLinecap="round" />
-    {/* Haft wood grain */}
-    <path d="M33.5 22L29.8 58" stroke="#c09050" strokeWidth="0.4" opacity="0.4" />
-    <path d="M34.3 20L30.5 59" stroke="#7a5a30" strokeWidth="0.3" opacity="0.3" />
+    {/* Main shield — heater/kite shape */}
+    <path d="M32 4C32 4 10 10 10 26C10 42 32 62 32 62C32 62 54 42 54 26C54 10 32 4 32 4Z" fill="url(#w-shield)" />
+    {/* Shield border — gold trim */}
+    <path d="M32 4C32 4 10 10 10 26C10 42 32 62 32 62C32 62 54 42 54 26C54 10 32 4 32 4Z" fill="none" stroke="url(#w-trim)" strokeWidth="2" />
+    {/* Inner border line */}
+    <path d="M32 9C32 9 15 14 15 27C15 40 32 56 32 56C32 56 49 40 49 27C49 14 32 9 32 9Z" fill="none" stroke="#fcd34d" strokeWidth="0.6" opacity="0.35" />
+    {/* Surface sheen */}
+    <path d="M32 4C32 4 10 10 10 26C10 42 32 62 32 62C32 62 54 42 54 26C54 10 32 4 32 4Z" fill="url(#w-sheen)" />
 
-    {/* === AXE HEAD — single-sided broad crescent blade === */}
-    {/* Main blade shape — wide sweeping crescent */}
-    <path d="M33 18C33 18 30 6 22 3C14 0 4 4 2 10C0 16 4 24 10 28C16 32 28 30 33 28Z" fill="url(#w-steel)" stroke="#9ca3af" strokeWidth="0.6" />
-    
-    {/* Blade cutting edge — bright highlight along the crescent */}
-    <path d="M22 3C14 1 5 5 3 10C1 16 5 23 10 27" stroke="url(#w-edge)" strokeWidth="1.2" fill="none" />
-    
-    {/* Blade face bevel lines — giving depth */}
-    <path d="M33 20C28 16 18 8 14 5" stroke="#d4d4d8" strokeWidth="0.4" opacity="0.25" fill="none" />
-    <path d="M33 24C26 22 16 18 10 16" stroke="#d4d4d8" strokeWidth="0.3" opacity="0.2" fill="none" />
-    
-    {/* Blade surface sheen */}
-    <path d="M28 10C24 8 18 6 14 5C10 6 6 10 5 14C6 18 10 24 14 26C20 28 28 26 32 24" fill="#e4e4e7" opacity="0.15" />
+    {/* Central heraldic emblem — crossed swords */}
+    {/* Left sword */}
+    <line x1="22" y1="38" x2="38" y2="18" stroke="#fcd34d" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M38 18L40 16L39 20L37 19Z" fill="#fcd34d" />
+    <line x1="24" y1="35" x2="20" y2="38" stroke="#fcd34d" strokeWidth="1.2" strokeLinecap="round" />
+    <line x1="24" y1="38" x2="20" y2="35" stroke="#fcd34d" strokeWidth="1.2" strokeLinecap="round" />
 
-    {/* === CHEEK / LANGETS — metal strips binding head to haft === */}
-    <path d="M31 16L35 16L35.5 24L30.5 24Z" fill="#52525b" stroke="#71717a" strokeWidth="0.5" />
-    <path d="M31.5 17H34.5M31.2 19H34.8M31 21H35M30.8 23H35.2" stroke="#a1a1aa" strokeWidth="0.3" opacity="0.35" />
+    {/* Right sword */}
+    <line x1="42" y1="38" x2="26" y2="18" stroke="#fcd34d" strokeWidth="1.8" strokeLinecap="round" />
+    <path d="M26 18L24 16L25 20L27 19Z" fill="#fcd34d" />
+    <line x1="40" y1="35" x2="44" y2="38" stroke="#fcd34d" strokeWidth="1.2" strokeLinecap="round" />
+    <line x1="40" y1="38" x2="44" y2="35" stroke="#fcd34d" strokeWidth="1.2" strokeLinecap="round" />
 
-    {/* Small back spike (poll) on opposite side */}
-    <path d="M35 18L42 14L40 18L42 22L35 20Z" fill="#71717a" stroke="#9ca3af" strokeWidth="0.4" />
-    <line x1="37" y1="16" x2="40" y2="18" stroke="#d4d4d8" strokeWidth="0.3" opacity="0.3" />
+    {/* Central circle crest */}
+    <circle cx="32" cy="28" r="6" fill="none" stroke="#fcd34d" strokeWidth="1.2" />
+    <circle cx="32" cy="28" r="3.5" fill="#7f1d1d" stroke="#fcd34d" strokeWidth="0.8" />
+    {/* Crown/star inside crest */}
+    <path d="M32 24.5L33.2 27L36 27.3L34 29.2L34.5 32L32 30.6L29.5 32L30 29.2L28 27.3L30.8 27Z" fill="#fcd34d" opacity="0.9" />
 
-    {/* === RUNE ENGRAVINGS on blade face === */}
-    <path d="M18 10L20 7L22 10L20 12Z" fill="#ef4444" opacity="0.35" />
-    <path d="M12 14L14 12L15 15" stroke="#ef4444" strokeWidth="0.5" opacity="0.3" fill="none" />
-    <circle cx="16" cy="20" r="1" fill="#ef4444" opacity="0.25" />
-
-    {/* === LEATHER GRIP on lower haft === */}
-    <path d="M31.5 40L29 54" stroke="url(#w-wrap)" strokeWidth="6" strokeLinecap="round" />
-    <path d="M31.3 41L29.2 53M31.1 43L29 51M30.9 45L28.8 49" stroke="#450a0a" strokeWidth="0.5" opacity="0.45" />
-
-    {/* === POMMEL — metal cap at bottom === */}
-    <circle cx="29.5" cy="59" r="3" fill="#52525b" stroke="#71717a" strokeWidth="0.6" />
-    <circle cx="29.5" cy="59" r="1.5" fill="#7f1d1d" stroke="#fbbf24" strokeWidth="0.6" />
-    <circle cx="29.5" cy="59" r="0.5" fill="#fbbf24" opacity="0.8" />
-
-    {/* Ambient glow at blade edge */}
-    <path d="M4 10C2 14 4 20 8 24" stroke="#ef4444" strokeWidth="2" opacity="0.04" fill="none" />
+    {/* Decorative corner rivets */}
+    <circle cx="32" cy="12" r="1.5" fill="#f59e0b" opacity="0.6" />
+    <circle cx="18" cy="24" r="1.2" fill="#f59e0b" opacity="0.5" />
+    <circle cx="46" cy="24" r="1.2" fill="#f59e0b" opacity="0.5" />
+    <circle cx="32" cy="48" r="1.2" fill="#f59e0b" opacity="0.4" />
   </svg>
 );
 
