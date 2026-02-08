@@ -3750,18 +3750,18 @@ setMiniBossCount(0);
     if (day === todayDayName) {
       return <span className="text-yellow-400/80 font-fantasy text-[10px] tracking-wider uppercase">Today</span>;
     } else {
-      return <span className="text-gray-600 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
+      return <span className="text-gray-400 text-[10px]">{getNextDayOfWeek(day).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>;
     }
   })()}
 </p>
                       </div>
-                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-blue-200/70 border border-blue-700/20">
+                      <button onClick={() => { setSelectedDay(day); setShowPlanModal(true); }} className="bg-gradient-to-b from-blue-800/50 to-blue-950/50 hover:from-blue-700/60 hover:to-blue-900/60 px-3 py-1.5 rounded-lg text-sm transition-all flex items-center gap-1 font-fantasy tracking-wide text-blue-200 border border-blue-700/30">
                         <Plus size={14}/> Add Task
                       </button>
                     </div>
                     
                     {weeklyPlan[day].length === 0 ? (
-                      <p className="text-gray-700 text-sm italic font-fantasy">No tasks planned</p>
+                      <p className="text-gray-500 text-sm italic font-fantasy">No tasks planned</p>
                     ) : (
                       <div className="space-y-1.5">
                       {[...weeklyPlan[day]].sort((a, b) => {
@@ -3847,14 +3847,14 @@ setMiniBossCount(0);
               {plannerView === 'calendar' && (
               <>
               <div className="flex justify-between items-center mb-5">
-                <button onClick={() => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } else { setCurrentMonth(currentMonth - 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-300/70 border border-gray-700/20 font-fantasy text-sm">← Prev</button>
-                <h3 className="text-xl font-fantasy-decorative text-green-300/80 tracking-wider">{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}</h3>
-                <button onClick={() => { if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); } else { setCurrentMonth(currentMonth + 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-300/70 border border-gray-700/20 font-fantasy text-sm">Next →</button>
+                <button onClick={() => { if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(currentYear - 1); } else { setCurrentMonth(currentMonth - 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-200 border border-gray-600/30 font-fantasy text-sm">← Prev</button>
+                <h3 className="text-xl font-fantasy-decorative text-green-300 tracking-wider">{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })} {currentYear}</h3>
+                <button onClick={() => { if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(currentYear + 1); } else { setCurrentMonth(currentMonth + 1); } }} className="bg-gradient-to-b from-gray-800/50 to-gray-900/50 hover:from-gray-700/60 hover:to-gray-800/60 px-4 py-2 rounded-lg transition-all text-gray-200 border border-gray-600/30 font-fantasy text-sm">Next →</button>
               </div>
               
               <div className="bg-black/30 rounded-lg p-4 border border-green-900/20">
                 <div className="grid grid-cols-7 gap-2 mb-2">
-                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-gray-600 font-fantasy text-xs tracking-wide py-2">{day}</div>))}
+                  {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (<div key={day} className="text-center text-gray-400 font-fantasy text-xs tracking-wide py-2">{day}</div>))}
                 </div>
                 
                 <div className="grid grid-cols-7 gap-2">
@@ -3874,8 +3874,8 @@ setMiniBossCount(0);
                       const allDone = hasTasks && completedTasks === dayTasks.length;
                       days.push(
                         <button key={day} onClick={() => { setSelectedDate(dateKey); setShowCalendarModal(true); }} className={`aspect-square rounded-lg p-1.5 transition-all hover:scale-105 relative ${isToday ? 'bg-blue-800/50 border border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.15)]' : hasTasks ? allDone ? 'bg-green-900/40 border border-green-600/30' : 'bg-yellow-900/30 border border-yellow-600/30' : 'bg-gray-700/40 hover:bg-gray-600/40 border border-gray-600/20 hover:border-gray-500/30'}`}>
-                          <div className="text-sm font-bold text-white/70">{day}</div>
-                          {hasTasks && (<div className="text-[10px] text-white/50 mt-0.5">{completedTasks}/{dayTasks.length}</div>)}
+                          <div className="text-sm font-bold text-white/90">{day}</div>
+                          {hasTasks && (<div className="text-[10px] text-white/70 mt-0.5">{completedTasks}/{dayTasks.length}</div>)}
                           {isToday && (<div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-yellow-400/70 rounded-full animate-pulse"></div>)}
                         </button>
                       );
@@ -3886,10 +3886,10 @@ setMiniBossCount(0);
               </div>
               
               <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs">
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-800/50 border border-blue-500/40 rounded"></div><span className="text-gray-500 font-fantasy">Today</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-500 font-fantasy">In Progress</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-500 font-fantasy">Complete</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-500 font-fantasy">Empty</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-blue-800/50 border border-blue-500/40 rounded"></div><span className="text-gray-400 font-fantasy">Today</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-yellow-900/30 border border-yellow-600/30 rounded"></div><span className="text-gray-400 font-fantasy">In Progress</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-green-900/40 border border-green-600/30 rounded"></div><span className="text-gray-400 font-fantasy">Complete</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-3 h-3 bg-gray-700/40 border border-gray-600/20 rounded"></div><span className="text-gray-400 font-fantasy">Empty</span></div>
               </div>
               </>
               )}
