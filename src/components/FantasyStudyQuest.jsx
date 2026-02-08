@@ -4073,7 +4073,7 @@ setMiniBossCount(0);
               
               <div className="px-6 py-5 space-y-5">
               {/* Current Cycle Status */}
-              <div className="bg-gradient-to-br from-red-950/50 to-black/30 rounded-xl p-5 border border-red-800/25 stat-card-texture">
+              <div className="bg-gradient-to-br from-red-950/50 to-black/30 rounded-xl p-5 border border-red-800/25">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-red-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Current Cycle</h3>
@@ -4104,7 +4104,7 @@ setMiniBossCount(0);
               </div>
               
               {/* Combat Power */}
-              <div className="bg-gradient-to-br from-red-950/40 to-orange-950/30 rounded-xl p-5 border border-red-800/25 stat-card-runes">
+              <div className="bg-gradient-to-br from-red-950/40 to-orange-950/30 rounded-xl p-5 border border-red-800/25">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-red-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-red-400 uppercase">Combat Power</h3>
@@ -4139,7 +4139,7 @@ setMiniBossCount(0);
               </div>
               
               {/* Progression */}
-              <div className="bg-gradient-to-br from-yellow-950/40 to-orange-950/30 rounded-xl p-5 border border-yellow-800/25 stat-card-weave">
+              <div className="bg-gradient-to-br from-yellow-950/40 to-orange-950/30 rounded-xl p-5 border border-yellow-800/25">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-yellow-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-yellow-400 uppercase">Progression</h3>
@@ -4168,7 +4168,7 @@ setMiniBossCount(0);
               </div>
               
               {/* Legacy Stats */}
-              <div className="bg-gradient-to-br from-green-950/40 to-teal-950/30 rounded-xl p-5 border border-green-800/25 stat-card-texture">
+              <div className="bg-gradient-to-br from-green-950/40 to-teal-950/30 rounded-xl p-5 border border-green-800/25">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-green-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-green-400 uppercase">Legacy</h3>
@@ -4201,7 +4201,7 @@ setMiniBossCount(0);
               </div>
               
               {/* Study Stats */}
-              <div className="bg-gradient-to-br from-cyan-950/40 to-emerald-950/30 rounded-xl p-5 border border-cyan-800/25 stat-card-runes">
+              <div className="bg-gradient-to-br from-cyan-950/40 to-emerald-950/30 rounded-xl p-5 border border-cyan-800/25">
                 <div className="flex items-center justify-center gap-2 mb-4">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-cyan-600/20"></div>
                   <h3 className="text-xs font-fantasy tracking-[0.2em] text-cyan-400 uppercase">Study Stats</h3>
