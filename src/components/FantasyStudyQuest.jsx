@@ -1,6 +1,6 @@
 // FANTASY STUDY QUEST - v4.2 MULTI-PHASE GAUNTLET
 // Ported to Lovable
-// Last updated: 2026-02-08
+// Last updated: 2026-02-07
 // FIXES: Calendar sync, date display on planner, missing dependencies, poison bug
 
 import React, { useState, useEffect, useCallback } from 'react';
