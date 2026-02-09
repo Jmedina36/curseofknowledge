@@ -3094,7 +3094,7 @@ setMiniBossCount(0);
            <header className="text-center mb-8 relative">
             {/* Logout button */}
             <button
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/')}
               className="absolute top-0 right-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/50 border border-red-800/30 hover:border-red-600/40 transition-all text-red-300/70 hover:text-red-200 font-fantasy text-xs tracking-wider"
               title="Logout"
             >
