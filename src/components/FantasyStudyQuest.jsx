@@ -4,7 +4,8 @@
 // FIXES: Calendar sync, date display on planner, missing dependencies, poison bug
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calendar, Hammer } from 'lucide-react';
+import { Sword, Shield, Heart, Zap, Skull, Trophy, Plus, Play, Pause, X, Calendar, Hammer, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import useGameSFX from '../hooks/useGameSFX.jsx';
 import DebugPanel from './DebugPanel';
 import AchievementsPanel from './AchievementsPanel';
@@ -345,6 +346,7 @@ const HERO_TITLES = ['Novice', 'Seeker', 'Wanderer', 'Survivor', 'Warrior', 'Cha
 
 const FantasyStudyQuest = () => {
   const sfx = useGameSFX();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('quest');
   const [plannerView, setPlannerView] = useState('weekly');
   const [currentDay, setCurrentDay] = useState(1);
@@ -3089,7 +3091,16 @@ setMiniBossCount(0);
       
       <div className="relative z-10 p-6">
         <div className={`max-w-6xl mx-auto rounded-xl transition-all`}>
-           <header className="text-center mb-8">
+           <header className="text-center mb-8 relative">
+            {/* Logout button */}
+            <button
+              onClick={() => navigate('/login')}
+              className="absolute top-0 right-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/50 border border-red-800/30 hover:border-red-600/40 transition-all text-red-300/70 hover:text-red-200 font-fantasy text-xs tracking-wider"
+              title="Logout"
+            >
+              <LogOut size={14} />
+              <span className="hidden sm:inline">LOGOUT</span>
+            </button>
             {/* Decorative top flourish */}
             <div className="flex items-center justify-center gap-3 mb-3">
               <div className="h-px w-16 bg-gradient-to-r from-transparent to-amber-600/50"></div>
