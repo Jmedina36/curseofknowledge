@@ -13,8 +13,7 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // UI-only: navigate to main app
-    navigate("/");
+    navigate("/app");
   };
 
   return (
